@@ -1,0 +1,162 @@
+<?php
+session_start();
+
+include_once('connect.php');
+
+if (isset($_POST['login'])) {
+
+  $sql = "SELECT * FROM tblusers WHERE username = ? AND password = ? ;";
+  $uname = $_POST['username'];
+  $password = md5($_POST['password']);
+
+  $stmt = $conn->prepare($sql);
+  $stmt->bind_param('ss', $uname, $password);
+  $stmt->execute();
+  $result = $stmt->get_result();
+  $row = $result->fetch_assoc();
+  if ($row > 0 && $row['pass_update'] == '0') {
+    $_SESSION['id'] = $row['id'];
+    $_SESSION['fullname'] = $row['fullname'];
+    $_SESSION['username'] = $row['username'];
+    $_SESSION['faculty'] = $row['faculty'];
+    $_SESSION['position'] = $row['position'];
+    $_SESSION['faculty_id'] = $row['faculty_id'];
+    session_write_close();
+    echo '<script type="text/javascript">';
+    echo 'setTimeout(function () { swal.fire({
+            title: "สำเร็จ!",
+            text: "เข้าสู่หน้าแก้ไขรหัสผ่าน",
+            type: "success",
+            icon: "success"
+        });';
+    echo '}, 500 );</script>';
+
+    echo '<script type="text/javascript">';
+    echo 'setTimeout(function () { 
+            window.location.href = "pass_update.php";';
+    echo '}, 3000 );</script>';
+  } else if ($row > 0 && $row['pass_update'] == '1') {
+    $_SESSION['id'] = $row['id'];
+    $_SESSION['fullname'] = $row['fullname'];
+    $_SESSION['username'] = $row['username'];
+    $_SESSION['faculty'] = $row['faculty'];
+    $_SESSION['position'] = $row['position'];
+    $_SESSION['faculty_id'] = $row['faculty_id'];
+    session_write_close();
+    echo '<script type="text/javascript">';
+    echo 'setTimeout(function () { swal.fire({
+            title: "สำเร็จ!",
+            text: "เข้าสู่ระบบเรียบร้อย!",
+            type: "success",
+            icon: "success"
+        });';
+    echo '}, 500 );</script>';
+
+    echo '<script type="text/javascript">';
+    echo 'setTimeout(function () { 
+            window.location.href = "index.php";';
+    echo '}, 3000 );</script>';
+  } else {
+    echo '<script type="text/javascript">';
+    echo 'setTimeout(function () { swal.fire({
+            title: "ผิดพลาด!",
+            text: "กรุณาลองใหม่!",
+            type: "warning",
+            icon: "error"
+        });';
+    echo '}, 500);</script>';
+
+    echo '<script type="text/javascript">';
+    echo 'setTimeout(function () { 
+        window.location.href = "login.php";';
+    echo '}, 3000 );</script>';
+  }
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>เข้าสู่ระบบ | สหกิจศึกษา :: มหาวิทยาลัยราชภัฏเลย</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
+  <!-- icheck bootstrap -->
+  <link rel="stylesheet" href="plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="dist/css/adminlte.min.css">
+
+  <!-- sweetalert2 -->
+  <script src="sweetalert2/dist/sweetalert2.all.min.js"></script>
+  <script src="sweetalert2/dist/sweetalert2.min.js"></script>
+  <link rel="stylesheet" href="sweetalert2/dist/sweetalert2.min.css">
+</head>
+
+<body class="hold-transition login-page">
+  <div class="login-box">
+    <!-- /.login-logo -->
+    <div class="card card-outline card-primary">
+      <div class="card-header text-center">
+        <img src="../images/lru.png" width="120 px" alt="" class="">
+        <p class="mb-1 text-center">
+          <a href="../index.php">สหกิจศึกษา มหาวิทยาลัยราชภัฏเลย</a>
+        </p>
+      </div>
+      <div class="card-body">
+        <p class="login-box-msg">สำหรับผู้ดูแลระบบ</p>
+
+        <form method="post">
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Username" name="username" id="username" required>
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-envelope"></span>
+              </div>
+            </div>
+          </div>
+          <div class="input-group mb-3">
+            <input type="password" class="form-control" placeholder="Password" name="password" id="password" required>
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-lock"></span>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-8">
+              <div class="icheck-primary">
+                <p class="mb-1">
+                  <a href="login2.php">ผู้ดูแลระบบ</a>
+                </p>
+              </div>
+            </div>
+            <!-- /.col -->
+            <div class="col-4">
+              <button type="submit" name="login" class="btn btn-primary btn-block">เข้าสู่ระบบ</button>
+            </div>
+            <!-- /.col -->
+          </div>
+        </form>
+
+
+        <!-- /.social-auth-links -->
+      </div>
+      <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+  </div>
+  <!-- /.login-box -->
+
+  <!-- jQuery -->
+  <script src="plugins/jquery/jquery.min.js"></script>
+  <!-- Bootstrap 4 -->
+  <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <!-- AdminLTE App -->
+  <script src="dist/js/adminlte.min.js"></script>
+</body>
+
+</html>
