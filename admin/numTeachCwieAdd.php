@@ -179,10 +179,11 @@ $faculty_id = $_SESSION['faculty_id'];
               <tbody>
                 <?php
                 if ($result->num_rows > 0) {
+                  $i = 1;
                   while ($row = $result->fetch_assoc()) {
                 ?>
                     <tr>
-                      <td><?php echo $row["id"]; ?></td>
+                      <td><?php echo $i; ?></td>
                       <td><?php echo $row["course"]; ?></td>
                       <td><?php echo $row["name_tea_cwie"]; ?></td>
                       <td><?php echo $row["num_tea_cwie"]; ?></td>
@@ -200,6 +201,7 @@ $faculty_id = $_SESSION['faculty_id'];
                       </td>
                     </tr>
                 <?php
+                    $i++;
                   }
                 }
                 ?>

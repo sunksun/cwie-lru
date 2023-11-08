@@ -1,11 +1,17 @@
 <?php
 session_start();
 include_once('connect.php');
+if ($_SESSION['fullname'] == '') {
+  echo '<script language="javascript">';
+  echo 'alert("กรุณา Login เข้าสู่ระบบ"); location.href="login.php"';
+  echo '</script>';
+}
 $fullname = $_SESSION['fullname'];
 $username = $_SESSION['username'];
 $faculty = $_SESSION['faculty'];
 $position = $_SESSION['position'];
 $faculty_id = $_SESSION['faculty_id'];
+$year = "2/2566";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,6 +31,18 @@ $faculty_id = $_SESSION['faculty_id'];
   <link rel="stylesheet" href="plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/adminlte.min.css">
+
+  <!-- Live Search -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+  <style>
+    .ullist {
+      padding-left: 10px;
+      margin-bottom: 10px;
+      width: 635px;
+      margin-top: -15px
+    }
+  </style>
+
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -50,8 +68,8 @@ $faculty_id = $_SESSION['faculty_id'];
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Project Add</li>
+                <li class="breadcrumb-item"><a href="index.php">หน้าแรก</a></li>
+                <li class="breadcrumb-item active"><a href="logout.php">ออกจากระบบ</a></li>
               </ol>
             </div>
           </div>
@@ -74,44 +92,62 @@ $faculty_id = $_SESSION['faculty_id'];
               </div>
               <div class="card-body">
                 <form action="numStuCwieSave.php" method="post" enctype="multipart/form-data">
-                  <div class="form-group">
-                    <label for="inputClientCompany">ปีการศึกษา</label>
-                    <select class="form-control select2" name="term" style="width: 100%;">
-                      <option selected="selected">--- เลือกปีการศึกษา ---</option>
-                      <?php
-                      $sql = "SELECT * FROM semester";
-                      $result = $conn->query($sql);
-                      if ($result->num_rows > 0) {
-                        while ($optionData = $result->fetch_assoc()) {
-                          $option = $optionData['semester'];
-                          $id = $optionData['id'];
-                      ?>
-                          <option value="<?php echo $option; ?>"><?php echo $option; ?></option>
-                      <?php
+                  <div class="row form-group">
+                    <div class="col-12">
+                      <label for="inputClientCompany">เลือกภาคการศึกษา</label>
+                      <select class="form-control select2" name="year" style="width: 100%;" required>
+                        <?php
+                        $sql = "SELECT * FROM year ";
+                        $result = $conn->query($sql);
+                        if ($result->num_rows > 0) {
+                          while ($optionData = $result->fetch_assoc()) {
+                            $option = $optionData['year'];
+                        ?>
+                            <option value="<?php echo $option; ?>" <?php if ($option == $year) echo 'selected="selected"'; ?>> ปีการศึกษา
+                              <?php echo $option; ?></option>
+                        <?php
+                          }
                         }
-                      }
-                      ?>
-                    </select>
+                        ?>
+                      </select>
+                    </div>
+                    <div class="col-12">
+                      <label for="inputClientCompany">สาขาวิชา</label>
+                      <input type="text" class="form-control" id="live_search" name="course" tabindex="1" placeholder="ค้นหาสาขาวิชา....">
+                    </div>
+                    <div>
+                      <ul id="search_result" class="list-group ullist">
+
+                      </ul>
+                    </div>
                   </div>
-                  <div class="form-group">
-                    <label for="inputClientCompany">หลักสูตร</label>
-                    <select class="form-control select2" name="major" style="width: 100%;">
-                      <option selected="selected">--- เลือกหลักสูตร ---</option>
-                      <?php
-                      $sql = "SELECT * FROM course WHERE id_faculty = '$faculty_id'";
-                      $result = $conn->query($sql);
-                      if ($result->num_rows > 0) {
-                        while ($optionData = $result->fetch_assoc()) {
-                          $option = $optionData['name_course'];
-                          $id = $optionData['id'];
-                      ?>
-                          <option value="<?php echo $option; ?>"><?php echo $option; ?></option>
-                      <?php
+                  <script type="text/javascript">
+                    $(document).ready(function() {
+                      $("#live_search").keyup(function() {
+                        var query = $(this).val();
+                        if (query != "") {
+                          $.ajax({
+                            url: 'ajax-db-search.php',
+                            method: 'POST',
+                            data: {
+                              query: query
+                            },
+                            success: function(data) {
+                              $('#search_result').html(data);
+                              $('#search_result').css('display', 'block');
+                              $("#search_result li").click(function() {
+                                var value = $(this).html();
+                                $('#live_search').val(value);
+                                $('#search_result').css('display', 'none');
+                              });
+                            }
+                          });
+                        } else {
+                          $('#search_result').css('display', 'none');
                         }
-                      }
-                      ?>
-                    </select>
-                  </div>
+                      });
+                    });
+                  </script>
                   <div class="row form-group">
                     <div class="col-6">
                       <label for="inputClientCompany">จำนวน นศ. ออกฝึกประสบการวิชาชีพ (ระบบปกติ)</label>
@@ -185,16 +221,17 @@ $faculty_id = $_SESSION['faculty_id'];
               <tbody>
                 <?php
                 if ($result->num_rows > 0) {
+                  $i = 1;
                   while ($row = $result->fetch_assoc()) {
                 ?>
                     <tr>
-                      <td><?php echo $row["id"]; ?></td>
-                      <td><?php echo $row["major"]; ?></td>
+                      <td><?php echo $i; ?></td>
+                      <td style="width: 30%;"><?php echo $row["major"]; ?></td>
                       <td><?php echo $row["num_practice"]; ?></td>
                       <td><?php echo $row["num_cwie"]; ?></td>
                       <td><?php echo $row["num_pundit"]; ?></td>
                       <td><?php echo $row["num_pundit_job"]; ?></td>
-                      <td class="project-actions text-right">
+                      <td class="project-actions text-right" style="width: 25%;">
                         <a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#modal-default<?php echo $row['id'] ?>">
                           <i class="fas fa-folder">
                           </i>
@@ -213,7 +250,8 @@ $faculty_id = $_SESSION['faculty_id'];
                       </td>
                     </tr>
                 <?php
-                  include 'numStuCwieView.php';
+                    include 'numStuCwieView.php';
+                    $i++;
                   }
                 }
                 ?>

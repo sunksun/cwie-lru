@@ -57,7 +57,7 @@ include_once('admin/connect.php');
 					<div class="news-block col-lg-4 col-md-6 col-sm-12 wow fadeInUp">
 						<div class="inner-box">
 							<div class="image-box">
-								<figure class="image"><a href="news-details.php"><img src="./admin/img_news/<?php echo $row["img"]; ?>" alt=""></a></figure>
+								<figure class="image"><a href="#"><img src="./admin/img_news/<?php echo $row["img"]; ?>" alt=""></a></figure>
 							</div>
 							<div class="content-box">
 								<div class="content">
@@ -65,8 +65,8 @@ include_once('admin/connect.php');
 										<li><i class="fa fa-user"></i> by Admin</li>
 										<li><i class="fa fa-comments"></i> 2 Comments</li>
 									</ul>
-									<h4 class="title"><a href="news-details.php"><?php echo $row["title"]; ?></a></h4>
-									<a href="news-details.php" class="read-more">อ่านต่อ <i class="fa fa-long-arrow-alt-right"></i></a>
+									<h4 class="title"><a href="#"><?php echo $row["title"]; ?></a></h4>
+									<a href="news-details.php?newid=<?php echo $row["id"]; ?>" class="read-more">อ่านต่อ <i class="fa fa-long-arrow-alt-right"></i></a>
 								</div>
 							</div>
 						</div>
@@ -81,7 +81,7 @@ include_once('admin/connect.php');
 					<div class="news-block col-lg-4 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="300ms">
 						<div class="inner-box">
 							<div class="image-box">
-								<figure class="image"><a href="news-details.php"><img src="./admin/img_news/<?php echo $row["img"]; ?>" alt=""></a></figure>
+								<figure class="image"><a href="#"><img src="./admin/img_news/<?php echo $row["img"]; ?>" alt=""></a></figure>
 							</div>
 							<div class="content-box">
 								<div class="content">
@@ -89,8 +89,8 @@ include_once('admin/connect.php');
 										<li><i class="fa fa-user"></i> by Admin</li>
 										<li><i class="fa fa-comments"></i> 2 Comments</li>
 									</ul>
-									<h4 class="title"><a href="news-details.php"><?php echo $row["title"]; ?></a></h4>
-									<a href="news-details.php" class="read-more">อ่านต่อ <i class="fa fa-long-arrow-alt-right"></i></a>
+									<h4 class="title"><a href="#"><?php echo $row["title"]; ?></a></h4>
+									<a href="news-details.php?newid=<?php echo $row["id"]; ?>" class="read-more">อ่านต่อ <i class="fa fa-long-arrow-alt-right"></i></a>
 								</div>
 							</div>
 						</div>
@@ -106,7 +106,7 @@ include_once('admin/connect.php');
 					<div class="news-block col-lg-4 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="300ms">
 						<div class="inner-box">
 							<div class="image-box">
-								<figure class="image"><a href="news-details.php"><img src="./admin/img_news/<?php echo $row["img"]; ?>" alt=""></a></figure>
+								<figure class="image"><a href="#"><img src="./admin/img_news/<?php echo $row["img"]; ?>" alt=""></a></figure>
 							</div>
 							<div class="content-box">
 								<div class="content">
@@ -114,8 +114,8 @@ include_once('admin/connect.php');
 										<li><i class="fa fa-user"></i> by Admin</li>
 										<li><i class="fa fa-comments"></i> 2 Comments</li>
 									</ul>
-									<h4 class="title"><a href="news-details.php"><?php echo $row["title"]; ?></a></h4>
-									<a href="news-details.php" class="read-more">อ่านต่อ <i class="fa fa-long-arrow-alt-right"></i></a>
+									<h4 class="title"><a href="#"><?php echo $row["title"]; ?></a></h4>
+									<a href="news-details.php?newid=<?php echo $row["id"]; ?>" class="read-more">อ่านต่อ <i class="fa fa-long-arrow-alt-right"></i></a>
 								</div>
 							</div>
 						</div>

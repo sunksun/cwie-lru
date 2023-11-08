@@ -11,7 +11,7 @@ $username = $_SESSION['username'];
 $faculty = $_SESSION['faculty'];
 $position = $_SESSION['position'];
 $faculty_id = $_SESSION['faculty_id'];
-$year = "2565";
+$year = "2/2566";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -68,8 +68,8 @@ $year = "2565";
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Project Add</li>
+                <li class="breadcrumb-item"><a href="index.php">หน้าแรก</a></li>
+                <li class="breadcrumb-item active"><a href="logout.php">ออกจากระบบ</a></li>
               </ol>
             </div>
           </div>
@@ -93,6 +93,24 @@ $year = "2565";
               <div class="card-body">
                 <form action="cwieCourseSave.php" method="post" enctype="multipart/form-data">
                   <div class="row form-group">
+                    <div class="col-12">
+                      <label for="inputClientCompany">เลือกภาคการศึกษา</label>
+                      <select class="form-control select2" name="year" style="width: 100%;" required>
+                        <?php
+                        $sql = "SELECT * FROM year ";
+                        $result = $conn->query($sql);
+                        if ($result->num_rows > 0) {
+                          while ($optionData = $result->fetch_assoc()) {
+                            $option = $optionData['year'];
+                        ?>
+                            <option value="<?php echo $option; ?>" <?php if ($option == $year) echo 'selected="selected"'; ?>> ปีการศึกษา
+                              <?php echo $option; ?></option>
+                        <?php
+                          }
+                        }
+                        ?>
+                      </select>
+                    </div>
                     <div class="col-12">
                       <label for="inputClientCompany">สาขาวิชา</label>
                       <input type="text" class="form-control" id="live_search" name="course" tabindex="1" placeholder="ค้นหาสาขาวิชา....">
@@ -170,7 +188,7 @@ $year = "2565";
       <!-- /.content -->
       <hr>
       <?php
-      $sql = "SELECT * FROM cwie_course";
+      $sql = "SELECT * FROM `cwie_course` ORDER BY `cwie_course`.`id` DESC";
       $result = $conn->query($sql);
       ?>
       <section class="content">
@@ -187,21 +205,22 @@ $year = "2565";
                 <tr>
                   <th>ลำดับ</th>
                   <th>สาขาวิชา</th>
-                  <th>รูปแบบสหกิจศึกษาและการจัดการเรียนรู้</th>
-                  <th>หมายเหตุ</th>
+                  <th>รูปแบบ</th>
+                  <th>ภาคการศึกษา</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
                 <?php
                 if ($result->num_rows > 0) {
+                  $i = 1;
                   while ($row = $result->fetch_assoc()) {
                 ?>
                     <tr>
-                      <td><?php echo $row["id"]; ?></td>
-                      <td><?php echo $row["major"]; ?></td>
+                      <td><?php echo $i; ?></td>
+                      <td style="width: 50%"><?php echo $row["major"]; ?></td>
                       <td><?php echo $row["type"]; ?></td>
-                      <td><?php echo $row["note"]; ?></td>
+                      <td><?php echo $row["year"]; ?></td>
                       <td class="project-actions text-right">
                         <a class="btn btn-info btn-sm" href="cwieCourseEdit.php?cwieCoid=<?php echo $row["id"]; ?>">
                           <i class="fas fa-pencil-alt">
@@ -216,6 +235,7 @@ $year = "2565";
                       </td>
                     </tr>
                 <?php
+                    $i++;
                   }
                 }
                 ?>
@@ -224,8 +244,8 @@ $year = "2565";
                 <tr>
                   <th>ลำดับ</th>
                   <th>สาขาวิชา</th>
-                  <th>รูปแบบสหกิจศึกษาและการจัดการเรียนรู้</th>
-                  <th>หมายเหตุ</th>
+                  <th>รูปแบบ</th>
+                  <th>ภาคการศึกษา</th>
                   <th></th>
                 </tr>
               </tfoot>

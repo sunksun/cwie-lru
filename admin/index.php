@@ -11,7 +11,7 @@ $username = $_SESSION['username'];
 $faculty = $_SESSION['faculty'];
 $position = $_SESSION['position'];
 $faculty_id = $_SESSION['faculty_id'];
-$year = "2565";
+$year = "2/2566";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -64,7 +64,7 @@ $year = "2565";
       <div class="content-header">
         <div class="container-fluid">
           <div class="row mb-2">
-            <div class="col-sm-6">
+            <div class="col-sm-4">
               <select class="form-control select2" name="fid" style="width: 100%;" required>
                 <?php
                 $sql = "SELECT * FROM year ";
@@ -80,10 +80,14 @@ $year = "2565";
                 }
                 ?>
               </select>
-            </div><!-- /.col -->
-            <div class="col-sm-6">
+            </div>
+            <div class="col-sm-4">
+              <a class="btn btn-success" href="#" role="button">GO</a>
+            </div>
+            <!-- /.col -->
+            <div class="col-sm-4">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="login.php">เข้าสู่ระบบ</a></li>
+                <li class="breadcrumb-item"><a href="index.php">หน้าแรก</a></li>
                 <li class="breadcrumb-item active"><a href="logout.php">ออกจากระบบ</a></li>
               </ol>
             </div><!-- /.col -->
@@ -99,9 +103,14 @@ $year = "2565";
           <div class="row">
             <div class="col-lg-3 col-6">
               <!-- small box -->
+              <?php
+              $sql = "SELECT SUM(num_cwie) AS num_cwie FROM `num_stu_cwie`;";
+              $result = mysqli_query($conn, $sql);
+              $row_num_cwie = mysqli_fetch_assoc($result);
+              ?>
               <div class="small-box bg-info">
                 <div class="inner">
-                  <h3>150</h3>
+                  <h3><?php echo $row_num_cwie["num_cwie"]; ?></h3>
 
                   <p>นักศึกษาสหกิจฯ</p>
                 </div>
@@ -114,9 +123,14 @@ $year = "2565";
             <!-- ./col -->
             <div class="col-lg-3 col-6">
               <!-- small box -->
+              <?php
+              $sql = "SELECT SUM(num_practice) AS num_practice FROM `num_stu_cwie`;";
+              $result = mysqli_query($conn, $sql);
+              $row_num_practice = mysqli_fetch_assoc($result);
+              ?>
               <div class="small-box bg-success">
                 <div class="inner">
-                  <h3>53<sup style="font-size: 20px"></sup></h3>
+                  <h3><?php echo $row_num_practice["num_practice"]; ?><sup style="font-size: 20px"></sup></h3>
 
                   <p>นักศึกษา SIL</p>
                 </div>
@@ -129,9 +143,14 @@ $year = "2565";
             <!-- ./col -->
             <div class="col-lg-3 col-6">
               <!-- small box -->
+              <?php
+              $sql = "SELECT COUNT(*) AS sum_count FROM `num_tea_cwie`;";
+              $result = mysqli_query($conn, $sql);
+              $row_sum_count = mysqli_fetch_assoc($result);
+              ?>
               <div class="small-box bg-warning">
                 <div class="inner">
-                  <h3>44</h3>
+                  <h3><?php echo $row_sum_count["sum_count"]; ?></h3>
 
                   <p>อาจารย์นิเทศสหกิจ</p>
                 </div>
@@ -144,9 +163,14 @@ $year = "2565";
             <!-- ./col -->
             <div class="col-lg-3 col-6">
               <!-- small box -->
+              <?php
+              $sql = "SELECT COUNT(*) AS num_org_mou FROM `organization_mou`;";
+              $result = mysqli_query($conn, $sql);
+              $row_num_org_mou = mysqli_fetch_assoc($result);
+              ?>
               <div class="small-box bg-danger">
                 <div class="inner">
-                  <h3>65</h3>
+                  <h3><?php echo $row_num_org_mou["num_org_mou"]; ?></h3>
 
                   <p>สถานประกอบการ</p>
                 </div>
