@@ -1,5 +1,6 @@
 <?php
 session_start();
+$user_img = $_SESSION['img'];
 include_once('connect.php');
 if ($_SESSION['fullname'] == '') {
   echo '<script language="javascript">';
@@ -87,7 +88,7 @@ $year = "2/2566";
             <!-- /.col -->
             <div class="col-sm-4">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="index.php">หน้าแรก</a></li>
+                <li class="breadcrumb-item active"><a href="index.php">หน้าแรก</a></li>
                 <li class="breadcrumb-item active"><a href="logout.php">ออกจากระบบ</a></li>
               </ol>
             </div><!-- /.col -->

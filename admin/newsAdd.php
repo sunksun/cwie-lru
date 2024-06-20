@@ -1,5 +1,6 @@
 <?php
 session_start();
+$user_img = $_SESSION['img'];
 include_once('connect.php');
 $fullname = $_SESSION['fullname'];
 $username = $_SESSION['username'];
@@ -48,12 +49,6 @@ $faculty_id = $_SESSION['faculty_id'];
           <div class="row mb-2">
             <div class="col-sm-6">
               <h1>จัดการข่าวประชาสัมพันธ์</h1>
-            </div>
-            <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Project Add</li>
-              </ol>
             </div>
           </div>
         </div><!-- /.container-fluid -->
@@ -156,7 +151,7 @@ $faculty_id = $_SESSION['faculty_id'];
                     <textarea name="detail2" class="form-control" id="exampleFormControlTextarea1" rows="3" required></textarea>
                   </div>
                   <div class="form-group">
-                    <label for="inputName">รูปภาพ (รูป Highlight ขนาด 666x799px / รูป กิจกรรมถัดไป ขนาด 460x549px / รูปข่าวประชาสัมพันธ์ ขนาด 370x360px)</label>
+                    <label for="inputName">รูปภาพ (รูปข่าวประชาสัมพันธ์ ขนาด 370x360px / รูป Highlight ขนาด 666x799px / รูป กิจกรรมถัดไป ขนาด 460x549px )</label>
                     <input class="form-control" type="file" name="fileToUpload" id="fileToUpload">
                   </div>
               </div>
@@ -177,7 +172,7 @@ $faculty_id = $_SESSION['faculty_id'];
       <!-- /.content -->
       <hr>
       <?php
-      $sql = "SELECT * FROM news";
+      $sql = "SELECT * FROM `news` ORDER BY `id` DESC";
       $result = $conn->query($sql);
       ?>
       <section class="content">
@@ -205,28 +200,35 @@ $faculty_id = $_SESSION['faculty_id'];
                 ?>
                     <tr>
                       <td><?php echo $row["id"]; ?></td>
-                      <td><?php echo $row["title"]; ?></td>
+                      <td>
+                        <?php
+                        $title = $row["title"];
+                        if (mb_strlen($title) > 40) {
+                          $title = mb_substr($title, 0, 40) . '...';
+                        }
+                        echo $title;
+                        ?>
+                      </td>
                       <td><?php echo $row["date_time"]; ?></td>
                       <td class="project-actions text-right">
                         <a class="btn btn-primary btn-sm" href="#">
-                          <i class="fas fa-folder">
-                          </i>
+                          <i class="fas fa-folder"></i>
                           View
                         </a>
                         <a class="btn btn-info btn-sm" href="newsEdit.php?newid=<?php echo $row["id"]; ?>">
-                          <i class="fas fa-pencil-alt">
-                          </i>
+                          <i class="fas fa-pencil-alt"></i>
                           Edit
                         </a>
                         <a class="btn btn-danger btn-sm" href="JavaScript:if(confirm('ยืนยันการลบข้อมูล?')==true){window.location='newsDel.php?newid=<?php echo $row["id"]; ?>';}">
-                          <i class="fas fa-trash">
-                          </i>
+                          <i class="fas fa-trash"></i>
                           Delete
                         </a>
                       </td>
                     </tr>
                 <?php
                   }
+                } else {
+                  echo "<tr><td colspan='4'>No news found.</td></tr>";
                 }
                 ?>
               </tbody>

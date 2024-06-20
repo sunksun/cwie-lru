@@ -18,8 +18,10 @@ if (isset($_POST['login'])) {
     $_SESSION['id'] = $row['id'];
     $_SESSION['fullname'] = $row['fullname'];
     $_SESSION['username'] = $row['username'];
+    $_SESSION['password'] = $row['password'];
     $_SESSION['faculty'] = $row['faculty'];
     $_SESSION['position'] = $row['position'];
+    $_SESSION['img'] = $row['img'];
     $_SESSION['faculty_id'] = $row['faculty_id'];
     session_write_close();
     echo '<script type="text/javascript">';
@@ -39,8 +41,10 @@ if (isset($_POST['login'])) {
     $_SESSION['id'] = $row['id'];
     $_SESSION['fullname'] = $row['fullname'];
     $_SESSION['username'] = $row['username'];
+    $_SESSION['password'] = $row['password'];
     $_SESSION['faculty'] = $row['faculty'];
     $_SESSION['position'] = $row['position'];
+    $_SESSION['img'] = $row['img'];
     $_SESSION['faculty_id'] = $row['faculty_id'];
     session_write_close();
     echo '<script type="text/javascript">';
@@ -68,7 +72,7 @@ if (isset($_POST['login'])) {
 
     echo '<script type="text/javascript">';
     echo 'setTimeout(function () { 
-        window.location.href = "login.php";';
+        window.location.href = "login2.php";';
     echo '}, 3000 );</script>';
   }
 }
@@ -130,7 +134,7 @@ if (isset($_POST['login'])) {
             <div class="col-8">
               <div class="icheck-primary">
                 <p class="mb-1">
-                  <a href="login2.php">ผู้ดูแลระบบ</a>
+                  <a href="login.php">อาจารย์/เจ้าหน้าที่</a>
                 </p>
               </div>
             </div>

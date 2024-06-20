@@ -61,12 +61,7 @@ include_once('admin/connect.php');
 							</div>
 							<div class="content-box">
 								<div class="content">
-									<ul class="post-info">
-										<li><i class="fa fa-user"></i> by Admin</li>
-										<li><i class="fa fa-comments"></i> 2 Comments</li>
-									</ul>
-									<h4 class="title"><a href="#"><?php echo $row["title"]; ?></a></h4>
-									<a href="news-details.php?newid=<?php echo $row["id"]; ?>" class="read-more">อ่านต่อ <i class="fa fa-long-arrow-alt-right"></i></a>
+									<h4 class="title"><a href="news-details.php?newid=<?php echo $row["id"]; ?>"><?php echo $row["title"]; ?></a></h4>
 								</div>
 							</div>
 						</div>
@@ -85,12 +80,7 @@ include_once('admin/connect.php');
 							</div>
 							<div class="content-box">
 								<div class="content">
-									<ul class="post-info">
-										<li><i class="fa fa-user"></i> by Admin</li>
-										<li><i class="fa fa-comments"></i> 2 Comments</li>
-									</ul>
-									<h4 class="title"><a href="#"><?php echo $row["title"]; ?></a></h4>
-									<a href="news-details.php?newid=<?php echo $row["id"]; ?>" class="read-more">อ่านต่อ <i class="fa fa-long-arrow-alt-right"></i></a>
+									<h4 class="title"><a href="news-details.php?newid=<?php echo $row["id"]; ?>"><?php echo $row["title"]; ?></a></h4>
 								</div>
 							</div>
 						</div>
@@ -110,12 +100,7 @@ include_once('admin/connect.php');
 							</div>
 							<div class="content-box">
 								<div class="content">
-									<ul class="post-info">
-										<li><i class="fa fa-user"></i> by Admin</li>
-										<li><i class="fa fa-comments"></i> 2 Comments</li>
-									</ul>
-									<h4 class="title"><a href="#"><?php echo $row["title"]; ?></a></h4>
-									<a href="news-details.php?newid=<?php echo $row["id"]; ?>" class="read-more">อ่านต่อ <i class="fa fa-long-arrow-alt-right"></i></a>
+									<h4 class="title"><a href="news-details.php?newid=<?php echo $row["id"]; ?>"><?php echo $row["title"]; ?></a></h4>
 								</div>
 							</div>
 						</div>
@@ -145,7 +130,7 @@ include_once('admin/connect.php');
 						$result = $conn->query($sql);
 						if ($result->num_rows > 0) {
 							while ($row = $result->fetch_assoc()) {
-								$thai_word = iconv_substr($row["activity_name"], 0, 50, 'UTF-8');
+								$thai_word = iconv_substr($row["activity_name"], 0, 60, 'UTF-8');
 						?>
 								<!-- Course Block -->
 								<div class="course-block">
@@ -158,21 +143,13 @@ include_once('admin/connect.php');
 											<ul class="course-info">
 												<li><i class="fa fa-book"></i><?php echo $row["activity_date"]; ?></li>
 											</ul>
-											<h5 class="title"><a href="page-course-details.html"><?php echo $thai_word; ?>...</a></h5>
-											<div class="other-info">
-												<div class="rating-box">
-													<span class="text">(4.9 /8 Rating)</span>
-													<div class="rating"><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span></div>
-												</div>
-												<?php
-												$date_regis = substr($row["date_regis"], 0, 10);
-												$date_now = date("Y-m-d");
-												$date1 = "$date_now";
-												$date2 = "$date_regis";
-												//$diff = date_diff($date1, $date2);
-												?>
-												<div class="duration"><i class="fa fa-clock"></i> <?php echo "$date2"; ?> </div>
-											</div>
+											<h5 class="title"><a href="page-course-details.html"><?php
+																									$title = $row["activity_name"];
+																									if (mb_strlen($title) > 40) {
+																										$title = mb_substr($title, 0, 40) . '...';
+																									}
+																									echo $title;
+																									?></a></h5>
 										</div>
 									</div>
 								</div>

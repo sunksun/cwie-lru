@@ -1,5 +1,6 @@
 <?php
 session_start();
+$user_img = $_SESSION['img'];
 include_once('connect.php');
 if ($_SESSION['fullname'] == '') {
   echo '<script language="javascript">';
@@ -153,16 +154,16 @@ $year = "2/2566";
                     <!-- radio -->
                     <div class="form-group">
                       <div class="form-check">
-                        <input class="form-check-input" type="radio" name="type" value="Separate">
-                        <label class="form-check-label">แบบแยก (Separate)</label>
+                        <input class="form-check-input" type="radio" name="type" value="Separate" id="separate">
+                        <label class="form-check-label" for="separate">แบบแยก (Separate)</label>
                       </div>
                       <div class="form-check">
-                        <input class="form-check-input" type="radio" name="type" value="Parallel">
-                        <label class="form-check-label">แบบคู่ขนาน (Parallel)</label>
+                        <input class="form-check-input" type="radio" name="type" value="Parallel" id="parallel">
+                        <label class="form-check-label" for="parallel">แบบคู่ขนาน (Parallel)</label>
                       </div>
                       <div class="form-check">
-                        <input class="form-check-input" type="radio" name="type" value="Mix">
-                        <label class="form-check-label">แบบผสม (Mix)</label>
+                        <input class="form-check-input" type="radio" name="type" value="Mix" id="mix">
+                        <label class="form-check-label" for="mix">แบบผสม (Mix)</label>
                       </div>
                     </div>
                   </div>
@@ -170,6 +171,7 @@ $year = "2/2566";
                     <label for="inputClientCompany">หมายเหตุ</label>
                     <input type="text" name="note" id="inputClientCompany" class="form-control">
                   </div>
+                  <input type="hidden" id="faculty_id" name="faculty_id" value="<?php echo $faculty_id; ?>">
               </div>
               <!-- /.card-body -->
             </div>

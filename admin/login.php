@@ -5,13 +5,12 @@ include_once('connect.php');
 
 if (isset($_POST['login'])) {
 
-  $sql = "SELECT * FROM tblusers WHERE username = ? AND password = ? AND faculty_id = ?;";
+  $sql = "SELECT * FROM tblusers WHERE username = ? AND password = ? ;";
   $uname = $_POST['username'];
   $password = md5($_POST['password']);
-  $faculty_id = $_POST['faculty_id'];
 
   $stmt = $conn->prepare($sql);
-  $stmt->bind_param('sss', $uname, $password, $faculty_id);
+  $stmt->bind_param('ss', $uname, $password);
   $stmt->execute();
   $result = $stmt->get_result();
   $row = $result->fetch_assoc();
@@ -21,6 +20,7 @@ if (isset($_POST['login'])) {
     $_SESSION['username'] = $row['username'];
     $_SESSION['faculty'] = $row['faculty'];
     $_SESSION['position'] = $row['position'];
+    $_SESSION['img'] = $row['img'];
     $_SESSION['faculty_id'] = $row['faculty_id'];
     session_write_close();
     echo '<script type="text/javascript">';
@@ -42,6 +42,7 @@ if (isset($_POST['login'])) {
     $_SESSION['username'] = $row['username'];
     $_SESSION['faculty'] = $row['faculty'];
     $_SESSION['position'] = $row['position'];
+    $_SESSION['img'] = $row['img'];
     $_SESSION['faculty_id'] = $row['faculty_id'];
     session_write_close();
     echo '<script type="text/javascript">';
@@ -149,17 +150,6 @@ if (isset($_POST['login'])) {
               </div>
             </div>
           </div>
-          <div class="input-group mb-3 justify-content-end">
-            <select class="form-control" name="faculty_id" id="faculty_id" aria-label="Default select example">
-              <option value="0" selected>---- เลือกคณะ ----</option>
-              <option value="01">คณะวิทยาการจัดการ</option>
-              <option value="02">คณะวิทยาศาสตร์และเทคโนโลยี</option>
-              <option value="03">คณะเทคโนโลยีอุตสาหกรรม</option>
-              <option value="04">คณะมนุษยศาสตร์และสังคมศาสตร์</option>
-              <option value="05">คณะครุศาสตร์</option>
-            </select>
-          </div>
-
           <div class="row">
             <div class="col-8">
               <div class="icheck-primary">

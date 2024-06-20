@@ -92,15 +92,8 @@
 
 
 			<div class="outer-box">
-				<a href="tel:+92(8800)9806" class="info-btn">
-					<i class="icon fa fa-phone"></i>
-					<small>Call Anytime</small><br> +92 (8800) - 8960
-				</a>
 
 				<div class="ui-btn-outer">
-					<button class="ui-btn ui-btn search-btn">
-						<span class="icon lnr lnr-icon-search"></span>
-					</button>
 					<a href="admin/login.php" class="ui-btn"><i class="lnr-icon-enter"></i></a>
 				</div>
 
