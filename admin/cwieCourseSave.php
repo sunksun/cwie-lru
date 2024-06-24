@@ -40,8 +40,23 @@ if (isset($_POST['save'])) {
 	echo 'alert("บันทึกข้อมูลเรียบร้อยแล้ว"); location.href="cwieCourseAdd.php"';
 	echo '</script>';
 } elseif (isset($_POST['update'])) {
+	// กำหนดค่าเริ่มต้นให้กับทุกฟิลด์เป็น 0 หรือค่าที่เหมาะสม
+	$separate = "";
+	$parallel = "";
+	$mix = "";
+
+	// กำหนดฟิลด์ที่เลือกเป็น 1 หรือค่าที่เหมาะสม
+	if ($type == "Separate") {
+		$separate = "/";
+	} elseif ($type == "Parallel") {
+		$parallel = "/";
+	} elseif ($type == "Mix") {
+		$mix = "/";
+	}
 	$sql = "UPDATE cwie_course SET major = '$course', 
-	type = '$type', 
+	separate = '$separate', 
+	parallel = '$parallel', 
+	mix = '$mix', 
 	note = '$note', 
 	year = '$year' 
 	WHERE cwie_course.id = $cwieCoid";

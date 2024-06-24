@@ -43,7 +43,20 @@ $year = "2/2566";
       margin-top: -15px
     }
   </style>
-
+  <style>
+    #openReportButton {
+      background-color: #04AA6D;
+      /* Green */
+      border: none;
+      color: white;
+      padding: 5px 5px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      /* ปรับความกว้างเท่ากับ 200px */
+    }
+  </style>
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -65,7 +78,6 @@ $year = "2/2566";
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h5>จัดการรูปแบบการจัดหลักสูตรสหกิจศึกษาฯ</h5>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -83,7 +95,7 @@ $year = "2/2566";
           <div class="col-md-12">
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title"><a href="#">เพิ่มรูปแบบการจัดหลักสูตรสหกิจศึกษาฯ</a></h3>
+                <h3 class="card-title"><a href="#">รูปแบบของการจัดหลักสูตรสหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE)</a></h3>
 
                 <div class="card-tools">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -181,7 +193,6 @@ $year = "2/2566";
         </div>
         <div class="row">
           <div class="col-12">
-            <a href="#" class="btn btn-secondary float-right">ยกเลิก</a>
             <input type="submit" name="save" value="บันทึกข้อมูล" class="btn btn-success float-left">
           </div>
         </div>
@@ -190,7 +201,18 @@ $year = "2/2566";
       <!-- /.content -->
       <hr>
       <?php
-      $sql = "SELECT * FROM `cwie_course` ORDER BY `cwie_course`.`id` DESC";
+      // สร้างคำสั่ง SQL
+      $sql = "SELECT id, faculty_id, major, 
+        CASE 
+            WHEN separate != '' THEN 'separate'
+            WHEN parallel != '' THEN 'parallel'
+            WHEN mix != '' THEN 'mix'
+            ELSE 'none'
+        END as type,
+        note, date_regis, year
+        FROM `cwie_course`
+        WHERE faculty_id = '$faculty_id'
+        ORDER BY `cwie_course`.`id` DESC";
       $result = $conn->query($sql);
       ?>
       <section class="content">
@@ -199,6 +221,7 @@ $year = "2/2566";
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">รูปแบบสหกิจศึกษาและการจัดการเรียนรู้</h3>
+            <a href="#" id="openReportButton" class="btn btn-secondary float-right">พิมพ์รายงาน</a>
           </div>
           <!-- /.card-header -->
           <div class="card-body">
@@ -315,6 +338,15 @@ $year = "2/2566";
         "info": true,
         "autoWidth": false,
         "responsive": true,
+      });
+      // Function to open cwieCourseReport.php
+      function openCwieCourseReport() {
+        window.location.href = 'cwieCourseReport.php';
+      }
+
+      // Bind click event to the button
+      $('#openReportButton').on('click', function() {
+        openCwieCourseReport();
       });
     });
   </script>

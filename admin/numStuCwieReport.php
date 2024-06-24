@@ -20,7 +20,7 @@ $year = "2/2566";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>แสดงผลการรายงาน</title>
+    <title>รายงาน : จำนวนนักศึกษาและบัณฑิต ในรูปแบบของการจัดหลักสูตรสหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE)</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New&display=swap">
     <style>
         body {
@@ -82,20 +82,17 @@ $year = "2/2566";
     <h4><?php echo $faculty; ?></h4>
     <h4>มหาวิทยาลัยราชภัฏเลย</h4>
     <h4>ประจำภาคเรียนที่ <?php echo $year; ?></h4>
-    <p>หลักสูตรที่มีการเรียนการสอนแบบสหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE) </p>
+    <p>จำนวนนักศึกษาและบัณฑิต ในรูปแบบของการจัดหลักสูตรสหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE)</p>
     <table id="reportTable">
         <thead>
             <tr>
-                <td rowspan="2">ลำดับที่</td>
-                <td rowspan="2" class="text-left">สาขาวิชา</td>
-                <td colspan="4">
-                    รูปแบบสหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE)
-                </td>
-            </tr>
-            <tr>
-                <td>แบบแยก (Separate)</td>
-                <td>แบบคู่ขนาน (Parallel)</td>
-                <td>แบบผสม (Mix)</td>
+                <td>ลำดับที่</td>
+                <td class="text-left">สาขาวิชา</td>
+                <td>นักศึกษาออกฝึกประสบการวิชาชีพ</td>
+                <td>จำนวนนักศึกษาสหกิจศึกษา</td>
+                <td>บัณฑิต CWIE (ที่สำเร็จการศึกษาปีที่ผ่านมา)</td>
+                <td>บัณฑิต CWIE ที่ได้งานทำ</td>
+                <td>บัณฑิต CWIE ที่ได้งานทำในสถานประกอบการ</td>
                 <td>หมายเหตุ</td>
             </tr>
         </thead>
@@ -107,7 +104,7 @@ $year = "2/2566";
     <button onclick="history.back()">ย้อนกลับ</button> | <button onclick="window.print()">พิมพ์รายงาน</button>
 
     <script>
-        fetch('cwieCourseData.php')
+        fetch('numStuCwieData.php')
             .then(response => response.json())
             .then(data => {
                 const tbody = document.querySelector('#reportTable tbody');

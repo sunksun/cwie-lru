@@ -1,5 +1,6 @@
 <?php
 session_start();
+$user_img = $_SESSION['img'];
 include_once('connect.php');
 if ($_SESSION['fullname'] == '') {
   echo '<script language="javascript">';
@@ -42,7 +43,20 @@ $year = "2/2566";
       margin-top: -15px
     }
   </style>
-
+  <style>
+    #openReportButton {
+      background-color: #04AA6D;
+      /* Green */
+      border: none;
+      color: white;
+      padding: 5px 5px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      /* ปรับความกว้างเท่ากับ 200px */
+    }
+  </style>
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -64,7 +78,6 @@ $year = "2/2566";
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>จำนวนนักศึกษาและบัณฑิต CWIE</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -82,7 +95,7 @@ $year = "2/2566";
           <div class="col-md-12">
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title"><a href="#">เพิ่มนักศึกษาและบัณฑิต CWIE</a></h3>
+                <h3 class="card-title"><a href="#">จำนวนนักศึกษาและบัณฑิต ในรูปแบบของการจัดหลักสูตรสหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE)</a></h3>
 
                 <div class="card-tools">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -150,24 +163,24 @@ $year = "2/2566";
                   </script>
                   <div class="row form-group">
                     <div class="col-6">
-                      <label for="inputClientCompany">จำนวน นศ. ออกฝึกประสบการวิชาชีพ (ระบบปกติ)</label>
+                      <label for="inputClientCompany">จำนวนนักศึกษาที่ออกฝึกประสบการวิชาชีพ (ระบบปกติ)</label>
                       <input type="number" name="num_practice" class="form-control">
                     </div>
                     <div class="col-6">
-                      <label for="inputClientCompany">จำนวน นส. สหกิจศึกษา</label>
+                      <label for="inputClientCompany">จำนวนนักศึกษาสหกิจศึกษา</label>
                       <input type="number" name="num_cwie" class="form-control">
                     </div>
                   </div>
                   <div class="row form-group">
-                    <div class="col-3">
-                      <label for="inputClientCompany">จำนวนบัณฑิต CWIE</label>
+                    <div class="col-4">
+                      <label for="inputClientCompany">จำนวนบัณฑิต CWIE (ที่สำเร็จการศึกษาปีที่ผ่านมา)</label>
                       <input type="number" name="num_pundit" class="form-control">
                     </div>
                     <div class="col-3">
                       <label for="inputClientCompany">จำนวนบัณฑิต CWIE ที่ได้งานทำ</label>
                       <input type="number" name="num_pundit_job" class="form-control">
                     </div>
-                    <div class="col-6">
+                    <div class="col-5">
                       <label for="inputClientCompany">จำนวนบัณฑิต CWIE ที่ได้งานทำในสถานประกอบการ</label>
                       <input type="number" name="num_pundit_job_work" class="form-control">
                     </div>
@@ -185,7 +198,6 @@ $year = "2/2566";
         </div>
         <div class="row">
           <div class="col-12">
-            <a href="#" class="btn btn-secondary float-right">ยกเลิก</a>
             <input type="submit" name="save" value="บันทึกข้อมูล" class="btn btn-success float-left">
           </div>
         </div>
@@ -194,7 +206,7 @@ $year = "2/2566";
       <!-- /.content -->
       <hr>
       <?php
-      $sql = "SELECT * FROM num_stu_cwie";
+      $sql = "SELECT * FROM num_stu_cwie ORDER BY `num_stu_cwie`.`id` DESC";
       $result = $conn->query($sql);
       ?>
       <section class="content">
@@ -203,6 +215,7 @@ $year = "2/2566";
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">จำนวนนักศึกษาและบัณฑิต CWIE</h3>
+            <a href="#" id="openReportButton" class="btn btn-secondary float-right">พิมพ์รายงาน</a>
           </div>
           <!-- /.card-header -->
           <div class="card-body">
@@ -331,6 +344,15 @@ $year = "2/2566";
         "info": true,
         "autoWidth": false,
         "responsive": true,
+      });
+      // Function to open cwieCourseReport.php
+      function openCwieCourseReport() {
+        window.location.href = 'numStuCwieReport.php';
+      }
+
+      // Bind click event to the button
+      $('#openReportButton').on('click', function() {
+        openCwieCourseReport();
       });
     });
   </script>

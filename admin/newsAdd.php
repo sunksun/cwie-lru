@@ -27,6 +27,7 @@ $faculty_id = $_SESSION['faculty_id'];
   <link rel="stylesheet" href="plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/adminlte.min.css">
+
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -40,7 +41,6 @@ $faculty_id = $_SESSION['faculty_id'];
     <!-- Main Sidebar Container -->
     <?php include_once 'sidebar.php'; ?>
 
-
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
       <!-- Content Header (Page header) -->
@@ -48,7 +48,12 @@ $faculty_id = $_SESSION['faculty_id'];
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>จัดการข่าวประชาสัมพันธ์</h1>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="index.php">หน้าแรก</a></li>
+                <li class="breadcrumb-item active"><a href="logout.php">ออกจากระบบ</a></li>
+              </ol>
             </div>
           </div>
         </div><!-- /.container-fluid -->
@@ -109,15 +114,8 @@ $faculty_id = $_SESSION['faculty_id'];
                         <select id="inputState" class="form-control" name="date3">
                           <option selected>ปี พ.ศ.</option>
                           <?php
-                          $sql = "SELECT * FROM year";
-                          $result = $conn->query($sql);
-                          if ($result->num_rows > 0) {
-                            while ($optionData = $result->fetch_assoc()) {
-                              $option = $optionData['year'];
-                          ?>
-                              <option value="<?php echo $option; ?>"> <?php echo $option; ?></option>
-                          <?php
-                            }
+                          for ($year = 2564; $year <= 2570; $year++) {
+                            echo "<option value='$year'>$year</option>";
                           }
                           ?>
                         </select>
@@ -163,7 +161,6 @@ $faculty_id = $_SESSION['faculty_id'];
         </div>
         <div class="row">
           <div class="col-12">
-            <a href="#" class="btn btn-secondary float-right">ยกเลิก</a>
             <input type="submit" name="save" value="บันทึกข้อมูล" class="btn btn-success float-left">
           </div>
         </div>

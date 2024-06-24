@@ -29,7 +29,7 @@ $faculty_id = $_SESSION['faculty_id'];
 $year = "2/2566";
 
 // สร้างคำสั่ง SQL เพื่อดึงข้อมูลจากตาราง
-$sql = "SELECT id, faculty_id, major, separate, parallel, mix, note, year FROM cwie_course WHERE faculty_id = '$faculty_id'";
+$sql = "SELECT * FROM `organization_mou` WHERE faculty_id = '$faculty_id'";
 $result = $conn->query($sql);
 
 // ตรวจสอบว่ามีข้อมูลหรือไม่
@@ -42,10 +42,10 @@ if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $data[] = [
             "sequence" => $sequence, // เพิ่มลำดับ
-            "major" => $row["major"],
-            "separate" => $row["separate"],
-            "parallel" => $row["parallel"],
-            "mix" => $row["mix"],
+            "name" => $row["name"],
+            "address" => $row["address"] . ' ' . $row["subdistrict"] . ' ' . $row["district"] . ' ' . $row["province"] . ' ' . $row["postcode"],
+            "date_mou" => $row["date_mou"],
+            "time_mou" => $row["time_mou"],
             "note" => $row["note"]
         ];
         $sequence++; // เพิ่มลำดับ

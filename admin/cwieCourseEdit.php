@@ -1,7 +1,18 @@
 <?php
-error_reporting(~E_NOTICE);
 session_start();
+$user_img = $_SESSION['img'];
 include_once('connect.php');
+if ($_SESSION['fullname'] == '') {
+  echo '<script language="javascript">';
+  echo 'alert("กรุณา Login เข้าสู่ระบบ"); location.href="login.php"';
+  echo '</script>';
+}
+$fullname = $_SESSION['fullname'];
+$username = $_SESSION['username'];
+$faculty = $_SESSION['faculty'];
+$position = $_SESSION['position'];
+$faculty_id = $_SESSION['faculty_id'];
+$year = "2/2566";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -46,8 +57,8 @@ include_once('connect.php');
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Project Add</li>
+                <li class="breadcrumb-item"><a href="index.php">หน้าแรก</a></li>
+                <li class="breadcrumb-item active"><a href="logout.php">ออกจากระบบ</a></li>
               </ol>
             </div>
           </div>
@@ -99,7 +110,7 @@ include_once('connect.php');
                     <select class="form-control select2" name="course" style="width: 100%;">
                       <option selected="selected">--- เลือกสาขาวิชา ---</option>
                       <?php
-                      $sql = "SELECT * FROM major";
+                      $sql = "SELECT * FROM major WHERE faculty = '$faculty_id'";
                       $result = $conn->query($sql);
                       if ($result->num_rows > 0) {
                         while ($optionData = $result->fetch_assoc()) {
@@ -120,7 +131,7 @@ include_once('connect.php');
                     <div class="form-group">
                       <div class="form-check">
                         <input class="form-check-input" type="radio" name="type" value="Separate" <?php
-                                                                                                  if ($row["type"] == 'Separate') {
+                                                                                                  if ($row["separate"] == '/') {
                                                                                                     echo "checked";
                                                                                                   }
                                                                                                   ?>>
@@ -129,7 +140,7 @@ include_once('connect.php');
                       </div>
                       <div class="form-check">
                         <input class="form-check-input" type="radio" name="type" value="Parallel" <?php
-                                                                                                  if ($row["type"] == 'Parallel') {
+                                                                                                  if ($row["parallel"] == '/') {
                                                                                                     echo "checked";
                                                                                                   }
                                                                                                   ?>>
@@ -138,7 +149,7 @@ include_once('connect.php');
                       </div>
                       <div class="form-check">
                         <input class="form-check-input" type="radio" name="type" value="Mix" <?php
-                                                                                              if ($row["type"] == 'Mix') {
+                                                                                              if ($row["mix"] == '/') {
                                                                                                 echo "checked";
                                                                                               }
                                                                                               ?>>
@@ -160,7 +171,6 @@ include_once('connect.php');
         </div>
         <div class="row">
           <div class="col-12">
-            <a href="#" class="btn btn-secondary float-right">ยกเลิก</a>
             <input type="submit" name="update" value="บันทึกข้อมูล" class="btn btn-success float-left">
           </div>
         </div>

@@ -4117,7 +4117,7 @@ Section Title
 ***/
 .courses-section {
   position: relative;
-  padding: 120px 0 90px;
+  padding: 20px 0 90px;
   z-index: 1;
 }
 .courses-section .icon-e {
@@ -6640,13 +6640,13 @@ Section Title
 ***/
 .news-section {
   position: relative;
-  padding: 120px 0 70px;
+  padding: 40px 0 70px;
   overflow: hidden;
 }
 
 .news-block {
   position: relative;
-  margin-bottom: 50px;
+  margin-bottom: 40px;
 }
 .news-block .inner-box {
   position: relative;

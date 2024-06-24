@@ -11,9 +11,9 @@
 
 			<nav class="nav main-menu">
 				<ul class="navigation">
-					<li class="current dropdown"><a href="index.php">หน้าแรก</a>
+					<li><a href="index.php">หน้าแรก</a>
 						<!-- <ul>
-								<li><a href="index.html">Home page 01</a></li>
+								<li><a href="index.php">Home page 01</a></li>
 								<li><a href="index-2.html">Home page 02</a></li>
 								<li class="dropdown"><a href="#">Single</a>
 									<ul>
@@ -40,7 +40,7 @@
 									</li>
 								<li class="dropdown"><a href="#">Header Styles</a>
 									<ul>
-										<li><a href="index.html">Header Style One</a></li>
+										<li><a href="index.php">Header Style One</a></li>
 										<li><a href="index-2.html">Header Style Two</a></li>
 									</ul>
 								</li>
@@ -64,27 +64,7 @@
 							<li><a href="#">การจัดกิจกรรม</a></li>
 						</ul>
 					</li>
-					<li class="dropdown"><a href="#">สถานประกอบการ</a>
-						<!--<ul>
-							<li><a href="shop-products.html">Products</a></li>
-							<li><a href="shop-products-sidebar.html">Products with Sidebar</a></li>
-							<li><a href="shop-product-details.html">Product Details</a></li>
-							<li><a href="shop-cart.html">Cart</a></li>
-							<li><a href="shop-checkout.html">Checkout</a></li>
-						</ul> -->
-					</li>
-					<li class="dropdown"><a href="#">คณาจารย์</a>
-						<!-- <ul>
-							<li><a href="news-grid.html">News Grid</a></li>
-							<li><a href="news-details.html">News Details</a></li>
-						</ul> -->
-					</li>
-					<li class="dropdown"><a href="#">นักศึกษา</a>
-						<!-- <ul>
-							<li><a href="news-grid.html">News Grid</a></li>
-							<li><a href="news-details.html">News Details</a></li>
-						</ul> -->
-					</li>
+					<li><a href="#team-section">คณาจารย์</a></li>
 					<li><a href="page-contact.php">ติดต่อเรา</a></li>
 				</ul>
 			</nav>
@@ -162,7 +142,7 @@
 		<button class="close-search"><span class="fa fa-times"></span></button>
 
 		<div class="search-inner">
-			<form method="post" action="index.html">
+			<form method="post" action="index.php">
 				<div class="form-group">
 					<input type="search" name="search-field" value="" placeholder="ค้นหา..." required="">
 					<button type="submit"><i class="fa fa-search"></i></button>
@@ -178,7 +158,7 @@
 			<div class="inner-container">
 				<!--Logo-->
 				<div class="logo">
-					<a href="index.html" title=""><img src="images/logo-2.png" alt="" title=""></a>
+					<a href="index.php" title=""><img src="images/logo-2.png" alt="" title=""></a>
 				</div>
 
 				<!--Right Col-->

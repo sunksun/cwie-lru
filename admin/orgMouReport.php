@@ -79,23 +79,17 @@ $year = "2/2566";
 
 <body>
     <h4>สหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE)</h4>
-    <h4><?php echo $faculty; ?></h4>
-    <h4>มหาวิทยาลัยราชภัฏเลย</h4>
+    <h4><?php echo $faculty; ?> มหาวิทยาลัยราชภัฏเลย</h4>
     <h4>ประจำภาคเรียนที่ <?php echo $year; ?></h4>
-    <p>หลักสูตรที่มีการเรียนการสอนแบบสหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE) </p>
+    <p>สถานประกอบการที่ทำบันทึกข้อตกลงหลักสูตรสหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE)</p>
     <table id="reportTable">
         <thead>
             <tr>
-                <td rowspan="2">ลำดับที่</td>
-                <td rowspan="2" class="text-left">สาขาวิชา</td>
-                <td colspan="4">
-                    รูปแบบสหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE)
-                </td>
-            </tr>
-            <tr>
-                <td>แบบแยก (Separate)</td>
-                <td>แบบคู่ขนาน (Parallel)</td>
-                <td>แบบผสม (Mix)</td>
+                <td>ลำดับที่</td>
+                <td>รายชื่อสถานประกอบการ</td>
+                <td>ที่อยู่</td>
+                <td>วันที่ทำ MOU</td>
+                <td>ระยะเวลา MOU</td>
                 <td>หมายเหตุ</td>
             </tr>
         </thead>
@@ -107,7 +101,7 @@ $year = "2/2566";
     <button onclick="history.back()">ย้อนกลับ</button> | <button onclick="window.print()">พิมพ์รายงาน</button>
 
     <script>
-        fetch('cwieCourseData.php')
+        fetch('orgMouData.php')
             .then(response => response.json())
             .then(data => {
                 const tbody = document.querySelector('#reportTable tbody');
@@ -119,7 +113,7 @@ $year = "2/2566";
                         td.textContent = item[key];
 
                         // Align 'major' column to the right
-                        if (key === 'major') {
+                        if (key === 'name' || key === 'address') {
                             td.classList.add('text-left');
                         }
 

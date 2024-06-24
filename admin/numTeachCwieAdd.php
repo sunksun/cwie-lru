@@ -1,11 +1,18 @@
 <?php
 session_start();
+$user_img = $_SESSION['img'];
 include_once('connect.php');
+if ($_SESSION['fullname'] == '') {
+  echo '<script language="javascript">';
+  echo 'alert("กรุณา Login เข้าสู่ระบบ"); location.href="login.php"';
+  echo '</script>';
+}
 $fullname = $_SESSION['fullname'];
 $username = $_SESSION['username'];
 $faculty = $_SESSION['faculty'];
 $position = $_SESSION['position'];
 $faculty_id = $_SESSION['faculty_id'];
+$year = "2/2566";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,18 +32,20 @@ $faculty_id = $_SESSION['faculty_id'];
   <link rel="stylesheet" href="plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="dist/css/adminlte.min.css">
-
-  <!-- Live Search -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
   <style>
-    .ullist {
-      padding-left: 10px;
-      margin-bottom: 10px;
-      width: 635px;
-      margin-top: -15px
+    #openReportButton {
+      background-color: #04AA6D;
+      /* Green */
+      border: none;
+      color: white;
+      padding: 5px 5px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      /* ปรับความกว้างเท่ากับ 200px */
     }
   </style>
-
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -58,12 +67,11 @@ $faculty_id = $_SESSION['faculty_id'];
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>จำนวนอาจารย์นิเทศสหกิจฯ</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Project Add</li>
+                <li class="breadcrumb-item"><a href="index.php">หน้าแรก</a></li>
+                <li class="breadcrumb-item active"><a href="logout.php">ออกจากระบบ</a></li>
               </ol>
             </div>
           </div>
@@ -76,7 +84,8 @@ $faculty_id = $_SESSION['faculty_id'];
           <div class="col-md-12">
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title"><a href="#">เพิ่มอาจารย์นิเทศสหกิจฯ</a></h3>
+                <h3 class="card-title"><a href="#">อาจารย์นิเทศหลักสูตรสหกิจศึกษาและการศึกษาเชิงบูรณาการกับการทำงาน (CWIE) ที่ผ่านการอบรมและรับรองโดยสำนักงานปลัดกระทรวงอุดมศึกษา วิทยาศาสตร์ วิจัยและนวัตกรรม
+                  </a></h3>
 
                 <div class="card-tools">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -87,14 +96,13 @@ $faculty_id = $_SESSION['faculty_id'];
               <div class="card-body">
                 <form action="numTeachCwieSave.php" method="post" enctype="multipart/form-data">
                   <div class="form-group">
-                    <label for="inputClientCompany">หลักสูตร</label>
+                    <label for="inputClientCompany">สาขาวิชา</label>
                     <input type="text" class="form-control" id="live_search" name="course" tabindex="1" placeholder="ค้นหาสาขาวิชา....">
                   </div>
                   <div>
-                    <ul id="search_result" class="list-group ullist">
-
-                    </ul>
+                    <ul id="search_result" class="list-group ullist"></ul>
                   </div>
+                  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                   <script type="text/javascript">
                     $(document).ready(function() {
                       $("#live_search").keyup(function() {
@@ -122,6 +130,7 @@ $faculty_id = $_SESSION['faculty_id'];
                       });
                     });
                   </script>
+
                   <div class="row form-group">
                     <div class="col-6">
                       <label for="inputClientCompany">ชื่ออาจารย์นิเทศสหกิจศึกษา</label>
@@ -136,6 +145,10 @@ $faculty_id = $_SESSION['faculty_id'];
                     <label for="inputClientCompany">หมายเหตุ</label>
                     <input type="text" name="note" id="inputClientCompany" class="form-control">
                   </div>
+                  <div class="form-group">
+                    <label for="inputClientCompany">รูปภาพ (ขนาด 220x220 px)</label>
+                    <input class="form-control" type="file" name="filename" id="fileToUpload">
+                  </div>
               </div>
               <!-- /.card-body -->
             </div>
@@ -145,7 +158,6 @@ $faculty_id = $_SESSION['faculty_id'];
         </div>
         <div class="row">
           <div class="col-12">
-            <a href="#" class="btn btn-secondary float-right">ยกเลิก</a>
             <input type="submit" name="save" value="บันทึกข้อมูล" class="btn btn-success float-left">
           </div>
         </div>
@@ -154,7 +166,7 @@ $faculty_id = $_SESSION['faculty_id'];
       <!-- /.content -->
       <hr>
       <?php
-      $sql = "SELECT * FROM num_tea_cwie";
+      $sql = "SELECT * FROM num_tea_cwie WHERE faculty_id = '$faculty_id' ORDER BY `num_tea_cwie`.`id` DESC;";
       $result = $conn->query($sql);
       ?>
       <section class="content">
@@ -162,7 +174,8 @@ $faculty_id = $_SESSION['faculty_id'];
         <!-- Default box -->
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">จำนวนนักศึกษาและบัณฑิต CWIE</h3>
+            <h3 class="card-title">จำนวนอาจารย์นิเทศหลักสูตรสหกิจศึกษาและการศึกษาเชิงบูรณาการกับการทำงาน (CWIE)</h3>
+            <a href="#" id="openReportButton" class="btn btn-secondary float-right">พิมพ์รายงาน</a>
           </div>
           <!-- /.card-header -->
           <div class="card-body">
@@ -208,7 +221,6 @@ $faculty_id = $_SESSION['faculty_id'];
               </tbody>
               <tfoot>
                 <tr>
-                  <th>ลำดับ</th>
                   <th>ลำดับ</th>
                   <th>สาขาวิชา</th>
                   <th>ชื่อ-นามสกุล</th>
@@ -281,8 +293,18 @@ $faculty_id = $_SESSION['faculty_id'];
         "autoWidth": false,
         "responsive": true,
       });
+      // Function to open cwieCourseReport.php
+      function openCwieCourseReport() {
+        window.location.href = 'numTeachCwieReport.php';
+      }
+
+      // Bind click event to the button
+      $('#openReportButton').on('click', function() {
+        openCwieCourseReport();
+      });
     });
   </script>
+
 </body>
 
 </html>

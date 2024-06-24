@@ -1,156 +1,86 @@
 <?php
 session_start();
 include_once('connect.php');
-$fullname = $_SESSION['fullname'];
-$username = $_SESSION['username'];
-$faculty = $_SESSION['faculty'];
-$position = $_SESSION['position'];
-$faculty_id = $_SESSION['faculty_id'];
 
-$target_dir = "img_act_cwie/";
-date_default_timezone_set("Asia/Bangkok");
-$newfilename = date('dmYHis');
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['save'])) {
+	$activity_type = $_POST['activity_type'];
+	$activity_name = $_POST['activity_name'];
+	$activity_date = $_POST['activity_date'];
+	$amount = $_POST['amount'];
+	$note = $_POST['note'];
+	$faculty_id = $_SESSION['faculty_id'];
+	$activity_id = $_SESSION['activity_id'];
 
-$temp = explode(".", $_FILES["filename"]["name"]);
-$newfilename = $newfilename . '.' . end($temp);
-$target_file = $target_dir . basename($newfilename);
-$uploadOk = 1;
-$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-
-
-$activity_type = $_POST["activity_type"];
-$activity_name = $_POST["activity_name"];
-$course = $_POST["course"];
-$activity_date = $_POST["activity_date"];
-$amount = $_POST["amount"];
-$note = $_POST["note"];
-
-if (isset($_POST['save'])) {
-	if($_FILES["filename"]["tmp_name"]=="") {
-	$newfilename = "";
-	$sql = "INSERT INTO activity_cwie (activity_type, activity_name, course, activity_date, amount, note, filename, date_regis) 
-	VALUES ('$activity_type', '$activity_name', '$course', '$activity_date', '$amount', '$note', '$newfilename', current_timestamp());";
-	mysqli_query($conn, $sql);
-	echo '<script language="javascript">';
-	echo 'alert("บันทึกข้อมูลเรียบร้อยแล้ว"); location.href="activityCwieAdd.php"';
-	echo '</script>';
-	}
-	// Check if image file is a actual image or fake image
-	$check = getimagesize($_FILES["filename"]["tmp_name"]);
-	if($check !== false) {
-	  echo "File is an image - " . $check["mime"] . ".";
-	  $uploadOk = 1;
-	} else {
-	  echo "File is not an image.";
-	  $uploadOk = 0;
-	}
-	// Check if file already exists
-	if (file_exists($target_file)) {
-		echo "Sorry, file already exists.";
-		$uploadOk = 0;
-	}
-	// Check file size
-	if ($_FILES["filename"]["size"] > 500000) {
-		echo '<script language="javascript">';
-		echo 'alert("Sorry, your file is too large."); location.href="newsAdd.php"';
-		echo '</script>';
-		$uploadOk = 0;
-	}
-	
-	// Allow certain file formats
-	if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-	&& $imageFileType != "gif" ) {
-		//echo '<script language="javascript">';
-		//echo 'alert("Sorry, only JPG, JPEG, PNG & GIF files are allowed."); location.href="activityCwieAdd.php"';
-		//echo '</script>';
-		$uploadOk = 0;
-	}
-	// Check if $uploadOk is set to 0 by an error
-	if ($uploadOk == 0) {
-		echo "Sorry, your file was not uploaded.";
-	// if everything is ok, try to upload file
-	} else {
-	if (move_uploaded_file($_FILES["filename"]["tmp_name"], $target_file)) {
-
-	$sql = "INSERT INTO activity_cwie (activity_type, activity_name, course, activity_date, amount, note, filename, date_regis) 
-	VALUES ('$activity_type', '$activity_name', '$course', '$activity_date', '$amount', '$note', '$newfilename', current_timestamp());";
-	mysqli_query($conn, $sql);
-	echo '<script language="javascript">';
-	echo 'alert("บันทึกข้อมูลเรียบร้อยแล้ว"); location.href="activityCwieAdd.php"';
-	echo '</script>';
-	} else {
-		echo "Sorry, there was an error uploading your file.";
+	// จัดการกับสาขาวิชา
+	if (isset($_POST['major']) && in_array('all', $_POST['major'])) {
+		$course = "ทุกหลักสูตร";
+	} elseif (isset($_POST['major'])) {
+		$majorIds = implode(',', $_POST['major']);
+		$sql = "SELECT GROUP_CONCAT(major SEPARATOR ', ') as majors FROM major WHERE id IN ($majorIds)";
+		$result = $conn->query($sql);
+		if ($result->num_rows > 0) {
+			$row = $result->fetch_assoc();
+			$course = $row['majors'];
 		}
+	} else {
+		$course = "";
 	}
 
-} elseif (isset($_POST['update'])){
-	if($_FILES["filename"]["tmp_name"]=="") {
-	$actid = $_GET["actid"];
-	$sql = "UPDATE activity_cwie SET activity_type = '$activity_type',
-	activity_name = '$activity_name',
-	course = '$course',
-	activity_date = '$activity_date',
-	amount = '$amount',
-	note = '$note' 
-	WHERE activity_cwie.id = $actid";
-	mysqli_query($conn, $sql);
-	echo '<script language="javascript">';
-	echo 'alert("อัปเดทข้อมูลเรียบร้อยแล้ว"); location.href="activityCwieAdd.php"';
-	echo '</script>';
-	}
+	$filename = ""; // กำหนดค่าเริ่มต้นเป็นสตริงว่าง
 
-	// Check if image file is a actual image or fake image
-	$check = getimagesize($_FILES["filename"]["tmp_name"]);
-	if($check !== false) {
-	  echo "File is an image - " . $check["mime"] . ".";
-	  $uploadOk = 1;
-	} else {
-	  echo "File is not an image.";
-	  $uploadOk = 0;
-	}
-	// Check if file already exists
-	if (file_exists($target_file)) {
-		echo "Sorry, file already exists.";
-		$uploadOk = 0;
-	}
-	// Check file size
-	if ($_FILES["filename"]["size"] > 500000) {
-		echo '<script language="javascript">';
-		echo 'alert("Sorry, your file is too large."); location.href="activityCwieAdd.php"';
-		echo '</script>';
-		$uploadOk = 0;
-	}
-	
-	// Allow certain file formats
-	if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-	&& $imageFileType != "gif" ) {
-		//echo '<script language="javascript">';
-		//echo 'alert("Sorry, only JPG, JPEG, PNG & GIF files are allowed."); location.href="activityCwieAdd.php"';
-		//echo '</script>';
-		$uploadOk = 0;
-	}
-	// Check if $uploadOk is set to 0 by an error
-	if ($uploadOk == 0) {
-		echo "Sorry, your file was not uploaded.";
-	// if everything is ok, try to upload file
-	} else {
-		if (move_uploaded_file($_FILES["filename"]["tmp_name"], $target_file)) {
-		$actid = $_GET["actid"];
-		$sql = "UPDATE activity_cwie SET activity_type = '$activity_type',
-		activity_name = '$activity_name',
-		course = '$course',
-		activity_date = '$activity_date',
-		amount = '$amount',
-		note = '$note' ,
-		filename = '$newfilename' 
-		WHERE activity_cwie.id = $actid";
-		mysqli_query($conn, $sql);
-		echo '<script language="javascript">';
-		echo 'alert("บันทึกข้อมูลเรียบร้อยแล้ว"); location.href="activityCwieAdd.php"';
-		echo '</script>';
+	// ตรวจสอบว่ามีการอัพโหลดไฟล์หรือไม่
+	if (isset($_FILES["filename"]) && $_FILES["filename"]["error"] != UPLOAD_ERR_NO_FILE) {
+		$target_dir = "img_act_cwie/";
+		$target_file = $target_dir . basename($_FILES["filename"]["name"]);
+		$uploadOk = 1;
+		$imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+		// เช็คว่าไฟล์รูปภาพจริงหรือไม่
+		$check = getimagesize($_FILES["filename"]["tmp_name"]);
+		if ($check === false) {
+			echo "ไฟล์ไม่ใช่รูปภาพ";
+			$uploadOk = 0;
+		}
+
+		// เช็คขนาดไฟล์
+		if ($_FILES["filename"]["size"] > 500000) {
+			echo "ขนาดไฟล์ใหญ่เกินไป";
+			$uploadOk = 0;
+		}
+
+		// อนุญาตเฉพาะไฟล์บางประเภท
+		if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+			echo "อนุญาตเฉพาะไฟล์ JPG, JPEG, PNG & GIF เท่านั้น";
+			$uploadOk = 0;
+		}
+
+		// ถ้าไม่มีข้อผิดพลาด ทำการอัพโหลดไฟล์
+		if ($uploadOk == 1 && move_uploaded_file($_FILES["filename"]["tmp_name"], $target_file)) {
+			$filename = basename($_FILES["filename"]["name"]);
 		} else {
-			echo "Sorry, there was an error uploading your file.";
-			}
+			echo "ขออภัย, เกิดข้อผิดพลาดในการอัพโหลดไฟล์ของคุณ";
+			exit;
 		}
+	}
+
+	// กำหนดค่า act_id ตามประเภทกิจกรรม
+	if ($activity_type == "กิจกรรมนักศึกษา") {
+		$act_id = "1";
+	} elseif ($activity_type == "กิจกรรมอาจารย์") {
+		$act_id = "2";
+	} elseif ($activity_type == "กิจกรรมร่วมกับสถานประกอบการ") {
+		$act_id = "3";
+	}
+
+	// เพิ่มข้อมูลลงในฐานข้อมูล
+	$sql = "INSERT INTO activity_cwie (activity_type, activity_name, course, activity_date, amount, note, filename, faculty_id, activity_id) 
+            VALUES ('$activity_type', '$activity_name', '$course', '$activity_date', '$amount', '$note', '$filename', '$faculty_id', '$act_id')";
+
+	if ($conn->query($sql) === TRUE) {
+		echo "<script>alert('บันทึกข้อมูลเรียบร้อยแล้ว'); window.location.href='activityCwieAdd.php';</script>";
+	} else {
+		echo "Error: " . $sql . "<br>" . $conn->error;
+	}
 }
-?>
+
+$conn->close();

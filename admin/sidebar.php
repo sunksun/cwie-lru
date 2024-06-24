@@ -183,9 +183,8 @@
           </li>
 
         <?php endif; ?>
-        <!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
-        <?php if ($username != 'admin_edu') : ?>
+
+        <?php if ($username != 'admin' && $username != 'admin_edu') : ?>
           <li class="nav-item menu-open">
             <a href="#" class="nav-link active">
               <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -238,7 +237,7 @@
             </ul>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="numStuCwieAdd.php" class="nav-link">
+                <a href="numStuCwieReport.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>พิมพ์รายงาน</p>
                 </a>
@@ -263,7 +262,7 @@
             </ul>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="orgMouAdd.php" class="nav-link">
+                <a href="orgMouReport.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>พิมพ์รายงาน</p>
                 </a>
@@ -288,7 +287,7 @@
             </ul>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="numTeachCwieAdd.php" class="nav-link">
+                <a href="numTeachCwieReport.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>พิมพ์รายงาน</p>
                 </a>
@@ -313,9 +312,26 @@
             </ul>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="activityCwieAdd.php" class="nav-link">
+                <a href="activityCwieReport.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>พิมพ์รายงาน</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-bullhorn"></i>
+              <p>
+                ข่าวประชาสัมพันธ์
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="newsAdd.php" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>จัดการข่าวประชาสัมพันธ์</p>
                 </a>
               </li>
             </ul>

@@ -1,6 +1,18 @@
 <?php
 session_start();
+$user_img = $_SESSION['img'];
 include_once('connect.php');
+if ($_SESSION['fullname'] == '') {
+  echo '<script language="javascript">';
+  echo 'alert("กรุณา Login เข้าสู่ระบบ"); location.href="login.php"';
+  echo '</script>';
+}
+$fullname = $_SESSION['fullname'];
+$username = $_SESSION['username'];
+$faculty = $_SESSION['faculty'];
+$position = $_SESSION['position'];
+$faculty_id = $_SESSION['faculty_id'];
+$year = "2/2566";
 $target_dir = "img_org/";
 
 date_default_timezone_set("Asia/Bangkok");
@@ -29,19 +41,19 @@ $email = $_POST["email"];
 $post_by = $_SESSION['fullname'];
 
 if (isset($_POST['save'])) {
-	$sql = "INSERT INTO `organization_mou` (`name`, `address`, `subdistrict`, 
+  $sql = "INSERT INTO `organization_mou` (`faculty_id`, `name`, `address`, `subdistrict`, 
   `district`, `province`, `postcode`, `date_mou`, `time_mou`, `note`, `tel1`, `tel2`, 
   `fax`, `line`, `facebook`, `website`, `email`, `date_regis`, `post_by`) 
-  VALUES ('$name', '$address', '$subdistrict', '$district', '$province', '$postcode', 
+  VALUES ('$faculty_id', '$name', '$address', '$subdistrict', '$district', '$province', '$postcode', 
   '$date_mou', '$time_mou', '$note', '$tel1', '$tel2', '$fax', '$line', '$facebook', 
   '$website', '$email', current_timestamp(), '$post_by')";
-	mysqli_query($conn, $sql);
-	echo '<script language="javascript">';
-	echo 'alert("บันทึกข้อมูลเรียบร้อยแล้ว"); location.href="orgMouAdd.php"';
-	echo '</script>';
-} elseif (isset($_POST['update'])){
+  mysqli_query($conn, $sql);
+  echo '<script language="javascript">';
+  echo 'alert("บันทึกข้อมูลเรียบร้อยแล้ว"); location.href="orgMouAdd.php"';
+  echo '</script>';
+} elseif (isset($_POST['update'])) {
   $orgMouid = $_GET["orgMouid"];
-	$sql = "UPDATE organization_mou SET name = '$name', 
+  $sql = "UPDATE organization_mou SET name = '$name', 
   address = '$address', 
   subdistrict = '$subdistrict', 
   district = '$district', 
@@ -59,10 +71,8 @@ if (isset($_POST['save'])) {
   email = '$email', 
   post_by = '$post_by' 
   WHERE organization_mou.id = $orgMouid";
-	mysqli_query($conn, $sql);
-	echo '<script language="javascript">';
-	echo 'alert("อัปเดทข้อมูลเรียบร้อยแล้ว"); location.href="orgMouAdd.php"';
-	echo '</script>';
+  mysqli_query($conn, $sql);
+  echo '<script language="javascript">';
+  echo 'alert("อัปเดทข้อมูลเรียบร้อยแล้ว"); location.href="orgMouAdd.php"';
+  echo '</script>';
 }
-
-?>

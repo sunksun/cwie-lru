@@ -39,13 +39,9 @@ include_once('admin/connect.php');
 		<?php include_once 'mainHeader.php'; ?>
 		<!--End Main Header -->
 
-		<!-- News Section -->
+		<!-- News Section ข่าวประชาสัมพันธ์ -->
 		<section class="news-section">
-
 			<div class="auto-container">
-				<div class="sec-title text-center">
-					<span class="sub-title">ข่าวประชาสัมพันธ์</span>
-				</div>
 				<div class="row">
 					<!-- News Block -->
 					<?php
@@ -111,17 +107,12 @@ include_once('admin/connect.php');
 		</section>
 		<!--End News Section -->
 
-		<!-- Courses Section -->
+		<!-- Courses Section โครงการและกิจกรรม -->
 		<section class="courses-section">
 			<div class="auto-container">
 				<div class="anim-icons">
 					<span class="icon icon-e wow zoomIn"></span>
 				</div>
-
-				<div class="sec-title">
-					<span class="sub-title" style="font-size: 40px;">โครงการและกิจกรรม</span>
-				</div>
-
 				<div class="carousel-outer">
 					<!-- Courses Carousel -->
 					<div class="courses-carousel owl-carousel owl-theme default-nav">
@@ -162,7 +153,7 @@ include_once('admin/connect.php');
 
 				<div class="bottom-text">
 					<div class="content">
-						<strong>หลักการของหลักสูตร CWIE (4 Key Characteristics of CWIE) </strong> <a href="#" class="theme-btn btn-style-one small">Explore All Courses</a>
+						<strong>หลักการของหลักสูตร CWIE (4 Key Characteristics of CWIE) </strong> <a href="" class="theme-btn btn-style-one small">Explore All Courses</a>
 					</div>
 				</div>
 			</div>
@@ -235,7 +226,7 @@ include_once('admin/connect.php');
 									</div>
 
 									<div class="tp-caption" data-paddingbottom="[0,0,0,0]" data-paddingleft="[15,15,15,15]" data-paddingright="[15,15,15,15]" data-paddingtop="[0,0,0,0]" data-responsive_offset="on" data-type="text" data-height="none" data-width="['650','750','750','450']" data-whitespace="normal" data-hoffset="['0','0','0','0']" data-voffset="['-55','-50','-50','-90']" data-x="['left','left','left','left']" data-y="['middle','middle','middle','middle']" data-textalign="['top','top','top','top']" data-frames='[{"delay":1000,"speed":1500,"frame":"0","from":"y:[-100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;","mask":"x:0px;y:0px;s:inherit;e:inherit;","to":"o:1;","ease":"Power3.easeInOut"},{"delay":"wait","speed":300,"frame":"999","to":"auto:auto;","ease":"Power3.easeInOut"}]'>
-										<h2><?php echo $row["title"]; ?></h2>
+										<h4><?php echo $row["title"]; ?></h4>
 									</div>
 
 									<div class="tp-caption" data-paddingbottom="[0,0,0,0]" data-paddingleft="[15,15,15,15]" data-paddingright="[0,0,0,0]" data-paddingtop="[0,0,0,0]" data-responsive_offset="on" data-type="text" data-height="none" data-width="['550','750','750','450']" data-whitespace="normal" data-hoffset="['0','0','0','0']" data-voffset="['110','90','100','65']" data-x="['left','left','left','left']" data-y="['middle','middle','middle','middle']" data-textalign="['top','top','top','top']" data-frames='[{"delay":1000,"speed":1500,"frame":"0","from":"y:[-100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;","mask":"x:0px;y:0px;s:inherit;e:inherit;","to":"o:1;","ease":"Power3.easeInOut"},{"delay":"wait","speed":300,"frame":"999","to":"auto:auto;","ease":"Power3.easeInOut"}]'>
@@ -488,7 +479,7 @@ include_once('admin/connect.php');
 		<!--End FAQ Section -->
 
 		<!-- Team Section -->
-		<section class="team-section">
+		<section id="team-section" class="team-section">
 			<div class="auto-container">
 				<div class="sec-title text-center">
 					<span class="sub-title" style="font-size: 40px;">อาจารย์นิเทศสหกิจศึกษา</span>

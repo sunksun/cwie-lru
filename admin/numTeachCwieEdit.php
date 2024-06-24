@@ -1,7 +1,18 @@
 <?php
-error_reporting(~E_NOTICE);
 session_start();
+$user_img = $_SESSION['img'];
 include_once('connect.php');
+if ($_SESSION['fullname'] == '') {
+  echo '<script language="javascript">';
+  echo 'alert("กรุณา Login เข้าสู่ระบบ"); location.href="login.php"';
+  echo '</script>';
+}
+$fullname = $_SESSION['fullname'];
+$username = $_SESSION['username'];
+$faculty = $_SESSION['faculty'];
+$position = $_SESSION['position'];
+$faculty_id = $_SESSION['faculty_id'];
+$year = "2/2566";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -46,8 +57,8 @@ include_once('connect.php');
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Project Add</li>
+                <li class="breadcrumb-item"><a href="index.php">หน้าแรก</a></li>
+                <li class="breadcrumb-item active"><a href="logout.php">ออกจากระบบ</a></li>
               </ol>
             </div>
           </div>
@@ -119,7 +130,6 @@ include_once('connect.php');
         </div>
         <div class="row">
           <div class="col-12">
-            <a href="#" class="btn btn-secondary float-right">ยกเลิก</a>
             <input type="submit" name="update" value="บันทึกข้อมูล" class="btn btn-success float-left">
           </div>
         </div>

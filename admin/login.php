@@ -127,7 +127,7 @@ if (isset($_POST['login'])) {
       <div class="card-header text-center">
         <img src="../images/lru.png" width="120 px" alt="" class="">
         <p class="mb-1 text-center">
-          <a href="../index.php">สหกิจศึกษา มหาวิทยาลัยราชภัฏเลย</a>
+          <a href="../index.php">สหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการ<br>กับการทำงาน (CWIE) มหาวิทยาลัยราชภัฏเลย</a>
         </p>
       </div>
       <div class="card-body">
