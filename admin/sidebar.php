@@ -201,7 +201,6 @@
                 CWIE
               </p>
             </a>
-
           </li>
           <li class="nav-item">
             <a href="#" class="nav-link">
@@ -363,15 +362,23 @@
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-users"></i>
               <p>
-                การจัดการเรียนรู้
+                การจัดการหลักสูตร
                 <i class="fas fa-angle-left right"></i>
               </p>
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="studentAdd.php" class="nav-link">
+                <a href="silCourseAdd.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>การปฏิบัติงาน SIL</p>
+                  <p>รูปแบบการจัดการ</p>
+                </a>
+              </li>
+            </ul>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="silCourseReport.php" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>พิมพ์รายงาน</p>
                 </a>
               </li>
             </ul>
@@ -380,15 +387,23 @@
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-user-tie"></i>
               <p>
-                นักศึกษาและบัณฑิต SIL
+                จำนวนนักศึกษาฯ
                 <i class="fas fa-angle-left right"></i>
               </p>
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="studentAdd.php" class="nav-link">
+                <a href="numStuCwieAdd.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>จำนวนนักศึกษาฯ SIL</p>
+                  <p>เพิ่มข้อมูลนักศึกษา SIL</p>
+                </a>
+              </li>
+            </ul>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="numStuCwieReport.php" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>พิมพ์รายงาน</p>
                 </a>
               </li>
             </ul>
@@ -403,9 +418,17 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="organizationAdd.php" class="nav-link">
+                <a href="orgMouAdd.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>สถานประกอบการที่ MOU</p>
+                </a>
+              </li>
+            </ul>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="orgMouReport.php" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>พิมพ์รายงาน</p>
                 </a>
               </li>
             </ul>
@@ -414,15 +437,23 @@
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-landmark"></i>
               <p>
-                อาจารย์นิเทศ SIL
+                อาจารย์นิเทศสหกิจฯ
                 <i class="fas fa-angle-left right"></i>
               </p>
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="pages/UI/general.html" class="nav-link">
+                <a href="numTeachCwieAdd.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>อาจารย์ที่ขึ้นทะเบียน</p>
+                </a>
+              </li>
+            </ul>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="numTeachCwieReport.php" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>พิมพ์รายงาน</p>
                 </a>
               </li>
             </ul>
@@ -437,9 +468,34 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="pages/forms/general.html" class="nav-link">
+                <a href="activityCwieAdd.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>กิจกรรม SIL</p>
+                </a>
+              </li>
+            </ul>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="activityCwieReport.php" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>พิมพ์รายงาน</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-bullhorn"></i>
+              <p>
+                ข่าวประชาสัมพันธ์
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="newsAdd.php" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>จัดการข่าวประชาสัมพันธ์</p>
                 </a>
               </li>
             </ul>

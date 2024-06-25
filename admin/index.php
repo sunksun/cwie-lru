@@ -105,7 +105,7 @@ $year = "2/2566";
             <div class="col-lg-3 col-6">
               <!-- small box -->
               <?php
-              $sql = "SELECT SUM(num_cwie) AS num_cwie FROM `num_stu_cwie`;";
+              $sql = "SELECT SUM(num_cwie) AS num_cwie FROM `num_stu_cwie` WHERE faculty_id = '$faculty_id';";
               $result = mysqli_query($conn, $sql);
               $row_num_cwie = mysqli_fetch_assoc($result);
               ?>
@@ -125,7 +125,7 @@ $year = "2/2566";
             <div class="col-lg-3 col-6">
               <!-- small box -->
               <?php
-              $sql = "SELECT SUM(num_practice) AS num_practice FROM `num_stu_cwie`;";
+              $sql = "SELECT SUM(num_practice) AS num_practice FROM `num_stu_cwie` WHERE faculty_id = '$faculty_id';";
               $result = mysqli_query($conn, $sql);
               $row_num_practice = mysqli_fetch_assoc($result);
               ?>
@@ -145,7 +145,7 @@ $year = "2/2566";
             <div class="col-lg-3 col-6">
               <!-- small box -->
               <?php
-              $sql = "SELECT COUNT(*) AS sum_count FROM `num_tea_cwie`;";
+              $sql = "SELECT COUNT(*) AS sum_count FROM `num_tea_cwie` WHERE faculty_id = '$faculty_id';";
               $result = mysqli_query($conn, $sql);
               $row_sum_count = mysqli_fetch_assoc($result);
               ?>
@@ -165,7 +165,7 @@ $year = "2/2566";
             <div class="col-lg-3 col-6">
               <!-- small box -->
               <?php
-              $sql = "SELECT COUNT(*) AS num_org_mou FROM `organization_mou`;";
+              $sql = "SELECT COUNT(*) AS num_org_mou FROM `organization_mou` WHERE faculty_id = '$faculty_id';";
               $result = mysqli_query($conn, $sql);
               $row_num_org_mou = mysqli_fetch_assoc($result);
               ?>
