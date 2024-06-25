@@ -121,6 +121,14 @@ $year = "2/2566";
                     <label for="inputClientCompany">หมายเหตุ</label>
                     <input type="text" name="note" id="inputClientCompany" class="form-control" value="<?php echo $row["note"]; ?>">
                   </div>
+                  <div class="form-group">
+                    <label for="inputName">ภาพอาจารย์</label>
+                    <div class="text-center">
+                      <img src="img_teach/<?php echo $row["filename"]; ?>" class="img-rounded" width="150 px" alt="...">
+                    </div>
+                    <br>
+                    <input class="form-control" type="file" name="filename" id="fileToUpload">
+                  </div>
               </div>
               <!-- /.card-body -->
             </div>

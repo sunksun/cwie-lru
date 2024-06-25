@@ -74,6 +74,7 @@
               -->
             </ul>
           </li>
+
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-user-tie"></i>
@@ -91,6 +92,7 @@
               </li>
             </ul>
           </li>
+
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon far fa-image"></i>
@@ -108,6 +110,7 @@
               </li>
             </ul>
           </li>
+          <!-- 
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-users"></i>
@@ -131,7 +134,8 @@
               </li>
             </ul>
           </li>
-
+        -->
+          <!--
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-building"></i>
@@ -149,6 +153,7 @@
               </li>
             </ul>
           </li>
+        -->
           <!--
           <li class="nav-item">
             <a href="#" class="nav-link">

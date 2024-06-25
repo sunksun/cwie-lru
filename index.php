@@ -293,7 +293,7 @@ include_once('admin/connect.php');
 				<div class="row">
 					<!-- Team block -->
 					<?php
-					$sql = "SELECT * FROM tea_cwie";
+					$sql = "SELECT * FROM `num_tea_cwie` ORDER BY `num_tea_cwie`.`id` DESC LIMIT 8";
 					$result = $conn->query($sql);
 					if ($result->num_rows > 0) {
 						while ($row = $result->fetch_assoc()) {
@@ -301,12 +301,19 @@ include_once('admin/connect.php');
 							<div class="team-block col-xl-3 col-lg-6 col-md-6 col-sm-12 wow fadeInUp">
 								<div class="inner-box">
 									<div class="image-box">
-										<figure class="image"><a href="#"><img src="admin/img_teach/<?php echo $row["filename"]; ?>" alt=""></a></figure>
+										<figure class="image"><a href="#"><img src="admin/img_teach/220x220_<?php echo $row["filename"]; ?>" alt=""></a></figure>
 										<span class="share-icon fa fa-share-alt"></span>
 									</div>
+									<?php
+									// ข้อความที่ต้องการตัด
+									$text = $row["course"];
+									// ใช้ strstr เพื่อค้นหาข้อความตั้งแต่ 'สาขาวิชาเกษตรศาสตร์' เป็นต้นไป
+									$substring = strstr($text, 'สาขาวิชา');
+									// แสดงผลลัพธ์
+									?>
 									<div class="info-box">
 										<h6 class="name"><a href="#"><?php echo $row["name_tea_cwie"]; ?></a></h6>
-										<span class="designation">สาขาวิชา<?php echo $row["course"]; ?></span>
+										<span class="designation"><?php echo $substring; ?></span>
 									</div>
 								</div>
 							</div>
@@ -392,69 +399,7 @@ include_once('admin/connect.php');
 			</div>
 		</section>
 		<!-- About Section Two-->
-		<section class="about-section-two">
-			<div class="anim-icons">
-				<span class="icon icon-e wow zoomIn"></span>
-				<span class="icon icon-dots-2 bounce-x"></span>
-			</div>
-			<div class="auto-container">
-				<div class="row">
-					<div class="content-column col-lg-6 col-md-12 order-2 wow fadeInRight" data-wow-delay="600ms">
-						<div class="inner-column">
-							<div class="sec-title">
-								<h2>นักศึกษาสหกิจศึกษาและการศึกษาเชิงบูรณาการกับการทำงาน CWIE LRU</h2>
-							</div>
-							<div class="row">
-								<?php
-								$sql = "SELECT * FROM `stu_highlight` ORDER BY `stu_highlight`.`id`  DESC LIMIT 2";
-								$result = $conn->query($sql);
-								if ($result->num_rows > 0) {
-									while ($row = $result->fetch_assoc()) {
-								?>
-										<div class="about-block col-lg-6 col-md-6 col-sm-6 wow fadeInUp">
-											<div class="inner-box">
-												<span class="info-text"><?php echo $row["highlight"]; ?></span>
-												<div class="info-box">
-													<div class="thumb"><img src="./admin/img_stu_htghlight/<?php echo $row["filename"]; ?>" alt=""></div>
-													<h6 class="name"><?php echo $row["name"]; ?></h6>
-													<span class="designation"><?php echo $row["faculty"]; ?></span>
-												</div>
-											</div>
-										</div>
-								<?php
-									}
-								}
-								?>
 
-							</div>
-						</div>
-					</div>
-
-					<!-- Image Column -->
-					<div class="image-column col-lg-6 col-md-12">
-						<div class="inner-column wow fadeInLeft">
-							<?php
-							$sql = "SELECT * FROM `stu_highlight` ORDER BY date_regis DESC LIMIT 1";
-							$result = $conn->query($sql);
-							if ($result->num_rows > 0) {
-								while ($row = $result->fetch_assoc()) {
-							?>
-									<div class="icons-box">
-										<span class="icon icon-dotted-map"></span>
-										<span class="icon icon-dotted-line"></span>
-										<span class="icon icon-papper-plan"></span>
-									</div>
-									<figure class="image overlay-anim wow fadeInUp"><img src="./admin/img_stu_htghlight/<?php echo $row["filename"]; ?>" alt="">
-									</figure>
-						</div>
-				<?php
-								}
-							}
-				?>
-					</div>
-				</div>
-			</div>
-		</section>
 		<!--Emd About Section Two-->
 
 		<!-- Countdown Section -->
@@ -469,7 +414,45 @@ include_once('admin/connect.php');
 			<div class="bg-image zoom-two" style="background-image: url(./images/background/4.jpg)"></div>
 
 			<!--Widgets Section-->
+			<div class="widgets-section">
+				<div class="auto-container">
+					<div class="row">
+						<!--Footer Column-->
+						<div class="footer-column col-xl-3 col-lg-12 col-md-6 col-sm-12">
+							<div class="footer-widget about-widget">
+								<div class="logo"><a href="index.html"><img src="images/logo-2.png" alt=""></a></div>
+								<ul class="social-icon-two">
+									<li><a href="#"><i class="fab fa-twitter"></i></a></li>
+									<li><a href="#"><i class="fab fa-facebook"></i></a></li>
+									<li><a href="#"><i class="fab fa-pinterest"></i></a></li>
+									<li><a href="#"><i class="fab fa-instagram"></i></a></li>
+								</ul>
+							</div>
+						</div>
 
+						<!--Footer Column-->
+
+
+						<!--Footer Column-->
+
+
+						<!--Footer Column-->
+						<div class="footer-column col-xl-5 col-lg-4 col-md-6 col-sm-12">
+							<div class="footer-widget contact-widget">
+								<h4 class="widget-title">ติดต่อเรา</h4>
+								<div class="widget-content">
+									<ul class="contact-info">
+										<li><i class="fa fa-phone-square"></i> <a href="042 - 835224 - 8 ต่อ 41127 - 41132">042 - 835224 - 8 ต่อ 41127 - 41132</a></li>
+										<li><i class="fa fa-envelope"></i> <a href="mailto:academic@lru.ac.th">academic@lru.ac.th</a></li>
+										<li><i class="fa fa-map-marker-alt"></i> สำนักส่งเสริมวิชาการและงานทะเบียน มหาวิทยาลัยราชภัฏเลย <br>
+											234 ถ.เลย-เชียงคาน ต.เมือง อ.เมือง จ.เลย 42000</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
 			<!--Footer Bottom-->
 			<div class="footer-bottom">

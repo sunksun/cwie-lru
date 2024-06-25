@@ -1,5 +1,6 @@
 <?php
 session_start();
+$user_img = $_SESSION['img'];
 include_once('connect.php');
 $fullname = $_SESSION['fullname'];
 $username = $_SESSION['username'];
@@ -46,12 +47,11 @@ $faculty_id = $_SESSION['faculty_id'];
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>จัดการข่าวสมัครงาน</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Project Add</li>
+                <li class="breadcrumb-item"><a href="index.php">หน้าแรก</a></li>
+                <li class="breadcrumb-item active"><a href="logout.php">ออกจากระบบ</a></li>
               </ol>
             </div>
           </div>
@@ -109,7 +109,6 @@ $faculty_id = $_SESSION['faculty_id'];
         </div>
         <div class="row">
           <div class="col-12">
-            <a href="#" class="btn btn-secondary float-right">ยกเลิก</a>
             <input type="submit" name="save" value="บันทึกข้อมูล" class="btn btn-success float-left">
           </div>
         </div>
@@ -118,7 +117,7 @@ $faculty_id = $_SESSION['faculty_id'];
       <!-- /.content -->
       <hr>
       <?php
-      $sql = "SELECT * FROM news";
+      $sql = "SELECT * FROM `job_cwie` ORDER BY `job_cwie`.`id` DESC";
       $result = $conn->query($sql);
       ?>
       <section class="content">
@@ -134,32 +133,28 @@ $faculty_id = $_SESSION['faculty_id'];
               <thead>
                 <tr>
                   <th>ลำดับ</th>
-                  <th>ชื่อหัวข้อข่าว</th>
-                  <th>วันที่</th>
+                  <th>ตำแหน่งงาน</th>
+                  <th>ชื่อบริษัท</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
                 <?php
                 if ($result->num_rows > 0) {
+                  $i = 1;
                   while ($row = $result->fetch_assoc()) {
                 ?>
                     <tr>
-                      <td><?php echo $row["id"]; ?></td>
-                      <td><?php echo $row["title"]; ?></td>
-                      <td><?php echo $row["date_time"]; ?></td>
+                      <td><?php echo $i; ?></td>
+                      <td><?php echo $row["job_title"]; ?></td>
+                      <td><?php echo $row["company"]; ?></td>
                       <td class="project-actions text-right">
-                        <a class="btn btn-primary btn-sm" href="#">
-                          <i class="fas fa-folder">
-                          </i>
-                          View
-                        </a>
-                        <a class="btn btn-info btn-sm" href="newsEdit.php?newid=<?php echo $row["id"]; ?>">
+                        <a class="btn btn-info btn-sm" href="jobEdit.php?jobid=<?php echo $row["id"]; ?>">
                           <i class="fas fa-pencil-alt">
                           </i>
                           Edit
                         </a>
-                        <a class="btn btn-danger btn-sm" href="JavaScript:if(confirm('ยืนยันการลบข้อมูล?')==true){window.location='newsDel.php?newid=<?php echo $row["id"]; ?>';}">
+                        <a class="btn btn-danger btn-sm" href="JavaScript:if(confirm('ยืนยันการลบข้อมูล?')==true){window.location='jobDel.php?jobid=<?php echo $row["id"]; ?>';}">
                           <i class="fas fa-trash">
                           </i>
                           Delete
@@ -167,6 +162,7 @@ $faculty_id = $_SESSION['faculty_id'];
                       </td>
                     </tr>
                 <?php
+                    $i++;
                   }
                 }
                 ?>
@@ -174,8 +170,8 @@ $faculty_id = $_SESSION['faculty_id'];
               <tfoot>
                 <tr>
                   <th>ลำดับ</th>
-                  <th>ชื่อหัวข้อข่าว</th>
-                  <th>วันที่</th>
+                  <th>ตำแหน่งงาน</th>
+                  <th>ชื่อบริษัท</th>
                   <th></th>
                 </tr>
               </tfoot>

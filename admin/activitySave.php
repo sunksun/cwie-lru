@@ -1,5 +1,6 @@
 <?php
 session_start();
+$user_img = $_SESSION['img'];
 include_once('connect.php');
 $fullname = $_SESSION['fullname'];
 $username = $_SESSION['username'];
@@ -92,7 +93,7 @@ if (isset($_POST['save'])) {
 	$maxFileSize = 2 * 1024 * 1024; // 2 MB
 	if ($_FILES["fileToUpload"]["size"] > $maxFileSize) {
 		echo '<script language="javascript">';
-		echo 'alert("Sorry, your file is too large."); location.href="newsAdd.php"';
+		echo 'alert("Sorry, your file is too large."); location.href="activityAdd.php"';
 		echo '</script>';
 		$uploadOk = 0;
 	}

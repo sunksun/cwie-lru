@@ -125,7 +125,7 @@ include_once('admin/connect.php');
 			<div class="footer-bottom">
 				<div class="auto-container">
 					<div class="inner-container">
-						<div class="copyright-text">&copy; Copyright 2022 by <a href="index.html">Company.com</a></div>
+						<div class="copyright-text">&copy; Copyright 2022 by <a href="index.php">CWIE | สหกิจศึกษามหาวิทยาลัยราชภัฏเลย</a></div>
 					</div>
 				</div>
 			</div>

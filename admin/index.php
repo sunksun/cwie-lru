@@ -133,7 +133,7 @@ $year = "2/2566";
                 <div class="inner">
                   <h3><?php echo $row_num_practice["num_practice"]; ?><sup style="font-size: 20px"></sup></h3>
 
-                  <p>นักศึกษา SIL</p>
+                  <p>นักศึกษาฝึกประสบการณ์วิชาชีพ</p>
                 </div>
                 <div class="icon">
                   <i class="ion ion-stats-bars"></i>

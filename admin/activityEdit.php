@@ -82,10 +82,10 @@ $faculty_id = $_SESSION['faculty_id'];
 
                             // ใช้ explode() เพื่อแยกคำ
                             $parts = explode(' ', $date, 3);
-                            echo "วัน: " . $parts[0] . "\n"; // 6
-                            echo "เดือน: " . $parts[1] . "\n"; // มีนาคม
-                            echo "ปี: " . $parts[2] . "\n"; // 2565
-                            echo $row["activity_id"];
+                            //echo "วัน: " . $parts[0] . "\n"; // 6
+                            //echo "เดือน: " . $parts[1] . "\n"; // มีนาคม
+                            //echo "ปี: " . $parts[2] . "\n"; // 2565
+                            //echo $row["activity_id"];
 
                             ?>
                             <div class="card-body">
