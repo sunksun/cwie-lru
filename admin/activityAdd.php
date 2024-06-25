@@ -1,5 +1,6 @@
 <?php
 session_start();
+$user_img = $_SESSION['img'];
 include_once('connect.php');
 $fullname = $_SESSION['fullname'];
 $username = $_SESSION['username'];
@@ -50,8 +51,8 @@ $faculty_id = $_SESSION['faculty_id'];
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Project Add</li>
+                <li class="breadcrumb-item"><a href="index.php">หน้าแรก</a></li>
+                <li class="breadcrumb-item active"><a href="logout.php">ออกจากระบบ</a></li>
               </ol>
             </div>
           </div>
@@ -139,15 +140,8 @@ $faculty_id = $_SESSION['faculty_id'];
                       <select id="inputState" class="form-control" name="date3">
                         <option selected>ปี พ.ศ.</option>
                         <?php
-                        $sql = "SELECT * FROM year";
-                        $result = $conn->query($sql);
-                        if ($result->num_rows > 0) {
-                          while ($optionData = $result->fetch_assoc()) {
-                            $option = $optionData['year'];
-                        ?>
-                            <option value="<?php echo $option; ?>"> <?php echo $option; ?></option>
-                        <?php
-                          }
+                        for ($year = 2564; $year <= 2570; $year++) {
+                          echo "<option value='$year'>$year</option>";
                         }
                         ?>
                       </select>
@@ -158,8 +152,8 @@ $faculty_id = $_SESSION['faculty_id'];
                     <textarea class="form-control" rows="3" name="details"></textarea>
                   </div>
                   <div class="form-group">
-                    <label for="inputName">ภาพกิจกรรม (ขนาด 270x270)</label>
-                    <input class="form-control" type="file" name="filename" id="fileToUpload">
+                    <label for="inputName">ภาพกิจกรรม</label>
+                    <input class="form-control" type="file" name="filename" id="fileToUpload" require>
                   </div>
               </div>
               <!-- /.card-body -->
@@ -170,7 +164,6 @@ $faculty_id = $_SESSION['faculty_id'];
         </div>
         <div class="row">
           <div class="col-12">
-            <a href="#" class="btn btn-secondary float-right">ยกเลิก</a>
             <input type="submit" name="save" value="บันทึกข้อมูล" class="btn btn-success float-left">
           </div>
         </div>
@@ -179,7 +172,7 @@ $faculty_id = $_SESSION['faculty_id'];
       <!-- /.content -->
       <hr>
       <?php
-      $sql = "SELECT * FROM activity";
+      $sql = "SELECT * FROM `activity` ORDER BY `date_regis` DESC";
       $result = $conn->query($sql);
       ?>
       <section class="content">
@@ -203,19 +196,15 @@ $faculty_id = $_SESSION['faculty_id'];
               <tbody>
                 <?php
                 if ($result->num_rows > 0) {
+                  $i = 1;
                   while ($row = $result->fetch_assoc()) {
                 ?>
                     <tr>
-                      <td><?php echo $row["id"]; ?></td>
+                      <td><?php echo $i; ?></td>
                       <td><?php echo $row["activity_name"]; ?></td>
                       <td><?php echo $row["activity_date"]; ?></td>
                       <td class="project-actions text-right">
-                        <a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#modal-default<?php echo $row['id'] ?>">
-                          <i class="fas fa-folder">
-                          </i>
-                          View
-                        </a>
-                        <a class="btn btn-info btn-sm" href="activityCwieEdit.php?actid=<?php echo $row["id"]; ?>">
+                        <a class="btn btn-info btn-sm" href="activityEdit.php?actid=<?php echo $row["id"]; ?>">
                           <i class="fas fa-pencil-alt">
                           </i>
                           Edit
@@ -228,7 +217,8 @@ $faculty_id = $_SESSION['faculty_id'];
                       </td>
                     </tr>
                 <?php
-                    include 'activityCwieView.php';
+                    //include 'activityCwieView.php';
+                    $i++;
                   }
                 }
                 ?>

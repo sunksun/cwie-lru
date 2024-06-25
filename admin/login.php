@@ -154,7 +154,7 @@ if (isset($_POST['login'])) {
             <div class="col-8">
               <div class="icheck-primary">
                 <p class="mb-1">
-                  <a href="login2.php">ผู้ดูแลระบบ</a>
+                  <a href="login2.php"></a>
                 </p>
               </div>
             </div>

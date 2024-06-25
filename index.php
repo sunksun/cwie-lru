@@ -45,7 +45,7 @@ include_once('admin/connect.php');
 				<div class="row">
 					<!-- News Block -->
 					<?php
-					$sql = "SELECT * FROM `news` WHERE new_type = 'information' ORDER BY id DESC LIMIT 1 OFFSET 0;";
+					$sql = "SELECT * FROM `news` ORDER BY id DESC LIMIT 1 OFFSET 0;";
 					$result = $conn->query($sql);
 					$result->num_rows > 0;
 					$row = $result->fetch_assoc();
@@ -53,18 +53,18 @@ include_once('admin/connect.php');
 					<div class="news-block col-lg-4 col-md-6 col-sm-12 wow fadeInUp">
 						<div class="inner-box">
 							<div class="image-box">
-								<figure class="image"><a href="#"><img src="./admin/img_news/<?php echo $row["img"]; ?>" alt=""></a></figure>
+								<figure class="image"><a href="#"><img src="./admin/img_news/370x360_<?php echo $row["img"]; ?>" alt=""></a></figure>
 							</div>
 							<div class="content-box">
 								<div class="content">
-									<h4 class="title"><a href="news-details.php?newid=<?php echo $row["id"]; ?>"><?php echo $row["title"]; ?></a></h4>
+									<h6 class="title"><a href="news-details.php?newid=<?php echo $row["id"]; ?>"><?php echo $row["title"]; ?></a></h6>
 								</div>
 							</div>
 						</div>
 					</div>
 					<!-- News Block -->
 					<?php
-					$sql = "SELECT * FROM `news` WHERE new_type = 'information' ORDER BY id DESC LIMIT 1 OFFSET 1;";
+					$sql = "SELECT * FROM `news` ORDER BY id DESC LIMIT 1 OFFSET 1;";
 					$result = $conn->query($sql);
 					$result->num_rows > 0;
 					$row = $result->fetch_assoc();
@@ -72,11 +72,11 @@ include_once('admin/connect.php');
 					<div class="news-block col-lg-4 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="300ms">
 						<div class="inner-box">
 							<div class="image-box">
-								<figure class="image"><a href="#"><img src="./admin/img_news/<?php echo $row["img"]; ?>" alt=""></a></figure>
+								<figure class="image"><a href="#"><img src="./admin/img_news/370x360_<?php echo $row["img"]; ?>" alt=""></a></figure>
 							</div>
 							<div class="content-box">
 								<div class="content">
-									<h4 class="title"><a href="news-details.php?newid=<?php echo $row["id"]; ?>"><?php echo $row["title"]; ?></a></h4>
+									<h6 class="title"><a href="news-details.php?newid=<?php echo $row["id"]; ?>"><?php echo $row["title"]; ?></a></h6>
 								</div>
 							</div>
 						</div>
@@ -84,7 +84,7 @@ include_once('admin/connect.php');
 
 					<!-- News Block -->
 					<?php
-					$sql = "SELECT * FROM `news` WHERE new_type = 'information' ORDER BY id DESC LIMIT 1 OFFSET 2;";
+					$sql = "SELECT * FROM `news` ORDER BY id DESC LIMIT 1 OFFSET 2;";
 					$result = $conn->query($sql);
 					$result->num_rows > 0;
 					$row = $result->fetch_assoc();
@@ -92,11 +92,11 @@ include_once('admin/connect.php');
 					<div class="news-block col-lg-4 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="300ms">
 						<div class="inner-box">
 							<div class="image-box">
-								<figure class="image"><a href="#"><img src="./admin/img_news/<?php echo $row["img"]; ?>" alt=""></a></figure>
+								<figure class="image"><a href="#"><img src="./admin/img_news/370x360_<?php echo $row["img"]; ?>" alt=""></a></figure>
 							</div>
 							<div class="content-box">
 								<div class="content">
-									<h4 class="title"><a href="news-details.php?newid=<?php echo $row["id"]; ?>"><?php echo $row["title"]; ?></a></h4>
+									<h6 class="title"><a href="news-details.php?newid=<?php echo $row["id"]; ?>"><?php echo $row["title"]; ?></a></h6>
 								</div>
 							</div>
 						</div>
@@ -127,20 +127,24 @@ include_once('admin/connect.php');
 								<div class="course-block">
 									<div class="inner-box">
 										<div class="image-box">
-											<figure class="image"><a href="page-course-details.html"><img src="admin/img_act/<?php echo $row["filename"]; ?>" alt=""></a></figure>
+											<figure class="image"><a href="activity-details.php?actid=<?php echo $row["id"]; ?>"><img src="admin/img_act/270x270_<?php echo $row["filename"]; ?>" alt=""></a></figure>
 											<div class="value"><?php echo $row["activity_type"]; ?></div>
 										</div>
 										<div class="content-box">
 											<ul class="course-info">
 												<li><i class="fa fa-book"></i><?php echo $row["activity_date"]; ?></li>
 											</ul>
-											<h5 class="title"><a href="page-course-details.html"><?php
-																									$title = $row["activity_name"];
-																									if (mb_strlen($title) > 40) {
-																										$title = mb_substr($title, 0, 40) . '...';
-																									}
-																									echo $title;
-																									?></a></h5>
+											<h5 class="title">
+												<a href="activity-details.php?actid=<?php echo $row["id"]; ?>">
+													<?php
+													$title = $row["activity_name"];
+													if (mb_strlen($title) > 40) {
+														$title = mb_substr($title, 0, 40) . '...';
+													}
+													echo $title;
+													?>
+												</a>
+											</h5>
 										</div>
 									</div>
 								</div>
@@ -161,150 +165,11 @@ include_once('admin/connect.php');
 		<!-- End Courses Section-->
 
 		<!--Main Slider-->
-		<section class="main-slider">
-			<div class="rev_slider_wrapper fullwidthbanner-container" id="rev_slider_one_wrapper" data-source="gallery">
-				<div class="rev_slider fullwidthabanner" id="rev_slider_one" data-version="5.4.1">
-					<ul>
-						<!-- Slide 1 -->
-						<li data-index="rs-1" data-transition="zoomout">
-							<!-- MAIN IMAGE -->
-							<?php
-							$sql = "SELECT * FROM news WHERE new_type = 'Highlight' ORDER BY date_time DESC LIMIT 1;";
-							$result = $conn->query($sql);
-							if ($result->num_rows > 0) {
-								while ($row = $result->fetch_assoc()) {
-							?>
-									<img src="images/main-slider/1.jpg" alt="" class="rev-slidebg">
 
-									<div class="tp-caption tp-shape tp-shapewrapper tp-resizeme big-ipad-hidden rs-parallaxlevel-1" data-paddingbottom="[0,0,0,0]" data-paddingleft="[0,0,0,0]" data-paddingright="[0,0,0,0]" data-paddingtop="[0,0,0,0]" data-responsive_offset="on" data-type="shape" data-height="auto" data-whitespace="nowrap" data-width="none" data-hoffset="['-260','-100','-100','-100']" data-voffset="['-270','-190','-190','-190']" data-x="['left','left','left','left']" data-y="['middle','middle','middle','middle']" data-frames='[{"from":"x:[100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;","mask":"x:0px;y:0px;s:inherit;e:inherit;","speed":1500,"to":"o:1;","delay":1000,"ease":"Power3.easeInOut"},{"delay":"wait","speed":1000,"to":"auto:auto;","mask":"x:0;y:0;s:inherit;e:inherit;","ease":"Power3.easeInOut"}]'>
-										<figure><img src="images/main-slider/icon/icon-book.png" alt=""></figure>
-									</div>
-
-									<div class="tp-caption tp-shape tp-shapewrapper tp-resizeme big-ipad-hidden rs-parallaxlevel-1" data-paddingbottom="[0,0,0,0]" data-paddingleft="[0,0,0,0]" data-paddingright="[0,0,0,0]" data-paddingtop="[0,0,0,0]" data-responsive_offset="on" data-type="shape" data-height="auto" data-whitespace="nowrap" data-width="none" data-hoffset="['-300','-100','-100','-100']" data-voffset="['280','-190','-190','-190']" data-x="['right','right','right','right']" data-y="['middle','middle','middle','middle']" data-frames='[{"from":"x:[100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;","mask":"x:0px;y:0px;s:inherit;e:inherit;","speed":1500,"to":"o:1;","delay":1000,"ease":"Power3.easeInOut"},{"delay":"wait","speed":1000,"to":"auto:auto;","mask":"x:0;y:0;s:inherit;e:inherit;","ease":"Power3.easeInOut"}]'>
-										<figure><img src="images/main-slider/icon/icon-globe.png" alt=""></figure>
-									</div>
-
-									<div class="tp-caption tp-resizeme rs-parallaxlevel-2 big-ipad-hidden" data-paddingbottom="[0,0,0,0]" data-paddingleft="[0,0,0,0]" data-paddingright="[0,0,0,0]" data-paddingtop="[0,0,0,0]" data-responsive_offset="on" data-type="shape" data-height="none" data-whitespace="nowrap" data-width="none" data-hoffset="['-250','-120','-120','-120']" data-voffset="['190','100','100','100']" data-x="['left','left','left','left']" data-y="['middle','middle','middle','middle']" data-frames='[{"from":"y:[100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;","mask":"x:0px;y:0px;s:inherit;e:inherit;","speed":1500,"to":"o:1;","delay":1500,"ease":"Power3.easeInOut"},{"delay":"wait","speed":3000,"to":"auto:auto;","mask":"x:0;y:0;s:inherit;e:inherit;","ease":"Power3.easeInOut"}]'>
-										<figure><img src="images/main-slider/icon/icon-dots.png" alt=""></figure>
-									</div>
-
-
-									<div class="tp-caption tp-resizeme rs-parallaxlevel-3 big-ipad-hidden" data-paddingbottom="[0,0,0,0]" data-paddingleft="[0,0,0,0]" data-paddingright="[0,0,0,0]" data-paddingtop="[0,0,0,0]" data-responsive_offset="on" data-type="shape" data-height="none" data-whitespace="nowrap" data-width="none" data-hoffset="['-170','120','120','120']" data-voffset="['220','180','180','180']" data-x="['center','center','center','center']" data-y="['middle','middle','middle','middle']" data-frames='[{"from":"y:[100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;","mask":"x:0px;y:0px;s:inherit;e:inherit;","speed":1500,"to":"o:1;","delay":2000,"ease":"Power3.easeInOut"},{"delay":"wait","speed":3000,"to":"auto:auto;","mask":"x:0;y:0;s:inherit;e:inherit;","ease":"Power3.easeInOut"}]'>
-										<figure><img src="images/main-slider/icon/icon-star.png" alt=""></figure>
-									</div>
-
-									<div class="tp-caption tp-resizeme rs-parallaxlevel-1 big-ipad-hidden" data-paddingbottom="[0,0,0,0]" data-paddingleft="[0,0,0,0]" data-paddingright="[0,0,0,0]" data-paddingtop="[0,0,0,0]" data-responsive_offset="on" data-type="shape" data-height="none" data-whitespace="nowrap" data-width="none" data-hoffset="['-40','120','120','120']" data-voffset="['-160','100','100','100']" data-x="['center','center','center','center']" data-y="['middle','middle','middle','middle']" data-frames='[{"from":"y:[100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;","mask":"x:0px;y:0px;s:inherit;e:inherit;","speed":1500,"to":"o:1;","delay":2000,"ease":"Power3.easeInOut"},{"delay":"wait","speed":3000,"to":"auto:auto;","mask":"x:0;y:0;s:inherit;e:inherit;","ease":"Power3.easeInOut"}]'>
-										<figure><img src="images/main-slider/icon/icon-arrow.png" alt=""></figure>
-									</div>
-
-									<div class="tp-caption tp-resizeme rs-parallaxlevel-2 big-ipad-hidden" data-paddingbottom="[0,0,0,0]" data-paddingleft="[0,0,0,0]" data-paddingright="[0,0,0,0]" data-paddingtop="[0,0,0,0]" data-responsive_offset="on" data-type="shape" data-height="none" data-whitespace="nowrap" data-width="none" data-hoffset="['-120','-30','-30','-30']" data-voffset="['-180','-180','-180','-180']" data-x="['right','right','right','right']" data-y="['middle','middle','middle','middle']" data-frames='[{"from":"y:[100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;","mask":"x:0px;y:0px;s:inherit;e:inherit;","speed":1500,"to":"o:1;","delay":2000,"ease":"Power3.easeInOut"},{"delay":"wait","speed":3000,"to":"auto:auto;","mask":"x:0;y:0;s:inherit;e:inherit;","ease":"Power3.easeInOut"}]'>
-										<figure><img src="images/main-slider/icon/icon-dots-2.png" alt=""></figure>
-									</div>
-
-									<div class="tp-caption tp-resizeme rs-parallaxlevel-1 big-ipad-hidden" data-paddingbottom="[0,0,0,0]" data-paddingleft="[0,0,0,0]" data-paddingright="[0,0,0,0]" data-paddingtop="[0,0,0,0]" data-responsive_offset="on" data-type="shape" data-height="none" data-whitespace="nowrap" data-width="none" data-hoffset="['-160','-50','0','150']" data-voffset="['170','120','120','120']" data-x="['right','right','right','right']" data-y="['middle','middle','middle','middle']" data-frames='[{"from":"y:[100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;","mask":"x:0px;y:0px;s:inherit;e:inherit;","speed":1500,"to":"o:1;","delay":2000,"ease":"Power3.easeInOut"},{"delay":"wait","speed":3000,"to":"auto:auto;","mask":"x:0;y:0;s:inherit;e:inherit;","ease":"Power3.easeInOut"}]'>
-										<figure><img src="images/main-slider/icon/icon-circle-1.png" alt=""></figure>
-									</div>
-
-									<div class="tp-caption tp-resizeme rs-parallaxlevel-1 big-ipad-hidden" data-paddingbottom="[0,0,0,0]" data-paddingleft="[0,0,0,0]" data-paddingright="[0,0,0,0]" data-paddingtop="[0,0,0,0]" data-responsive_offset="on" data-type="shape" data-height="none" data-whitespace="nowrap" data-width="none" data-hoffset="['30','-50','0','150']" data-voffset="['300','120','120','120']" data-x="['center','center','center','center']" data-y="['middle','middle','middle','middle']" data-frames='[{"from":"y:[100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;","mask":"x:0px;y:0px;s:inherit;e:inherit;","speed":1500,"to":"o:1;","delay":2000,"ease":"Power3.easeInOut"},{"delay":"wait","speed":3000,"to":"auto:auto;","mask":"x:0;y:0;s:inherit;e:inherit;","ease":"Power3.easeInOut"}]'>
-										<figure><img src="images/main-slider/icon/icon-circle-2.png" alt=""></figure>
-									</div>
-
-									<div class="tp-caption tp-resizeme rs-parallaxlevel-1 big-ipad-hidden" data-paddingbottom="[0,0,0,0]" data-paddingleft="[0,0,0,0]" data-paddingright="[0,0,0,0]" data-paddingtop="[0,0,0,0]" data-responsive_offset="on" data-type="shape" data-height="none" data-whitespace="nowrap" data-width="none" data-hoffset="['250','-50','0','150']" data-voffset="['-190','120','120','120']" data-x="['center','center','center','center']" data-y="['middle','middle','middle','middle']" data-frames='[{"from":"y:[100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;","mask":"x:0px;y:0px;s:inherit;e:inherit;","speed":1500,"to":"o:1;","delay":2000,"ease":"Power3.easeInOut"},{"delay":"wait","speed":3000,"to":"auto:auto;","mask":"x:0;y:0;s:inherit;e:inherit;","ease":"Power3.easeInOut"}]'>
-										<figure><img src="images/main-slider/icon/icon-circle-3.png" alt=""></figure>
-									</div>
-
-
-									<div class="tp-caption tp-resizeme rs-parallaxlevel-2 big-ipad-hidden" data-paddingbottom="[0,0,0,0]" data-paddingleft="[0,0,0,0]" data-paddingright="[0,0,0,0]" data-paddingtop="[0,0,0,0]" data-responsive_offset="on" data-type="shape" data-height="none" data-whitespace="nowrap" data-width="none" data-hoffset="['-220','-30','-30','-30']" data-voffset="['-80','-180','-180','-180']" data-x="['right','right','right','right']" data-y="['middle','middle','middle','middle']" data-frames='[{"from":"y:[100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;","mask":"x:0px;y:0px;s:inherit;e:inherit;","speed":1500,"to":"o:1;","delay":2000,"ease":"Power3.easeInOut"},{"delay":"wait","speed":3000,"to":"auto:auto;","mask":"x:0;y:0;s:inherit;e:inherit;","ease":"Power3.easeInOut"}]'>
-										<figure><img src="images/main-slider/icon/icon-bulb.png" alt=""></figure>
-									</div>
-
-									<div class="tp-caption tp-resizeme" data-paddingbottom="[0,0,0,0]" data-paddingleft="[0,0,0,0]" data-paddingright="[0,0,0,0]" data-paddingtop="[0,0,0,0]" data-responsive_offset="on" data-type="shape" data-height="none" data-whitespace="nowrap" data-width="none" data-hoffset="['-100','-100','-200','-320']" data-voffset="['0','0','-30','-30']" data-x="['right','right','right','right']" data-y="['bottom','bottom','bottom','bottom']" data-frames='[{"from":"y:[100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;","mask":"x:0px;y:0px;s:inherit;e:inherit;","speed":1500,"to":"o:1;","delay":1000,"ease":"Power3.easeInOut"},{"delay":"wait","speed":3000,"to":"auto:auto;","mask":"x:0;y:0;s:inherit;e:inherit;","ease":"Power3.easeInOut"}]'>
-										<figure class="main-image"><img src="./admin/img_news/<?php echo $row["img"]; ?>" width="666 px" alt=""></figure>
-									</div>
-
-									<div class="tp-caption" data-paddingbottom="[15,15,15,15]" data-paddingleft="[15,15,15,15]" data-paddingright="[0,0,0,0]" data-paddingtop="[0,0,0,0]" data-responsive_offset="on" data-type="text" data-height="none" data-width="['750','750','750','750']" data-whitespace="normal" data-hoffset="['0','0','0','0']" data-voffset="['-205','-190','-210','-220']" data-x="['left','left','left','left']" data-y="['middle','middle','middle','middle']" data-textalign="['top','top','top','top']" data-frames='[{"delay":1000,"speed":1500,"frame":"0","from":"y:[-100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;","mask":"x:0px;y:0px;s:inherit;e:inherit;","to":"o:1;","ease":"Power3.easeInOut"},{"delay":"wait","speed":300,"frame":"999","to":"auto:auto;","ease":"Power3.easeInOut"}]'>
-									</div>
-
-									<div class="tp-caption" data-paddingbottom="[0,0,0,0]" data-paddingleft="[15,15,15,15]" data-paddingright="[15,15,15,15]" data-paddingtop="[0,0,0,0]" data-responsive_offset="on" data-type="text" data-height="none" data-width="['650','750','750','450']" data-whitespace="normal" data-hoffset="['0','0','0','0']" data-voffset="['-55','-50','-50','-90']" data-x="['left','left','left','left']" data-y="['middle','middle','middle','middle']" data-textalign="['top','top','top','top']" data-frames='[{"delay":1000,"speed":1500,"frame":"0","from":"y:[-100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;","mask":"x:0px;y:0px;s:inherit;e:inherit;","to":"o:1;","ease":"Power3.easeInOut"},{"delay":"wait","speed":300,"frame":"999","to":"auto:auto;","ease":"Power3.easeInOut"}]'>
-										<h4><?php echo $row["title"]; ?></h4>
-									</div>
-
-									<div class="tp-caption" data-paddingbottom="[0,0,0,0]" data-paddingleft="[15,15,15,15]" data-paddingright="[0,0,0,0]" data-paddingtop="[0,0,0,0]" data-responsive_offset="on" data-type="text" data-height="none" data-width="['550','750','750','450']" data-whitespace="normal" data-hoffset="['0','0','0','0']" data-voffset="['110','90','100','65']" data-x="['left','left','left','left']" data-y="['middle','middle','middle','middle']" data-textalign="['top','top','top','top']" data-frames='[{"delay":1000,"speed":1500,"frame":"0","from":"y:[-100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;","mask":"x:0px;y:0px;s:inherit;e:inherit;","to":"o:1;","ease":"Power3.easeInOut"},{"delay":"wait","speed":300,"frame":"999","to":"auto:auto;","ease":"Power3.easeInOut"}]'>
-										<div class="text"><?php echo $row["detail"]; ?></div>
-									</div>
-
-
-									<div class="tp-caption" data-paddingbottom="[0,0,0,0]" data-paddingleft="[15,15,15,15]" data-paddingright="[15,15,15,15]" data-paddingtop="[0,0,0,0]" data-responsive_offset="on" data-type="text" data-height="none" data-width="['700','750','700','450']" data-whitespace="normal" data-hoffset="['0','0','0','0']" data-voffset="['200','185','200','185']" data-x="['left','left','left','left']" data-y="['middle','middle','middle','middle']" data-textalign="['top','top','top','top']" data-frames='[{"delay":1000,"speed":1500,"frame":"0","from":"y:[-100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;","mask":"x:0px;y:0px;s:inherit;e:inherit;","to":"o:1;","ease":"Power3.easeInOut"},{"delay":"wait","speed":300,"frame":"999","to":"auto:auto;","ease":"Power3.easeInOut"}]'>
-										<a href="#" class="theme-btn btn-style-one">อ่านต่อ</a>
-									</div>
-						</li>
-				<?php
-								}
-							}
-				?>
-
-					</ul>
-				</div>
-			</div>
-		</section>
 		<!-- End Main Slider-->
 
 		<!-- About Section -->
-		<section class="about-section">
-			<div class="anim-icons">
-				<span class="icon icon-dotted-map"></span>
-			</div>
-			<div class="auto-container">
-				<div class="row">
-					<div class="content-column col-lg-6 col-md-12 order-2 wow fadeInRight" data-wow-delay="600ms">
-						<div class="inner-column">
-							<div class="sec-title">
-								<h2>Cooperative and Work Integrated Education (CWIE)</h2>
-								<div class="text">คือ หลักสูตรการเรียนการสอนในลักษณะร่วมผลิตระหว่างสถานบันอุดมศึกษา และสถานประกอบการ (ภาครัฐ เอกชน ชุมชน) เพื่อให้บัณฑิตพร้อมสู้โลกแห่งการทำงานจริงได้ทันที มีสมรรถนะตรงกับความต้องการของตลาดงาน สามารถพัฒนาอาชีพในปัจจุบันและเตรียมพร้อมรองรับตำแหน่งงานในอนาคต</div>
-							</div>
 
-							<ul class="list-style-one two-column">
-								<li><i class="icon fa fa-check"></i> นักศึกษา</li>
-								<li><i class="icon fa fa-check"></i> สถาบันอุดมศึกษา</li>
-								<li><i class="icon fa fa-check"></i> สถานประกอบการ</li>
-								<li><i class="icon fa fa-check"></i> ประเทศชาติ</li>
-							</ul>
-
-							<div class="btn-box">
-								<a href="#" class="theme-btn btn-style-one"><span class="btn-title">อ่านต่อ</span></a>
-							</div>
-						</div>
-					</div>
-
-					<!-- Image Column -->
-					<div class="image-column col-lg-6 col-md-12">
-						<div class="anim-icons">
-							<span class="icon icon-dotted-map-2"></span>
-							<span class="icon icon-paper-plan"></span>
-							<span class="icon icon-dotted-line"></span>
-						</div>
-						<?php
-						$sql = "SELECT * FROM news WHERE new_type = 'next_activity' ORDER BY date_time DESC LIMIT 1;";
-						$result = $conn->query($sql);
-						if ($result->num_rows > 0) {
-							while ($row = $result->fetch_assoc()) {
-						?>
-								<div class="inner-column wow fadeInLeft">
-									<figure class="image-1 overlay-anim wow fadeInUp"><img src="admin/img_news/<?php echo $row["img"]; ?>" alt=""></figure>
-									<figure class="image-2 overlay-anim wow fadeInRight"><img src="images/resource/about-2.jpg" alt=""></figure>
-									<div class="experience bounce-y"><span class="count" style="font-size: 25px;"><?php echo $row["date1"]; ?></span>
-										<?php echo $row["mou_year"]; ?>
-									</div>
-
-								</div>
-						<?php
-							}
-						}
-						?>
-					</div>
-				</div>
-			</div>
-		</section>
 		<!--Emd About Section -->
 
 		<!-- Features Section -->
@@ -416,66 +281,7 @@ include_once('admin/connect.php');
 		<!-- End Product Categories -->
 
 		<!-- Signup Section -->
-		<section class="signup-section">
-			<div class="auto-container">
-				<div class="anim-icons">
-					<span class="icon icon-paper-clip bounce-x"></span>
-				</div>
-				<div class="outer-box" style="background-image: url(./images/background/3.jpg)">
-					<span class="float-icon icon-pencil-line wow fadeInUp"></span>
-					<div class="row">
-						<!-- Title Column -->
-						<div class="title-column col-lg-6 col-md-12 col-sm-12">
-							<div class="sec-title light">
-								<h2>สมัคร<br> รับข้อมูลข่าวสารจาก<br> CWIE LRU</h2>
-							</div>
-						</div>
 
-						<!-- Form Column -->
-						<div class="form-column col-lg-6 col-md-12 col-sm-12">
-							<div class="inner-column">
-								<!-- Sign Form -->
-								<div class="signup-form wow fadeInLeft">
-									<!--Contact Form-->
-									<form method="post" action="get" id="contact-form">
-										<div class="form-group">
-											<input type="text" name="full_name" placeholder="ชื่อ-นามสกุล" required>
-										</div>
-
-										<div class="form-group">
-											<input type="text" name="Email" placeholder="อีเมล์" required>
-										</div>
-
-										<div class="form-group">
-											<select class="custom-select">
-												<?php
-												$sql = "SELECT * FROM faculty ";
-												$result = $conn->query($sql);
-												if ($result->num_rows > 0) {
-													while ($optionData = $result->fetch_assoc()) {
-														$option = $optionData['faculty'];
-												?>
-														<option value="<?php echo $option; ?>">
-															<?php echo $option; ?></option>
-												<?php
-													}
-												}
-												?>
-											</select>
-										</div>
-
-										<div class="form-group">
-											<button class="theme-btn btn-style-one" type="submit" name="submit-form">Send Request</button>
-										</div>
-									</form>
-								</div>
-								<!--End Contact Form -->
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
 		<!--End FAQ Section -->
 
 		<!-- Team Section -->

@@ -123,24 +123,6 @@ $faculty_id = $_SESSION['faculty_id'];
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="inputClientCompany">ประเภทข่าวประชาสัมพันธ์</label>
-                    <!-- radio -->
-                    <div class="form-group">
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="new_type" value="information">
-                        <label class="form-check-label">ข่าวประชาสัมพันธ์</label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="new_type" value="Highlight">
-                        <label class="form-check-label">Highlight</label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="new_type" value="next_activity">
-                        <label class="form-check-label">กิจกรรมถัดไป</label>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="form-group">
                     <label for="inputName">รายละเอียดข่าว (Paragraph 1)</label>
                     <textarea name="detail" class="form-control" id="exampleFormControlTextarea1" rows="3" required></textarea>
                   </div>
@@ -149,8 +131,8 @@ $faculty_id = $_SESSION['faculty_id'];
                     <textarea name="detail2" class="form-control" id="exampleFormControlTextarea1" rows="3" required></textarea>
                   </div>
                   <div class="form-group">
-                    <label for="inputName">รูปภาพ (รูปข่าวประชาสัมพันธ์ ขนาด 370x360px / รูป Highlight ขนาด 666x799px / รูป กิจกรรมถัดไป ขนาด 460x549px )</label>
-                    <input class="form-control" type="file" name="fileToUpload" id="fileToUpload">
+                    <label for="inputName">รูปภาพ (รูปข่าวประชาสัมพันธ์ ขนาด 370x360px)</label>
+                    <input class="form-control" type="file" name="fileToUpload" id="fileToUpload" required>
                   </div>
               </div>
               <!-- /.card-body -->
@@ -169,7 +151,7 @@ $faculty_id = $_SESSION['faculty_id'];
       <!-- /.content -->
       <hr>
       <?php
-      $sql = "SELECT * FROM `news` ORDER BY `id` DESC";
+      $sql = "SELECT * FROM `news` ORDER BY `news`.`id` DESC";
       $result = $conn->query($sql);
       ?>
       <section class="content">
@@ -193,25 +175,26 @@ $faculty_id = $_SESSION['faculty_id'];
               <tbody>
                 <?php
                 if ($result->num_rows > 0) {
+                  $i = 1;
                   while ($row = $result->fetch_assoc()) {
                 ?>
                     <tr>
-                      <td><?php echo $row["id"]; ?></td>
+                      <td><?php echo $i; ?></td>
                       <td>
                         <?php
+                        // กำหนดการเข้ารหัสเป็น UTF-8
+                        mb_internal_encoding("UTF-8");
+
                         $title = $row["title"];
-                        if (mb_strlen($title) > 40) {
-                          $title = mb_substr($title, 0, 40) . '...';
+                        if (mb_strlen($title) > 50) {
+                          $title = mb_substr($title, 0, 50) . '...';
                         }
                         echo $title;
                         ?>
+
                       </td>
                       <td><?php echo $row["date_time"]; ?></td>
                       <td class="project-actions text-right">
-                        <a class="btn btn-primary btn-sm" href="#">
-                          <i class="fas fa-folder"></i>
-                          View
-                        </a>
                         <a class="btn btn-info btn-sm" href="newsEdit.php?newid=<?php echo $row["id"]; ?>">
                           <i class="fas fa-pencil-alt"></i>
                           Edit
@@ -223,6 +206,7 @@ $faculty_id = $_SESSION['faculty_id'];
                       </td>
                     </tr>
                 <?php
+                    $i++;
                   }
                 } else {
                   echo "<tr><td colspan='4'>No news found.</td></tr>";

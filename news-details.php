@@ -57,7 +57,7 @@ include_once('admin/connect.php');
 					<div class="col-xl-12 col-lg-12">
 						<div class="blog-details__left">
 							<div class="blog-details__img">
-								<img src="./admin/img_news/<?php echo $row["img"]; ?>" alt="">
+								<img src="./admin/img_news/1024x683_<?php echo $row["img"]; ?>" alt="">
 								<div class="blog-details__date">
 									<span class="day"><?php echo $row["date1"]; ?></span>
 									<span class="month"><?php echo $row["mou_year"]; ?></span>

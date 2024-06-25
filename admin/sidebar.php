@@ -64,12 +64,14 @@
                   <p>จัดการโครงการ/กิจกรรม</p>
                 </a>
               </li>
+              <!--
               <li class="nav-item">
                 <a href="activityPhotoAdd.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>เพิ่มรูปโครงการ/กิจกรรม</p>
                 </a>
               </li>
+              -->
             </ul>
           </li>
           <li class="nav-item">
@@ -147,6 +149,7 @@
               </li>
             </ul>
           </li>
+          <!--
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-landmark"></i>
@@ -181,6 +184,7 @@
               </li>
             </ul>
           </li>
+        -->
 
         <?php endif; ?>
 
