@@ -20,7 +20,7 @@ $year = "2/2566";
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Admin | จำนวนนักศึกษาและบัณฑิต CWIE</title>
+  <title>Admin | จำนวนนักศึกษาและบัณฑิต SIL</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -95,7 +95,7 @@ $year = "2/2566";
           <div class="col-md-12">
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title"><a href="#">จำนวนนักศึกษาและบัณฑิต ในรูปแบบของการจัดหลักสูตรสหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE)</a></h3>
+                <h3 class="card-title"><a href="#">จำนวนนักศึกษาและบัณฑิต การจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</a></h3>
 
                 <div class="card-tools">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -104,7 +104,7 @@ $year = "2/2566";
                 </div>
               </div>
               <div class="card-body">
-                <form action="numStuCwieSave.php" method="post" enctype="multipart/form-data">
+                <form action="numStuSilSave.php" method="post" enctype="multipart/form-data">
                   <div class="row form-group">
                     <div class="col-12">
                       <label for="inputClientCompany">เลือกภาคการศึกษา</label>
@@ -163,25 +163,25 @@ $year = "2/2566";
                   </script>
                   <div class="row form-group">
                     <div class="col-6">
-                      <label for="inputClientCompany">จำนวนนักศึกษาที่ออกฝึกประสบการวิชาชีพ (ระบบปกติ)</label>
+                      <label for="inputClientCompany">จำนวนนักศึกษาที่ออกฝึกทั้งหมด</label>
                       <input type="number" name="num_practice" class="form-control">
                     </div>
                     <div class="col-6">
-                      <label for="inputClientCompany">จำนวนนักศึกษาสหกิจศึกษา</label>
+                      <label for="inputClientCompany">จำนวนนักศึกษาที่ออกฝึกประสบการวิชาชีพ (SIL)</label>
                       <input type="number" name="num_cwie" class="form-control">
                     </div>
                   </div>
                   <div class="row form-group">
                     <div class="col-4">
-                      <label for="inputClientCompany">จำนวนบัณฑิต CWIE (ที่สำเร็จการศึกษาปีที่ผ่านมา)</label>
+                      <label for="inputClientCompany">จำนวนบัณฑิต SIL (ที่สำเร็จการศึกษาปีที่ผ่านมา)</label>
                       <input type="number" name="num_pundit" class="form-control">
                     </div>
                     <div class="col-3">
-                      <label for="inputClientCompany">จำนวนบัณฑิต CWIE ที่ได้งานทำ</label>
+                      <label for="inputClientCompany">จำนวนบัณฑิต SIL ที่ได้งานทำ</label>
                       <input type="number" name="num_pundit_job" class="form-control">
                     </div>
                     <div class="col-5">
-                      <label for="inputClientCompany">จำนวนบัณฑิต CWIE ที่ได้งานทำในสถานประกอบการ</label>
+                      <label for="inputClientCompany">จำนวนบัณฑิต SIL ที่ได้งานทำในสถานประกอบการ</label>
                       <input type="number" name="num_pundit_job_work" class="form-control">
                     </div>
                   </div>
@@ -206,7 +206,7 @@ $year = "2/2566";
       <!-- /.content -->
       <hr>
       <?php
-      $sql = "SELECT * FROM num_stu_cwie ORDER BY `num_stu_cwie`.`id` DESC";
+      $sql = "SELECT * FROM num_stu_cwie WHERE faculty_id = '$faculty_id' ORDER BY `num_stu_cwie`.`id` DESC";
       $result = $conn->query($sql);
       ?>
       <section class="content">
@@ -214,7 +214,7 @@ $year = "2/2566";
         <!-- Default box -->
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">จำนวนนักศึกษาและบัณฑิต CWIE</h3>
+            <h3 class="card-title">จำนวนนักศึกษาและบัณฑิต SIL</h3>
             <a href="#" id="openReportButton" class="btn btn-secondary float-right">พิมพ์รายงาน</a>
           </div>
           <!-- /.card-header -->
@@ -225,9 +225,9 @@ $year = "2/2566";
                   <th>ลำดับ</th>
                   <th>สาขาวิชา</th>
                   <th>ฝึกประสบการ</th>
-                  <th>CWIE</th>
-                  <th>บัณฑิต CWIE</th>
-                  <th>บัณฑิต CWIE ได้งาน</th>
+                  <th>SIL</th>
+                  <th>บัณฑิต SIL</th>
+                  <th>บัณฑิต SIL ได้งาน</th>
                   <th></th>
                 </tr>
               </thead>
@@ -245,12 +245,12 @@ $year = "2/2566";
                       <td><?php echo $row["num_pundit"]; ?></td>
                       <td><?php echo $row["num_pundit_job"]; ?></td>
                       <td class="project-actions text-right" style="width: 25%;">
-                        <a class="btn btn-info btn-sm" href="numStuCwieEdit.php?numStuid=<?php echo $row["id"]; ?>">
+                        <a class="btn btn-info btn-sm" href="numStuSilEdit.php?numStuid=<?php echo $row["id"]; ?>">
                           <i class="fas fa-pencil-alt">
                           </i>
                           Edit
                         </a>
-                        <a class="btn btn-danger btn-sm" href="JavaScript:if(confirm('ยืนยันการลบข้อมูล?')==true){window.location='numStuCwieDel.php?numStuid=<?php echo $row["id"]; ?>';}">
+                        <a class="btn btn-danger btn-sm" href="JavaScript:if(confirm('ยืนยันการลบข้อมูล?')==true){window.location='numStuSilDel.php?numStuid=<?php echo $row["id"]; ?>';}">
                           <i class="fas fa-trash">
                           </i>
                           Delete
@@ -258,7 +258,6 @@ $year = "2/2566";
                       </td>
                     </tr>
                 <?php
-                    include 'numStuCwieView.php';
                     $i++;
                   }
                 }
@@ -341,13 +340,13 @@ $year = "2/2566";
         "responsive": true,
       });
       // Function to open cwieCourseReport.php
-      function openCwieCourseReport() {
-        window.location.href = 'numStuCwieReport.php';
+      function openSilCourseReport() {
+        window.location.href = 'numStuSilReport.php';
       }
 
       // Bind click event to the button
       $('#openReportButton').on('click', function() {
-        openCwieCourseReport();
+        openSilCourseReport();
       });
     });
   </script>

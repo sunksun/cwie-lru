@@ -20,7 +20,7 @@ $year = "2/2566";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายงาน : จำนวนนักศึกษาและบัณฑิต ในรูปแบบของการจัดหลักสูตรสหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE)</title>
+    <title>รายงาน : จำนวนนักศึกษาและบัณฑิต การจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New&display=swap">
     <style>
         body {
@@ -78,29 +78,20 @@ $year = "2/2566";
 </head>
 
 <body>
-    <?php
-    if ($username == 'admin_edu') {
-        echo '<h4>การจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</h4>';
-    } else {
-        echo '<h4>สหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE)</h4>';
-    }
-    ?>
+    <h4>การจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</h4>
     <h4><?php echo $faculty; ?> มหาวิทยาลัยราชภัฏเลย</h4>
     <h4>ประจำภาคเรียนที่ <?php echo $year; ?></h4>
-    <?php
-    if ($username == 'admin_edu') {
-        echo '<p>อาจารย์นิเทศหลักสูตรการจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</p>';
-    } else {
-        echo '<p>อาจารย์นิเทศหลักสูตรสหกิจศึกษาและการศึกษาเชิงบูรณาการกับการทำงาน (CWIE) ที่ผ่านการอบรมและรับรองโดยสำนักงานปลัดกระทรวงอุดมศึกษา วิทยาศาสตร์ วิจัยและนวัตกรรม</p>';
-    }
-    ?>
+    <p>จำนวนนักศึกษาและบัณฑิต การจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</p>
     <table id="reportTable">
         <thead>
             <tr>
                 <td>ลำดับที่</td>
-                <td>รายชื่ออาจารย์นิเทศหลักสูตรสหกิจศึกษา</td>
-                <td>สาขาวิชา</td>
-                <td>หมายเลขประจำตัวผู้ขึ้นทะเบียน</td>
+                <td class="text-left">สาขาวิชา</td>
+                <td>นักศึกษาออกฝึกประสบการวิชาชีพ</td>
+                <td>จำนวนนักศึกษาสหกิจศึกษา</td>
+                <td>บัณฑิต SIL (ที่สำเร็จการศึกษาปีที่ผ่านมา)</td>
+                <td>บัณฑิต SIL ที่ได้งานทำ</td>
+                <td>บัณฑิต SIL ที่ได้งานทำในสถานประกอบการ</td>
                 <td>หมายเหตุ</td>
             </tr>
         </thead>
@@ -112,7 +103,7 @@ $year = "2/2566";
     <button onclick="history.back()">ย้อนกลับ</button> | <button onclick="window.print()">พิมพ์รายงาน</button>
 
     <script>
-        fetch('numTeachCwieData.php')
+        fetch('numStuSilData.php')
             .then(response => response.json())
             .then(data => {
                 const tbody = document.querySelector('#reportTable tbody');
@@ -124,7 +115,7 @@ $year = "2/2566";
                         td.textContent = item[key];
 
                         // Align 'major' column to the right
-                        if (key === 'course' || key === 'name_tea_cwie') {
+                        if (key === 'major') {
                             td.classList.add('text-left');
                         }
 

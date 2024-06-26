@@ -74,7 +74,7 @@
               -->
             </ul>
           </li>
-
+          <!--
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-user-tie"></i>
@@ -92,7 +92,7 @@
               </li>
             </ul>
           </li>
-
+        -->
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon far fa-image"></i>
@@ -393,7 +393,7 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="numStuCwieAdd.php" class="nav-link">
+                <a href="numStuSilAdd.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>เพิ่มข้อมูลนักศึกษา SIL</p>
                 </a>
@@ -401,7 +401,7 @@
             </ul>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="numStuCwieReport.php" class="nav-link">
+                <a href="numStuSilReport.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>พิมพ์รายงาน</p>
                 </a>

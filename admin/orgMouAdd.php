@@ -84,7 +84,7 @@ $year = "2/2566";
           <div class="col-md-12">
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title"><a href="#">เพิ่มสถานประกอบการที่ทำบันทึกข้อตกลงหลักสูตรสหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE)</a></h3>
+                <h3 class="card-title"><a href="#">เพิ่มสถานประกอบการที่ทำบันทึกข้อตกลงหลักสูตรสหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE) | การจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</a></h3>
 
                 <div class="card-tools">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -95,7 +95,7 @@ $year = "2/2566";
               <div class="card-body">
                 <form action="orgMouSave.php" method="post" enctype="multipart/form-data">
                   <div class="form-group">
-                    <label for="inputClientCompany">ชื่อสถานประกอบการ</label>
+                    <label for="inputClientCompany">ชื่อสถานประกอบการ/โรงเรียน</label>
                     <input type="text" name="name" id="inputClientCompany" class="form-control" required>
                   </div>
                   <div class="row form-group">
@@ -254,7 +254,7 @@ $year = "2/2566";
         <!-- Default box -->
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">รายการข่าวประชาสัมพันธ์</h3>
+            <h3 class="card-title">รายการสถานประกอบการที่ทำบันทึกข้อตกลง (MOU)</h3>
             <a href="#" id="openReportButton" class="btn btn-secondary float-right">พิมพ์รายงาน</a>
           </div>
           <!-- /.card-header -->
@@ -283,11 +283,6 @@ $year = "2/2566";
                       <td><?php echo $row["province"]; ?></td>
                       <td><?php echo $row["date_mou"]; ?></td>
                       <td class="project-actions text-right">
-                        <a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#modal-default<?php echo $row['id'] ?>">
-                          <i class="fas fa-folder">
-                          </i>
-                          View
-                        </a>
                         <a class="btn btn-info btn-sm" href="orgMouEdit.php?orgMouid=<?php echo $row["id"]; ?>">
                           <i class="fas fa-pencil-alt">
                           </i>

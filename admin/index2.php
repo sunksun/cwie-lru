@@ -13,10 +13,7 @@ $faculty = $_SESSION['faculty'];
 $position = $_SESSION['position'];
 $faculty_id = $_SESSION['faculty_id'];
 $year = "2/2566";
-// ตรวจสอบว่า username เป็น admin หรือไม่
-if ($username === 'admin') {
-  echo "<script>window.location.href = 'index2.php';</script>";
-}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
