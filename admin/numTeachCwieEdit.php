@@ -12,7 +12,22 @@ $username = $_SESSION['username'];
 $faculty = $_SESSION['faculty'];
 $position = $_SESSION['position'];
 $faculty_id = $_SESSION['faculty_id'];
-$year = "2/2566";
+
+// รับค่าปีการศึกษาจาก URL หรือใช้ค่าเริ่มต้น
+if (isset($_GET['year']) && !empty($_GET['year'])) {
+  $year = $_GET['year'];
+} else {
+  // ดึงปีการศึกษาล่าสุดจากตาราง year
+  $latest_year_query = "SELECT year FROM year ORDER BY id DESC LIMIT 1";
+  $latest_year_result = mysqli_query($conn, $latest_year_query);
+
+  if ($latest_year_result && mysqli_num_rows($latest_year_result) > 0) {
+    $latest_year_row = mysqli_fetch_assoc($latest_year_result);
+    $year = $latest_year_row['year'];
+  } else {
+    $year = "2/2566"; // ค่าเริ่มต้นกรณีไม่พบข้อมูล
+  }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -71,7 +86,7 @@ $year = "2/2566";
           <div class="col-md-12">
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title"><a href="#">แก้ไขรายชื่ออาจารย์นิเทศสหกิจฯ</a></h3>
+                <h3 class="card-title"><a href="#">แก้ไขรายชื่ออาจารย์นิเทศสหกิจฯ (ปีการศึกษา <?php echo $year; ?>)</a></h3>
 
                 <div class="card-tools">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -87,6 +102,29 @@ $year = "2/2566";
               ?>
               <div class="card-body">
                 <form action="numTeachCwieSave.php?numTeacid=<?php echo $row["id"]; ?>" method="post" enctype="multipart/form-data">
+                  <input type="hidden" name="year" value="<?php echo $year; ?>">
+
+                  <div class="row form-group">
+                    <div class="col-12">
+                      <label>ปีการศึกษา</label>
+                      <select id="yearSelect" class="form-control select2" name="year" style="width: 100%;">
+                        <?php
+                        $sql = "SELECT * FROM year ORDER BY id DESC";
+                        $result_year = $conn->query($sql);
+                        if ($result_year->num_rows > 0) {
+                          while ($optionData = $result_year->fetch_assoc()) {
+                            $option = $optionData['year'];
+                            $selected = ($option == $year) ? 'selected' : '';
+                        ?>
+                            <option value="<?php echo $option; ?>" <?php echo $selected; ?>>ปีการศึกษา <?php echo $option; ?></option>
+                        <?php
+                          }
+                        }
+                        ?>
+                      </select>
+                    </div>
+                  </div>
+
                   <div class="form-group">
                     <label for="inputClientCompany">หลักสูตร</label>
                     <select class="form-control select2" name="course" style="width: 100%;">
@@ -110,11 +148,11 @@ $year = "2/2566";
                   <div class="row form-group">
                     <div class="col-6">
                       <label for="inputClientCompany">ชื่ออาจารย์นิเทศสหกิจศึกษา</label>
-                      <input type="text" name="name_tea_cwie" class="form-control" value="<?php echo $row["name_tea_cwie"]; ?>">
+                      <input type="text" name="name_tea_cwie" class="form-control" value="<?php echo $row["name_tea_cwie"]; ?>" required>
                     </div>
                     <div class="col-6">
                       <label for="inputClientCompany">หมายเลขประจำตัวผู้ขึ้นทะเบียน</label>
-                      <input type="text" name="num_tea_cwie" class="form-control" value="<?php echo $row["num_tea_cwie"]; ?>">
+                      <input type="text" name="num_tea_cwie" class="form-control" value="<?php echo $row["num_tea_cwie"]; ?>" required>
                     </div>
                   </div>
                   <div class="form-group">
@@ -124,7 +162,11 @@ $year = "2/2566";
                   <div class="form-group">
                     <label for="inputName">ภาพอาจารย์</label>
                     <div class="text-center">
-                      <img src="img_teach/<?php echo $row["filename"]; ?>" class="img-rounded" width="150 px" alt="...">
+                      <?php if (!empty($row["filename"])): ?>
+                        <img src="img_teach/<?php echo $row["filename"]; ?>" class="img-rounded" width="150 px" alt="...">
+                      <?php else: ?>
+                        <p>ไม่มีรูปภาพ</p>
+                      <?php endif; ?>
                     </div>
                     <br>
                     <input class="form-control" type="file" name="filename" id="fileToUpload">
@@ -138,24 +180,13 @@ $year = "2/2566";
         </div>
         <div class="row">
           <div class="col-12">
-            <input type="submit" name="update" value="บันทึกข้อมูล" class="btn btn-success float-left">
+            <a href="numTeachCwieAdd.php?year=<?php echo $year; ?>" class="btn btn-secondary">ยกเลิก</a>
+            <input type="submit" name="update" value="บันทึกข้อมูล" class="btn btn-success float-right">
           </div>
         </div>
         </form>
       </section>
       <!-- /.content -->
-      <hr>
-      <?php
-      $sql = "SELECT * FROM num_tea_cwie";
-      $result = $conn->query($sql);
-      ?>
-      <section class="content">
-
-        <!-- Default box -->
-
-        <!-- /.card -->
-
-      </section>
     </div>
     <!-- /.content-wrapper -->
 
@@ -194,8 +225,7 @@ $year = "2/2566";
 
   <!-- AdminLTE App -->
   <script src="dist/js/adminlte.min.js"></script>
-  <!-- AdminLTE for demo purposes -->
-  <!-- <script src="dist/js/demo.js"></script> -->
+
   <!-- Page specific script -->
   <script>
     $(function() {
@@ -214,6 +244,12 @@ $year = "2/2566";
         "autoWidth": false,
         "responsive": true,
       });
+    });
+
+    // ฟังก์ชันสำหรับเปลี่ยนปีการศึกษา
+    document.getElementById('yearSelect').addEventListener('change', function() {
+      var year = this.value;
+      window.location.href = 'numTeachCwieEdit.php?numTeacid=<?php echo $numTeacid; ?>&year=' + year;
     });
   </script>
 </body>

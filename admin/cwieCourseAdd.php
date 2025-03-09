@@ -73,21 +73,7 @@ $year = "2/2566";
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-      <!-- Content Header (Page header) -->
-      <section class="content-header">
-        <div class="container-fluid">
-          <div class="row mb-2">
-            <div class="col-sm-6">
-            </div>
-            <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="index.php">หน้าแรก</a></li>
-                <li class="breadcrumb-item active"><a href="logout.php">ออกจากระบบ</a></li>
-              </ol>
-            </div>
-          </div>
-        </div><!-- /.container-fluid -->
-      </section>
+
 
       <!-- Main content -->
       <section class="content">
@@ -110,7 +96,25 @@ $year = "2/2566";
                       <label for="inputClientCompany">เลือกภาคการศึกษา</label>
                       <select class="form-control select2" name="year" style="width: 100%;" required>
                         <?php
-                        $sql = "SELECT * FROM year ";
+                        // ดึงปีการศึกษาล่าสุดมาเก็บไว้ก่อน
+                        $latest_year_query = "SELECT year FROM year ORDER BY id DESC LIMIT 1";
+                        $latest_year_result = $conn->query($latest_year_query);
+
+                        // กำหนดค่าเริ่มต้นของ $year
+                        if ($latest_year_result->num_rows > 0) {
+                          $latest_year_data = $latest_year_result->fetch_assoc();
+                          $year = $latest_year_data['year']; // ตั้งค่า $year เป็นปีล่าสุด
+                        } else {
+                          $year = "2/2566"; // ค่าเริ่มต้นกรณีไม่มีข้อมูลในตาราง
+                        }
+
+                        // ถ้ามีการส่งค่า year จาก URL ให้ใช้ค่านั้นแทน
+                        if (isset($_GET['year'])) {
+                          $year = $_GET['year'];
+                        }
+
+                        // แสดงตัวเลือกทั้งหมด
+                        $sql = "SELECT * FROM year ORDER BY id DESC";
                         $result = $conn->query($sql);
                         if ($result->num_rows > 0) {
                           while ($optionData = $result->fetch_assoc()) {

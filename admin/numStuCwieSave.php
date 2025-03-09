@@ -21,27 +21,76 @@ $year = $_POST["year"];
 
 if (isset($_POST['save'])) {
 	$sql = "INSERT INTO num_stu_cwie (faculty_id, major, num_practice, num_cwie, num_pundit, 
-	num_pundit_job, num_pundit_job_work, note, date_regis, year) 
-	VALUES ('$faculty_id', '$course', '$num_practice', '$num_cwie', '$num_pundit', '$num_pundit_job', 
-	'$num_pundit_job_work', '$note', current_timestamp(), '$year');";
-	mysqli_query($conn, $sql);
+num_pundit_job, num_pundit_job_work, note, date_regis, year) 
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, current_timestamp(), ?)";
+	$stmt = $conn->prepare($sql);
+	$stmt->bind_param(
+		"sssssssss",
+		$faculty_id,
+		$course,
+		$num_practice,
+		$num_cwie,
+		$num_pundit,
+		$num_pundit_job,
+		$num_pundit_job_work,
+		$note,
+		$year
+	);
+	$stmt->execute();
 	echo '<script language="javascript">';
 	echo 'alert("บันทึกข้อมูลเรียบร้อยแล้ว"); location.href="numStuCwieAdd.php"';
 	echo '</script>';
 } elseif (isset($_POST['update'])) {
-	$numStuid = $_GET["numStuid"];
-	$sql = "UPDATE num_stu_cwie SET major = '$major', 
-	num_practice = '$num_practice', 
-	num_cwie = '$num_cwie',
-	num_pundit = '$num_pundit',
-	num_pundit_job = '$num_pundit_job',
-	num_pundit_job_work = '$num_pundit_job_work',
-	note = '$note',
-	term = '$term' 
-	WHERE num_stu_cwie.id = $numStuid";
-	echo $sql;
-	mysqli_query($conn, $sql);
-	echo '<script language="javascript">';
-	echo 'alert("อัปเดทข้อมูลเรียบร้อยแล้ว"); location.href="numStuCwieAdd.php"';
-	echo '</script>';
+	$numStuid = intval($_GET["numStuid"]);
+
+	// ตรวจสอบว่า numStuid เป็นของ faculty นี้จริงหรือไม่
+	$check_sql = "SELECT id FROM num_stu_cwie WHERE id = ? AND faculty_id = ?";
+	$check_stmt = $conn->prepare($check_sql);
+	$check_stmt->bind_param("is", $numStuid, $faculty_id);
+	$check_stmt->execute();
+	$check_result = $check_stmt->get_result();
+
+	if ($check_result->num_rows == 0) {
+		echo '<script language="javascript">';
+		echo 'alert("ไม่พบข้อมูลที่ต้องการแก้ไข"); location.href="numStuCwieAdd.php"';
+		echo '</script>';
+		exit;
+	}
+
+	// อัปเดตข้อมูล
+	$sql = "UPDATE num_stu_cwie SET 
+        major = ?, 
+        num_practice = ?, 
+        num_cwie = ?,
+        num_pundit = ?,
+        num_pundit_job = ?,
+        num_pundit_job_work = ?,
+        note = ?,
+        year = ? 
+        WHERE id = ? AND faculty_id = ?";
+
+	$stmt = $conn->prepare($sql);
+	$stmt->bind_param(
+		"ssssssssis",
+		$course,
+		$num_practice,
+		$num_cwie,
+		$num_pundit,
+		$num_pundit_job,
+		$num_pundit_job_work,
+		$note,
+		$year,
+		$numStuid,
+		$faculty_id
+	);
+
+	if ($stmt->execute()) {
+		echo '<script language="javascript">';
+		echo 'alert("อัปเดตข้อมูลเรียบร้อยแล้ว"); location.href="numStuCwieAdd.php"';
+		echo '</script>';
+	} else {
+		echo '<script language="javascript">';
+		echo 'alert("เกิดข้อผิดพลาด: ' . $conn->error . '"); location.href="numStuCwieAdd.php"';
+		echo '</script>';
+	}
 }

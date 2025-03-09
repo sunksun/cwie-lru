@@ -154,7 +154,10 @@ if (isset($_POST['login'])) {
             <div class="col-8">
               <div class="icheck-primary">
                 <p class="mb-1">
-                  <a href="login2.php"></a>
+                  <a href="../forgot_password.php">ลืมรหัสผ่าน</a> | <a href="login2.php">ผู้ดูแลระบบ</a>
+                </p>
+                <p class="mb-1">
+                  <a href="../register.php">สมัครเข้าใช้งานระบบ</a>
                 </p>
               </div>
             </div>

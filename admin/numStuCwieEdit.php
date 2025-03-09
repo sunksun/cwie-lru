@@ -1,18 +1,47 @@
 <?php
 session_start();
-$user_img = $_SESSION['img'];
 include_once('connect.php');
-if ($_SESSION['fullname'] == '') {
+
+// ตรวจสอบการเข้าสู่ระบบ
+if (!isset($_SESSION['fullname']) || $_SESSION['fullname'] == '') {
   echo '<script language="javascript">';
   echo 'alert("กรุณา Login เข้าสู่ระบบ"); location.href="login.php"';
   echo '</script>';
+  exit;
 }
+
 $fullname = $_SESSION['fullname'];
 $username = $_SESSION['username'];
 $faculty = $_SESSION['faculty'];
 $position = $_SESSION['position'];
 $faculty_id = $_SESSION['faculty_id'];
 $year = "2/2566";
+
+// ตรวจสอบและรับค่า numStuid
+if (!isset($_GET["numStuid"]) || !is_numeric($_GET["numStuid"])) {
+  echo '<script language="javascript">';
+  echo 'alert("ข้อมูลไม่ถูกต้อง"); location.href="numStuCwieAdd.php"';
+  echo '</script>';
+  exit;
+}
+
+$numStuid = intval($_GET["numStuid"]);
+
+// ดึงข้อมูลโดยใช้ Prepared Statement
+$sql = "SELECT * FROM num_stu_cwie WHERE id = ? AND faculty_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("is", $numStuid, $faculty_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows == 0) {
+  echo '<script language="javascript">';
+  echo 'alert("ไม่พบข้อมูลที่ต้องการแก้ไข"); location.href="numStuCwieAdd.php"';
+  echo '</script>';
+  exit;
+}
+
+$row = $result->fetch_assoc();
 ?>
 <!DOCTYPE html>
 <html lang="en">

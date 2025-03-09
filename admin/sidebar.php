@@ -16,6 +16,44 @@
       </div>
     </div>
 
+    <!-- เพิ่ม CSS สำหรับปรับแต่ง nav-treeview -->
+    <style>
+      .nav-treeview {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-left: 3px solid #4f5962;
+        margin-left: 5px;
+      }
+
+      .nav-treeview .nav-item {
+        margin-bottom: 2px;
+      }
+
+      .nav-treeview .nav-link {
+        border-radius: 4px;
+        margin-left: 5px;
+        margin-right: 5px;
+        padding-left: 15px;
+      }
+
+      .nav-treeview .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .nav-treeview .nav-link.active {
+        background-color: #007bff !important;
+        color: #ffffff !important;
+      }
+
+      /* สีที่แตกต่างกันสำหรับเมนูย่อยระดับต่างๆ */
+      .nav-item:nth-child(odd)>.nav-treeview {
+        border-left-color: #17a2b8;
+      }
+
+      .nav-item:nth-child(even)>.nav-treeview {
+        border-left-color: #28a745;
+      }
+    </style>
+
     <!-- SidebarSearch Form -->
     <!-- Sidebar Menu -->
     <nav class="mt-2">
@@ -109,6 +147,12 @@
                 </a>
               </li>
             </ul>
+          </li>
+          <li class="nav-item">
+            <a href="yearManage.php" class="nav-link">
+              <i class="nav-icon fas fa-calendar-alt"></i>
+              <p>จัดการปีการศึกษา</p>
+            </a>
           </li>
           <!-- 
           <li class="nav-item">
@@ -217,8 +261,6 @@
                   <p>รูปแบบการจัดการ</p>
                 </a>
               </li>
-            </ul>
-            <ul class="nav nav-treeview">
               <li class="nav-item">
                 <a href="cwieCourseReport.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
@@ -242,8 +284,6 @@
                   <p>เพิ่มข้อมูลนักศึกษา CWIE</p>
                 </a>
               </li>
-            </ul>
-            <ul class="nav nav-treeview">
               <li class="nav-item">
                 <a href="numStuCwieReport.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
@@ -267,8 +307,6 @@
                   <p>สถานประกอบการที่ MOU</p>
                 </a>
               </li>
-            </ul>
-            <ul class="nav nav-treeview">
               <li class="nav-item">
                 <a href="orgMouReport.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
@@ -292,8 +330,6 @@
                   <p>อาจารย์ที่ขึ้นทะเบียน</p>
                 </a>
               </li>
-            </ul>
-            <ul class="nav nav-treeview">
               <li class="nav-item">
                 <a href="numTeachCwieReport.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
@@ -317,8 +353,6 @@
                   <p>กิจกรรมสหกิจศึกษา</p>
                 </a>
               </li>
-            </ul>
-            <ul class="nav nav-treeview">
               <li class="nav-item">
                 <a href="activityCwieReport.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
@@ -328,21 +362,21 @@
             </ul>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="newsAdd.php" class="nav-link">
               <i class="nav-icon fas fa-bullhorn"></i>
               <p>
                 ข่าวประชาสัมพันธ์
                 <i class="fas fa-angle-left right"></i>
               </p>
             </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="newsAdd.php" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>จัดการข่าวประชาสัมพันธ์</p>
-                </a>
-              </li>
-            </ul>
+          </li>
+          <li class="nav-item menu-open">
+            <a href="logout.php" class="nav-link active">
+              <i class="nav-icon fas fa-external-link-alt"></i>
+              <p>
+                ออกจากระบบ
+              </p>
+            </a>
           </li>
         <?php endif; ?>
         <!-- Add icons to the links using the .nav-icon class
@@ -373,8 +407,6 @@
                   <p>รูปแบบการจัดการ</p>
                 </a>
               </li>
-            </ul>
-            <ul class="nav nav-treeview">
               <li class="nav-item">
                 <a href="silCourseReport.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
@@ -398,8 +430,6 @@
                   <p>เพิ่มข้อมูลนักศึกษา SIL</p>
                 </a>
               </li>
-            </ul>
-            <ul class="nav nav-treeview">
               <li class="nav-item">
                 <a href="numStuSilReport.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
@@ -423,8 +453,6 @@
                   <p>สถานประกอบการที่ MOU</p>
                 </a>
               </li>
-            </ul>
-            <ul class="nav nav-treeview">
               <li class="nav-item">
                 <a href="orgMouReport.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
@@ -448,8 +476,6 @@
                   <p>อาจารย์ที่ขึ้นทะเบียน</p>
                 </a>
               </li>
-            </ul>
-            <ul class="nav nav-treeview">
               <li class="nav-item">
                 <a href="numTeachCwieReport.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
@@ -473,8 +499,6 @@
                   <p>กิจกรรม SIL</p>
                 </a>
               </li>
-            </ul>
-            <ul class="nav nav-treeview">
               <li class="nav-item">
                 <a href="activityCwieReport.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
@@ -499,6 +523,14 @@
                 </a>
               </li>
             </ul>
+          </li>
+          <li class="nav-item menu-open">
+            <a href="logout.php" class="nav-link active">
+              <i class="nav-icon fas fa-external-link-alt"></i>
+              <p>
+                ออกจากระบบ
+              </p>
+            </a>
           </li>
         <?php endif; ?>
         <!-- 

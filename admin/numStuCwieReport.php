@@ -58,23 +58,48 @@ $year = "2/2566";
 
         @media print {
             @page {
+                size: auto;
                 margin: 0;
+                margin-header: 0;
+                margin-footer: 0;
             }
 
+            html,
             body {
                 margin: 1cm;
+                padding: 0;
             }
 
-            button {
-                display: none;
+            button,
+            .no-print {
+                display: none !important;
             }
 
-            @page {
-                size: auto;
-                margin: 0mm;
+            /* ซ่อนส่วนหัวและท้ายที่บราว์เซอร์สร้างอัตโนมัติ */
+            body::before,
+            body::after {
+                display: none !important;
             }
         }
     </style>
+    <script>
+        // ฟังก์ชันสำหรับพิมพ์เอกสาร
+        function printReport() {
+            // เก็บชื่อเดิมของ title
+            const originalTitle = document.title;
+
+            // เปลี่ยน title เป็นค่าว่างก่อนพิมพ์
+            document.title = '';
+
+            // สั่งพิมพ์
+            window.print();
+
+            // คืนค่า title กลับเป็นค่าเดิมหลังจากพิมพ์
+            setTimeout(function() {
+                document.title = originalTitle;
+            }, 100);
+        }
+    </script>
 </head>
 
 <body>
@@ -101,7 +126,7 @@ $year = "2/2566";
     </table>
 
     <hr>
-    <button onclick="history.back()">ย้อนกลับ</button> | <button onclick="window.print()">พิมพ์รายงาน</button>
+    <button onclick="history.back()">กลับไปหน้าจัดการ</button> <button onclick="printReport()">พิมพ์รายงาน</button>
 
     <script>
         fetch('numStuCwieData.php')

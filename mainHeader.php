@@ -1,5 +1,19 @@
 <header class="main-header header-style-one">
-
+	<!-- Header Top -->
+	<div class="header-top">
+		<div class="auto-container">
+			<div class="inner-container">
+				<div class="top-left">
+				</div>
+				<div class="top-right">
+					<ul class="useful-links">
+						<li><a href="admin/login.php">เข้าสู่ระบบ</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Header Top -->
 	<!-- Main box -->
 	<div class="main-box">
 		<div class="logo-box">
@@ -48,11 +62,11 @@
 					</li>
 					<li class="dropdown"><a href="#">CWIE</a>
 						<ul>
-							<li><a href="#">การจัดการหลักสูตร</a></li>
-							<li><a href="#">จำนวนนักศึกษา CWIE</a></li>
-							<li><a href="#">สถานประกอบการ CWIE</a></li>
-							<li><a href="#">อาจารย์นิเทศสหกิจฯ</a></li>
-							<li><a href="#">การจัดกิจกรรม</a></li>
+							<li><a href="course-manage.php">การจัดการหลักสูตร</a></li>
+							<li><a href="num-stu-cwie.php">จำนวนนักศึกษา CWIE</a></li>
+							<li><a href="organization-cwie.php">สถานประกอบการและการได้งานทำ</a></li>
+							<li><a href="num-tea-cwie.php">อาจารย์นิเทศสหกิจฯ</a></li>
+							<li><a href="activity-cwie.php">การจัดกิจกรรม</a></li>
 						</ul>
 					</li>
 					<li class="dropdown"><a href="#">SIL</a>
@@ -74,9 +88,9 @@
 			<div class="outer-box">
 
 				<div class="ui-btn-outer">
-					<a href="admin/login.php" class="ui-btn"><i class="lnr-icon-enter"></i></a>
 				</div>
 
+				<a href="admin/login.php" class="theme-btn btn-style-one"><span class="btn-title">เข้าสู่ระบบ</span></a>
 
 				<!-- Mobile Nav toggler -->
 				<div class="mobile-nav-toggler"><span class="icon lnr-icon-bars"></span></div>

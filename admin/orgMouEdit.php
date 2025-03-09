@@ -12,7 +12,53 @@ $username = $_SESSION['username'];
 $faculty = $_SESSION['faculty'];
 $position = $_SESSION['position'];
 $faculty_id = $_SESSION['faculty_id'];
-$year = "2/2566";
+
+// ตรวจสอบ URL parameter
+if (!isset($_GET["orgMouid"]) || empty($_GET["orgMouid"])) {
+  echo '<script language="javascript">';
+  echo 'alert("ไม่พบรหัสสถานประกอบการที่ต้องการแก้ไข"); location.href="orgMouAdd.php"';
+  echo '</script>';
+  exit();
+}
+
+// ดึงปีการศึกษาจาก URL หรือใช้ค่าปีล่าสุด
+if (isset($_GET['year']) && !empty($_GET['year'])) {
+  $academic_year = $_GET['year'];
+} else {
+  // ดึงปีการศึกษาล่าสุดจากตาราง year
+  $latest_year_query = "SELECT year FROM year ORDER BY id DESC LIMIT 1";
+  $latest_year_result = mysqli_query($conn, $latest_year_query);
+
+  if ($latest_year_result && mysqli_num_rows($latest_year_result) > 0) {
+    $latest_year_row = mysqli_fetch_assoc($latest_year_result);
+    $academic_year = $latest_year_row['year'];
+  } else {
+    $academic_year = "2/2566"; // ค่าเริ่มต้นกรณีไม่พบข้อมูล
+  }
+}
+
+$orgMouid = $_GET["orgMouid"];
+$sql = "SELECT * FROM organization_mou WHERE id = '$orgMouid'";
+$result = $conn->query($sql);
+
+if (!$result || $result->num_rows == 0) {
+  echo '<script language="javascript">';
+  echo 'alert("ไม่พบข้อมูลสถานประกอบการที่ต้องการแก้ไข"); location.href="orgMouAdd.php"';
+  echo '</script>';
+  exit();
+}
+
+$row = $result->fetch_assoc();
+
+// แยกข้อมูลวันที่ MOU
+$date_mou = $row["date_mou"];
+$date_mou_spil = explode(" ", $date_mou);
+$day = isset($date_mou_spil[0]) ? $date_mou_spil[0] : "";
+$mount = isset($date_mou_spil[1]) ? $date_mou_spil[1] : "";
+$mou_year = isset($date_mou_spil[2]) ? $date_mou_spil[2] : "";
+
+// เก็บค่าปีการศึกษาของข้อมูลนี้ (ถ้ามีในฐานข้อมูล)
+$org_academic_year = isset($row["year"]) ? $row["year"] : $academic_year;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -57,24 +103,15 @@ $year = "2/2566";
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Project Add</li>
+                <li class="breadcrumb-item"><a href="index.php">หน้าแรก</a></li>
+                <li class="breadcrumb-item"><a href="orgMouAdd.php">สถานประกอบการ MOU</a></li>
+                <li class="breadcrumb-item active">แก้ไขข้อมูล</li>
               </ol>
             </div>
           </div>
         </div><!-- /.container-fluid -->
       </section>
-      <?php
-      $orgMouid = $_GET["orgMouid"];
-      $sql = "SELECT * FROM organization_mou WHERE id = '$orgMouid'";
-      $result = $conn->query($sql);
-      $row = $result->fetch_assoc();
-      $date_mou = $row["date_mou"];
-      $date_mou_spil = explode(" ", $date_mou);
-      $day = $date_mou_spil[0];
-      $mount = $date_mou_spil[1];
-      $year = $date_mou_spil[2];
-      ?>
+
       <!-- Main content -->
       <section class="content">
         <div class="row">
@@ -91,37 +128,58 @@ $year = "2/2566";
               </div>
               <div class="card-body">
                 <form action="orgMouSave.php?orgMouid=<?php echo $orgMouid; ?>" method="post" enctype="multipart/form-data">
+                  <div class="row form-group">
+                    <div class="col-12">
+                      <label>ปีการศึกษา</label>
+                      <select class="form-control select2" name="year" style="width: 100%;">
+                        <?php
+                        $sql = "SELECT * FROM year ORDER BY id DESC";
+                        $result = $conn->query($sql);
+                        if ($result->num_rows > 0) {
+                          while ($optionData = $result->fetch_assoc()) {
+                            $option = $optionData['year'];
+                            $selected = ($option == $org_academic_year) ? 'selected' : '';
+                        ?>
+                            <option value="<?php echo $option; ?>" <?php echo $selected; ?>>ปีการศึกษา <?php echo $option; ?></option>
+                        <?php
+                          }
+                        }
+                        ?>
+                      </select>
+                    </div>
+                  </div>
                   <div class="form-group">
                     <label for="inputClientCompany">ชื่อสถานประกอบการ</label>
-                    <input type="text" name="name" id="inputClientCompany" class="form-control" value="<?php echo $row["name"]; ?>">
+                    <input type="text" name="name" id="inputClientCompany" class="form-control" value="<?php echo htmlspecialchars($row["name"]); ?>" required>
                   </div>
                   <div class="row form-group">
                     <div class="col-5">
                       <label for="inputClientCompany">ที่อยู่</label>
-                      <input type="text" name="address" class="form-control" value="<?php echo $row["address"]; ?>">
+                      <input type="text" name="address" class="form-control" value="<?php echo htmlspecialchars($row["address"]); ?>">
                     </div>
                     <div class="col-4">
                       <label for="inputClientCompany">แขวง/ตำบล</label>
-                      <input type="text" name="subdistrict" class="form-control" value="<?php echo $row["subdistrict"]; ?>">
+                      <input type="text" name="subdistrict" class="form-control" value="<?php echo htmlspecialchars($row["subdistrict"]); ?>">
                     </div>
                     <div class="col-3">
                       <label for="inputClientCompany">เขต/อำเภอ</label>
-                      <input type="text" name="district" class="form-control" value="<?php echo $row["district"]; ?>">
+                      <input type="text" name="district" class="form-control" value="<?php echo htmlspecialchars($row["district"]); ?>">
                     </div>
                   </div>
                   <div class="row form-group">
                     <div class="col-6">
                       <label>จังหวัด</label>
                       <select class="form-control select2" name="province" style="width: 100%;">
-                        <option selected="selected">--- เลือกจังหวัด ---</option>
+                        <option>--- เลือกจังหวัด ---</option>
                         <?php
                         $sql = "SELECT * FROM thai_provinces";
                         $result = $conn->query($sql);
                         if ($result->num_rows > 0) {
                           while ($optionData = $result->fetch_assoc()) {
                             $option = $optionData['thai_province'];
+                            $selected = ($option == $row["province"]) ? 'selected="selected"' : '';
                         ?>
-                            <option value="<?php echo $option; ?>" <?php if ($option == $row["province"]) echo 'selected="selected"'; ?>>
+                            <option value="<?php echo $option; ?>" <?php echo $selected; ?>>
                               <?php echo $option; ?></option>
                         <?php
                           }
@@ -131,22 +189,23 @@ $year = "2/2566";
                     </div>
                     <div class="col-6">
                       <label for="inputClientCompany">รหัสไปรษณีย์</label>
-                      <input type="text" name="postcode" class="form-control" value="<?php echo $row["postcode"]; ?>">
+                      <input type="text" name="postcode" class="form-control" value="<?php echo htmlspecialchars($row["postcode"]); ?>">
                     </div>
                   </div>
                   <div class="row form-group">
                     <div class="col-2">
                       <label for="inputClientCompany">วันที่ทำ MOU</label>
                       <select id="inputState" class="form-control" name="date_mou1">
-                        <option selected>วันที่</option>
+                        <option>วันที่</option>
                         <?php
                         $sql = "SELECT * FROM day";
                         $result = $conn->query($sql);
                         if ($result->num_rows > 0) {
                           while ($optionData = $result->fetch_assoc()) {
                             $option = $optionData['day'];
+                            $selected = ($option == $day) ? 'selected="selected"' : '';
                         ?>
-                            <option value="<?php echo $option; ?>" <?php if ($option == $day) echo 'selected="selected"'; ?>>
+                            <option value="<?php echo $option; ?>" <?php echo $selected; ?>>
                               <?php echo $option; ?></option>
                         <?php
                           }
@@ -157,15 +216,16 @@ $year = "2/2566";
                     <div class="col-2">
                       <label for="inputClientCompany">&nbsp;</label>
                       <select id="inputState" class="form-control" name="date_mou2">
-                        <option selected>เดือน</option>
+                        <option>เดือน</option>
                         <?php
                         $sql = "SELECT * FROM mount";
                         $result = $conn->query($sql);
                         if ($result->num_rows > 0) {
                           while ($optionData = $result->fetch_assoc()) {
                             $option = $optionData['mount'];
+                            $selected = ($option == $mount) ? 'selected="selected"' : '';
                         ?>
-                            <option value="<?php echo $option; ?>" <?php if ($option == $mount) echo 'selected="selected"'; ?>>
+                            <option value="<?php echo $option; ?>" <?php echo $selected; ?>>
                               <?php echo $option; ?></option>
                         <?php
                           }
@@ -178,57 +238,56 @@ $year = "2/2566";
                       <select id="inputState" class="form-control" name="date_mou3">
                         <option>ปี พ.ศ.</option>
                         <?php
-                        $selected_year = $year; // ตัวแปรที่เก็บปีที่ต้องการให้ถูกเลือก
-                        for ($year = 2566; $year <= 2570; $year++) {
-                          $selected = ($year == $selected_year) ? "selected='selected'" : "";
-                          echo "<option value='$year' $selected>$year</option>";
+                        for ($y = 2564; $y <= 2570; $y++) {
+                          $selected = ($y == $mou_year) ? "selected='selected'" : "";
+                          echo "<option value='$y' $selected>$y</option>";
                         }
                         ?>
                       </select>
                     </div>
                     <div class="col-6">
                       <label for="inputClientCompany">ระยะเวลา MOU</label>
-                      <input type="number" name="time_mou" class="form-control" value="<?php echo $row["time_mou"]; ?>">
+                      <input type="number" name="time_mou" class="form-control" value="<?php echo htmlspecialchars($row["time_mou"]); ?>">
                     </div>
                   </div>
                   <div class="row form-group">
                     <div class="col-5">
                       <label for="inputClientCompany">หมายเลขโทรศัพท์ 1</label>
-                      <input type="text" name="tel1" class="form-control" value="<?php echo $row["tel1"]; ?>">
+                      <input type="text" name="tel1" class="form-control" value="<?php echo htmlspecialchars($row["tel1"]); ?>">
                     </div>
                     <div class="col-4">
                       <label for="inputClientCompany">หมายเลขโทรศัพท์ 2</label>
-                      <input type="text" name="tel2" class="form-control" value="<?php echo $row["tel2"]; ?>">
+                      <input type="text" name="tel2" class="form-control" value="<?php echo htmlspecialchars($row["tel2"]); ?>">
                     </div>
                     <div class="col-3">
                       <label for="inputClientCompany">Fax</label>
-                      <input type="text" name="fax" class="form-control" value="<?php echo $row["fax"]; ?>">
+                      <input type="text" name="fax" class="form-control" value="<?php echo htmlspecialchars($row["fax"]); ?>">
                     </div>
                   </div>
                   <div class="row form-group">
                     <div class="col-6">
                       <label for="inputClientCompany">Line ID</label>
-                      <input type="text" name="line" class="form-control" value="<?php echo $row["line"]; ?>">
+                      <input type="text" name="line" class="form-control" value="<?php echo htmlspecialchars($row["line"]); ?>">
                     </div>
                     <div class="col-6">
                       <label for="inputClientCompany">Facebook</label>
-                      <input type="text" name="facebook" class="form-control" value="<?php echo $row["facebook"]; ?>">
+                      <input type="text" name="facebook" class="form-control" value="<?php echo htmlspecialchars($row["facebook"]); ?>">
                     </div>
                   </div>
                   <div class="row form-group">
                     <div class="col-6">
                       <label for="inputClientCompany">Web Site</label>
-                      <input type="text" name="website" class="form-control" value="<?php echo $row["website"]; ?>">
+                      <input type="text" name="website" class="form-control" value="<?php echo htmlspecialchars($row["website"]); ?>">
                     </div>
                     <div class="col-6">
                       <label for="inputClientCompany">Email</label>
-                      <input type="text" name="email" class="form-control" value="<?php echo $row["email"]; ?>">
+                      <input type="text" name="email" class="form-control" value="<?php echo htmlspecialchars($row["email"]); ?>">
                     </div>
                   </div>
                   <div class="row form-group">
                     <div class="col-12">
                       <label for="inputClientCompany">หมายเหตุ</label>
-                      <input type="text" name="note" class="form-control" value="<?php echo $row["note"]; ?>">
+                      <input type="text" name="note" class="form-control" value="<?php echo htmlspecialchars($row["note"]); ?>">
                     </div>
                   </div>
               </div>
@@ -240,24 +299,13 @@ $year = "2/2566";
         </div>
         <div class="row">
           <div class="col-12">
+            <a href="orgMouAdd.php?year=<?php echo $academic_year; ?>" class="btn btn-secondary float-right">ยกเลิก</a>
             <input type="submit" name="update" value="บันทึกข้อมูล" class="btn btn-success float-left">
           </div>
         </div>
         </form>
       </section>
       <!-- /.content -->
-      <hr>
-      <?php
-      $sql = "SELECT * FROM organization";
-      $result = $conn->query($sql);
-      ?>
-      <section class="content">
-
-        <!-- Default box -->
-
-        <!-- /.card -->
-
-      </section>
     </div>
     <!-- /.content-wrapper -->
 
@@ -296,8 +344,6 @@ $year = "2/2566";
 
   <!-- AdminLTE App -->
   <script src="dist/js/adminlte.min.js"></script>
-  <!-- AdminLTE for demo purposes -->
-  <!-- <script src="dist/js/demo.js"></script> -->
   <!-- Page specific script -->
   <script>
     $(function() {

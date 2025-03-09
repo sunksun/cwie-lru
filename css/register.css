@@ -1,0 +1,60 @@
+/* Styles for Register Page */
+.register-box {
+    max-width: 700px;
+    margin: 60px auto;
+    padding: 35px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo-container img {
+    max-width: 150px;
+}
+
+.alert {
+    border-radius: 3px;
+    margin-bottom: 20px;
+}
+
+.form-control {
+    margin-bottom: 10px;
+    height: 40px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.btn-register {
+    padding: 8px 15px;
+    width: auto;
+    min-width: 120px;
+}
+
+.theme-btn.btn-style-one {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .register-box {
+        max-width: 95%;
+        padding: 20px;
+        margin: 30px auto;
+    }
+}

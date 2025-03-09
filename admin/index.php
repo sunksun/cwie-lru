@@ -1,21 +1,61 @@
 <?php
 session_start();
-$user_img = $_SESSION['img'];
 include_once('connect.php');
-if ($_SESSION['fullname'] == '') {
+
+// ตรวจสอบการล็อกอินและสถานะการอนุมัติ
+if (!isset($_SESSION['id']) || empty($_SESSION['fullname'])) {
   echo '<script language="javascript">';
   echo 'alert("กรุณา Login เข้าสู่ระบบ"); location.href="login.php"';
   echo '</script>';
+  exit; // เพิ่ม exit เพื่อหยุดการทำงานทันที
 }
+
+// ตรวจสอบสถานะการอนุมัติ (ถ้ามีการเก็บสถานะในเซสชัน)
+// ถ้าไม่มีเก็บในเซสชัน ควรตรวจสอบจากฐานข้อมูล
+$user_id = $_SESSION['id'];
+$check_status_sql = "SELECT status FROM tblusers WHERE id = ?";
+$check_status_stmt = $conn->prepare($check_status_sql);
+$check_status_stmt->bind_param('i', $user_id);
+$check_status_stmt->execute();
+$result_status = $check_status_stmt->get_result();
+if ($result_status->num_rows > 0) {
+  $status_row = $result_status->fetch_assoc();
+  if ($status_row['status'] !== 'approved') {
+    echo '<script language="javascript">';
+    echo 'alert("บัญชีของคุณยังไม่ได้รับการอนุมัติ กรุณาติดต่อผู้ดูแลระบบ"); location.href="login.php"';
+    echo '</script>';
+    exit;
+  }
+}
+
+$user_img = $_SESSION['img'];
 $fullname = $_SESSION['fullname'];
 $username = $_SESSION['username'];
 $faculty = $_SESSION['faculty'];
 $position = $_SESSION['position'];
 $faculty_id = $_SESSION['faculty_id'];
-$year = "2/2566";
+
+// รับค่าปีการศึกษาจาก URL หรือใช้ค่าล่าสุดจากฐานข้อมูล
+if (isset($_GET['year'])) {
+  $year = $_GET['year'];
+} else {
+  // ดึงปีล่าสุดจากตาราง year
+  $latest_year_query = "SELECT year FROM year ORDER BY id DESC LIMIT 1";
+  $latest_year_result = mysqli_query($conn, $latest_year_query);
+
+  if (mysqli_num_rows($latest_year_result) > 0) {
+    $latest_year_row = mysqli_fetch_assoc($latest_year_result);
+    $year = $latest_year_row['year'];
+  } else {
+    // กรณีไม่มีข้อมูลในตาราง ใช้ค่าเริ่มต้น
+    $year = "2/2567";
+  }
+}
+
 // ตรวจสอบว่า username เป็น admin หรือไม่
 if ($username === 'admin') {
-  echo "<script>window.location.href = 'index2.php';</script>";
+  header("Location: index2.php");
+  exit;
 }
 ?>
 <!DOCTYPE html>
@@ -24,7 +64,7 @@ if ($username === 'admin') {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><?php echo "$faculty"; ?> | สหกิจศึกษา :: มหาวิทยาลัยราชภัฏเลย</title>
+  <title><?php echo htmlspecialchars($faculty); ?> | สหกิจศึกษา :: มหาวิทยาลัยราชภัฏเลย</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -66,39 +106,6 @@ if ($username === 'admin') {
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
       <!-- Content Header (Page header) -->
-      <div class="content-header">
-        <div class="container-fluid">
-          <div class="row mb-2">
-            <div class="col-sm-4">
-              <select class="form-control select2" name="fid" style="width: 100%;" required>
-                <?php
-                $sql = "SELECT * FROM year ";
-                $result = $conn->query($sql);
-                if ($result->num_rows > 0) {
-                  while ($optionData = $result->fetch_assoc()) {
-                    $option = $optionData['year'];
-                ?>
-                    <option value="<?php echo $option; ?>" <?php if ($option == $year) echo 'selected="selected"'; ?>> ปีการศึกษา
-                      <?php echo $option; ?></option>
-                <?php
-                  }
-                }
-                ?>
-              </select>
-            </div>
-            <div class="col-sm-4">
-              <a class="btn btn-success" href="#" role="button">GO</a>
-            </div>
-            <!-- /.col -->
-            <div class="col-sm-4">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item active"><a href="index.php">หน้าแรก</a></li>
-                <li class="breadcrumb-item active"><a href="logout.php">ออกจากระบบ</a></li>
-              </ol>
-            </div><!-- /.col -->
-          </div><!-- /.row -->
-        </div><!-- /.container-fluid -->
-      </div>
       <!-- /.content-header -->
 
       <!-- Main content -->
@@ -109,13 +116,17 @@ if ($username === 'admin') {
             <div class="col-lg-3 col-6">
               <!-- small box -->
               <?php
-              $sql = "SELECT SUM(num_cwie) AS num_cwie FROM `num_stu_cwie` WHERE faculty_id = '$faculty_id';";
-              $result = mysqli_query($conn, $sql);
-              $row_num_cwie = mysqli_fetch_assoc($result);
+              // ใช้ Prepared Statement แทน
+              $stmt = $conn->prepare("SELECT SUM(num_cwie) AS num_cwie FROM num_stu_cwie WHERE faculty_id = ?");
+              $stmt->bind_param('s', $faculty_id);
+              $stmt->execute();
+              $result = $stmt->get_result();
+              $row_num_cwie = $result->fetch_assoc();
+              $num_cwie = $row_num_cwie["num_cwie"] ?? 0; // ใช้ Null coalescing operator เพื่อป้องกันค่า null
               ?>
               <div class="small-box bg-info">
                 <div class="inner">
-                  <h3><?php echo $row_num_cwie["num_cwie"]; ?></h3>
+                  <h3><?php echo number_format($num_cwie); ?></h3>
 
                   <p>นักศึกษาสหกิจฯ</p>
                 </div>
@@ -129,13 +140,17 @@ if ($username === 'admin') {
             <div class="col-lg-3 col-6">
               <!-- small box -->
               <?php
-              $sql = "SELECT SUM(num_practice) AS num_practice FROM `num_stu_cwie` WHERE faculty_id = '$faculty_id';";
-              $result = mysqli_query($conn, $sql);
-              $row_num_practice = mysqli_fetch_assoc($result);
+              // ใช้ Prepared Statement แทน
+              $stmt = $conn->prepare("SELECT SUM(num_practice) AS num_practice FROM num_stu_cwie WHERE faculty_id = ?");
+              $stmt->bind_param('s', $faculty_id);
+              $stmt->execute();
+              $result = $stmt->get_result();
+              $row_num_practice = $result->fetch_assoc();
+              $num_practice = $row_num_practice["num_practice"] ?? 0;
               ?>
               <div class="small-box bg-success">
                 <div class="inner">
-                  <h3><?php echo $row_num_practice["num_practice"]; ?><sup style="font-size: 20px"></sup></h3>
+                  <h3><?php echo number_format($num_practice); ?><sup style="font-size: 20px"></sup></h3>
 
                   <p>นักศึกษาฝึกประสบการณ์วิชาชีพ</p>
                 </div>
@@ -149,13 +164,17 @@ if ($username === 'admin') {
             <div class="col-lg-3 col-6">
               <!-- small box -->
               <?php
-              $sql = "SELECT COUNT(*) AS sum_count FROM `num_tea_cwie` WHERE faculty_id = '$faculty_id';";
-              $result = mysqli_query($conn, $sql);
-              $row_sum_count = mysqli_fetch_assoc($result);
+              // ใช้ Prepared Statement แทน
+              $stmt = $conn->prepare("SELECT COUNT(*) AS sum_count FROM num_tea_cwie WHERE faculty_id = ?");
+              $stmt->bind_param('s', $faculty_id);
+              $stmt->execute();
+              $result = $stmt->get_result();
+              $row_sum_count = $result->fetch_assoc();
+              $sum_count = $row_sum_count["sum_count"] ?? 0;
               ?>
               <div class="small-box bg-warning">
                 <div class="inner">
-                  <h3><?php echo $row_sum_count["sum_count"]; ?></h3>
+                  <h3><?php echo number_format($sum_count); ?></h3>
 
                   <p>อาจารย์นิเทศสหกิจ</p>
                 </div>
@@ -169,13 +188,17 @@ if ($username === 'admin') {
             <div class="col-lg-3 col-6">
               <!-- small box -->
               <?php
-              $sql = "SELECT COUNT(*) AS num_org_mou FROM `organization_mou` WHERE faculty_id = '$faculty_id';";
-              $result = mysqli_query($conn, $sql);
-              $row_num_org_mou = mysqli_fetch_assoc($result);
+              // ใช้ Prepared Statement แทน
+              $stmt = $conn->prepare("SELECT COUNT(*) AS num_org_mou FROM organization_mou WHERE faculty_id = ?");
+              $stmt->bind_param('s', $faculty_id);
+              $stmt->execute();
+              $result = $stmt->get_result();
+              $row_num_org_mou = $result->fetch_assoc();
+              $num_org_mou = $row_num_org_mou["num_org_mou"] ?? 0;
               ?>
               <div class="small-box bg-danger">
                 <div class="inner">
-                  <h3><?php echo $row_num_org_mou["num_org_mou"]; ?></h3>
+                  <h3><?php echo number_format($num_org_mou); ?></h3>
 
                   <p>สถานประกอบการ</p>
                 </div>
@@ -192,374 +215,103 @@ if ($username === 'admin') {
           <div class="row">
             <!-- Left col -->
             <section class="col-lg-7 connectedSortable">
-              <!-- Custom tabs (Charts with tabs)-->
+              <?php
+              // ดึงข้อมูลสำหรับกราฟข้อมูลนักศึกษาและบัณฑิต CWIE
+              $chart_query = "
+                SELECT major, 
+                      num_practice, 
+                      num_cwie, 
+                      num_pundit, 
+                      num_pundit_job, 
+                      num_pundit_job_work
+                FROM num_stu_cwie 
+                WHERE faculty_id = ? AND year = ?
+                ORDER BY id DESC
+                LIMIT 10";
+
+              $chart_stmt = $conn->prepare($chart_query);
+              $chart_stmt->bind_param('ss', $faculty_id, $year);
+              $chart_stmt->execute();
+              $chart_result = $chart_stmt->get_result();
+
+              // เตรียมข้อมูลสำหรับกราฟ
+              $majors = [];
+              $practice_data = [];
+              $cwie_data = [];
+              $graduate_data = [];
+              $employed_data = [];
+              $employed_in_org_data = [];
+
+              while ($row = $chart_result->fetch_assoc()) {
+                // ตัดชื่อสาขาให้สั้นลงเพื่อแสดงในกราฟ
+                $major_parts = explode('--', $row['major']);
+                $short_major = end($major_parts);
+
+                // ตัดคำว่า "สาขาวิชา" ออก
+                $short_major = str_replace("สาขาวิชา", "", $short_major);
+
+                $majors[] = $short_major;
+                $practice_data[] = (int)$row['num_practice'];
+                $cwie_data[] = (int)$row['num_cwie'];
+                $graduate_data[] = (int)$row['num_pundit'];
+                $employed_data[] = (int)$row['num_pundit_job'];
+                $employed_in_org_data[] = (int)$row['num_pundit_job_work'];
+              }
+
+              // แปลงข้อมูลเป็น JSON สำหรับใช้ใน JavaScript
+              $majors_json = json_encode($majors);
+              $practice_json = json_encode($practice_data);
+              $cwie_json = json_encode($cwie_data);
+              $graduate_json = json_encode($graduate_data);
+              $employed_json = json_encode($employed_data);
+              $employed_in_org_json = json_encode($employed_in_org_data);
+
+              ?>
+
+              <!-- ส่วนกราฟข้อมูลนักศึกษา -->
               <div class="card">
                 <div class="card-header">
                   <h3 class="card-title">
-                    <i class="fas fa-chart-pie mr-1"></i>
-                    ข้อมูลนักศึกษา
+                    <i class="fas fa-chart-bar mr-1"></i>
+                    คณะ<?php echo htmlspecialchars($faculty);
+                        echo "ภาคเรียนที่ " . $year; ?>
                   </h3>
-                </div><!-- /.card-header -->
-                <div class="card-body">
-                  <div class="tab-content p-0">
-                    <!-- Morris chart - Sales -->
-                    <div class="chart tab-pane active" id="revenue-chart" style="position: relative; height: 300px;">
-                      <canvas id="revenue-chart-canvas" height="300" style="height: 300px;"></canvas>
-                    </div>
-                  </div>
-                </div><!-- /.card-body -->
-              </div>
-              <!-- /.card -->
-
-              <!-- DIRECT CHAT -->
-              <div class="card direct-chat direct-chat-primary">
-                <div class="card-header">
-                  <h3 class="card-title">Direct Chat</h3>
-
                   <div class="card-tools">
-                    <span title="3 New Messages" class="badge badge-primary">3</span>
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                       <i class="fas fa-minus"></i>
-                    </button>
-                    <button type="button" class="btn btn-tool" title="Contacts" data-widget="chat-pane-toggle">
-                      <i class="fas fa-comments"></i>
                     </button>
                     <button type="button" class="btn btn-tool" data-card-widget="remove">
                       <i class="fas fa-times"></i>
                     </button>
                   </div>
-                </div>
-                <!-- /.card-header -->
+                </div><!-- /.card-header -->
                 <div class="card-body">
-                  <!-- Conversations are loaded here -->
-                  <div class="direct-chat-messages">
-                    <!-- Message. Default to the left -->
-                    <div class="direct-chat-msg">
-                      <div class="direct-chat-infos clearfix">
-                        <span class="direct-chat-name float-left">Alexander Pierce</span>
-                        <span class="direct-chat-timestamp float-right">23 Jan 2:00 pm</span>
-                      </div>
-                      <!-- /.direct-chat-infos -->
-                      <img class="direct-chat-img" src="dist/img/user1-128x128.jpg" alt="message user image">
-                      <!-- /.direct-chat-img -->
-                      <div class="direct-chat-text">
-                        Is this template really for free? That's unbelievable!
-                      </div>
-                      <!-- /.direct-chat-text -->
+                  <div class="tab-content p-0">
+                    <div class="chart tab-pane active" id="student-chart" style="position: relative; height: 350px;">
+                      <canvas id="student-chart-canvas" height="350" style="height: 350px;"></canvas>
                     </div>
-                    <!-- /.direct-chat-msg -->
-
-                    <!-- Message to the right -->
-                    <div class="direct-chat-msg right">
-                      <div class="direct-chat-infos clearfix">
-                        <span class="direct-chat-name float-right">Sarah Bullock</span>
-                        <span class="direct-chat-timestamp float-left">23 Jan 2:05 pm</span>
-                      </div>
-                      <!-- /.direct-chat-infos -->
-                      <img class="direct-chat-img" src="dist/img/user2-128x128.jpg" alt="message user image">
-                      <!-- /.direct-chat-img -->
-                      <div class="direct-chat-text">
-                        You better believe it!
-                      </div>
-                      <!-- /.direct-chat-text -->
-                    </div>
-                    <!-- /.direct-chat-msg -->
-
-                    <!-- Message. Default to the left -->
-                    <div class="direct-chat-msg">
-                      <div class="direct-chat-infos clearfix">
-                        <span class="direct-chat-name float-left">Alexander Pierce</span>
-                        <span class="direct-chat-timestamp float-right">23 Jan 5:37 pm</span>
-                      </div>
-                      <!-- /.direct-chat-infos -->
-                      <img class="direct-chat-img" src="dist/img/user1-128x128.jpg" alt="message user image">
-                      <!-- /.direct-chat-img -->
-                      <div class="direct-chat-text">
-                        Working with AdminLTE on a great new app! Wanna join?
-                      </div>
-                      <!-- /.direct-chat-text -->
-                    </div>
-                    <!-- /.direct-chat-msg -->
-
-                    <!-- Message to the right -->
-                    <div class="direct-chat-msg right">
-                      <div class="direct-chat-infos clearfix">
-                        <span class="direct-chat-name float-right">Sarah Bullock</span>
-                        <span class="direct-chat-timestamp float-left">23 Jan 6:10 pm</span>
-                      </div>
-                      <!-- /.direct-chat-infos -->
-                      <img class="direct-chat-img" src="dist/img/user2-128x128.jpg" alt="message user image">
-                      <!-- /.direct-chat-img -->
-                      <div class="direct-chat-text">
-                        I would love to.
-                      </div>
-                      <!-- /.direct-chat-text -->
-                    </div>
-                    <!-- /.direct-chat-msg -->
-
                   </div>
-                  <!--/.direct-chat-messages-->
-
-                  <!-- Contacts are loaded here -->
-                  <div class="direct-chat-contacts">
-                    <ul class="contacts-list">
-                      <li>
-                        <a href="#">
-                          <img class="contacts-list-img" src="dist/img/user1-128x128.jpg" alt="User Avatar">
-
-                          <div class="contacts-list-info">
-                            <span class="contacts-list-name">
-                              Count Dracula
-                              <small class="contacts-list-date float-right">2/28/2015</small>
-                            </span>
-                            <span class="contacts-list-msg">How have you been? I was...</span>
-                          </div>
-                          <!-- /.contacts-list-info -->
-                        </a>
-                      </li>
-                      <!-- End Contact Item -->
-                      <li>
-                        <a href="#">
-                          <img class="contacts-list-img" src="dist/img/user7-128x128.jpg" alt="User Avatar">
-
-                          <div class="contacts-list-info">
-                            <span class="contacts-list-name">
-                              Sarah Doe
-                              <small class="contacts-list-date float-right">2/23/2015</small>
-                            </span>
-                            <span class="contacts-list-msg">I will be waiting for...</span>
-                          </div>
-                          <!-- /.contacts-list-info -->
-                        </a>
-                      </li>
-                      <!-- End Contact Item -->
-                      <li>
-                        <a href="#">
-                          <img class="contacts-list-img" src="dist/img/user3-128x128.jpg" alt="User Avatar">
-
-                          <div class="contacts-list-info">
-                            <span class="contacts-list-name">
-                              Nadia Jolie
-                              <small class="contacts-list-date float-right">2/20/2015</small>
-                            </span>
-                            <span class="contacts-list-msg">I'll call you back at...</span>
-                          </div>
-                          <!-- /.contacts-list-info -->
-                        </a>
-                      </li>
-                      <!-- End Contact Item -->
-                      <li>
-                        <a href="#">
-                          <img class="contacts-list-img" src="dist/img/user5-128x128.jpg" alt="User Avatar">
-
-                          <div class="contacts-list-info">
-                            <span class="contacts-list-name">
-                              Nora S. Vans
-                              <small class="contacts-list-date float-right">2/10/2015</small>
-                            </span>
-                            <span class="contacts-list-msg">Where is your new...</span>
-                          </div>
-                          <!-- /.contacts-list-info -->
-                        </a>
-                      </li>
-                      <!-- End Contact Item -->
-                      <li>
-                        <a href="#">
-                          <img class="contacts-list-img" src="dist/img/user6-128x128.jpg" alt="User Avatar">
-
-                          <div class="contacts-list-info">
-                            <span class="contacts-list-name">
-                              John K.
-                              <small class="contacts-list-date float-right">1/27/2015</small>
-                            </span>
-                            <span class="contacts-list-msg">Can I take a look at...</span>
-                          </div>
-                          <!-- /.contacts-list-info -->
-                        </a>
-                      </li>
-                      <!-- End Contact Item -->
-                      <li>
-                        <a href="#">
-                          <img class="contacts-list-img" src="dist/img/user8-128x128.jpg" alt="User Avatar">
-
-                          <div class="contacts-list-info">
-                            <span class="contacts-list-name">
-                              Kenneth M.
-                              <small class="contacts-list-date float-right">1/4/2015</small>
-                            </span>
-                            <span class="contacts-list-msg">Never mind I found...</span>
-                          </div>
-                          <!-- /.contacts-list-info -->
-                        </a>
-                      </li>
-                      <!-- End Contact Item -->
-                    </ul>
-                    <!-- /.contacts-list -->
-                  </div>
-                  <!-- /.direct-chat-pane -->
-                </div>
-                <!-- /.card-body -->
-                <div class="card-footer">
-                  <form action="#" method="post">
-                    <div class="input-group">
-                      <input type="text" name="message" placeholder="Type Message ..." class="form-control">
-                      <span class="input-group-append">
-                        <button type="button" class="btn btn-primary">Send</button>
-                      </span>
-                    </div>
-                  </form>
-                </div>
-                <!-- /.card-footer-->
+                </div><!-- /.card-body -->
               </div>
-              <!--/.direct-chat -->
 
-              <!-- TO DO List -->
-              <div class="card">
-                <div class="card-header">
-                  <h3 class="card-title">
-                    <i class="ion ion-clipboard mr-1"></i>
-                    To Do List
-                  </h3>
+              <!-- /.card -->
 
-                  <div class="card-tools">
-                    <ul class="pagination pagination-sm">
-                      <li class="page-item"><a href="#" class="page-link">&laquo;</a></li>
-                      <li class="page-item"><a href="#" class="page-link">1</a></li>
-                      <li class="page-item"><a href="#" class="page-link">2</a></li>
-                      <li class="page-item"><a href="#" class="page-link">3</a></li>
-                      <li class="page-item"><a href="#" class="page-link">&raquo;</a></li>
-                    </ul>
-                  </div>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body">
-                  <ul class="todo-list" data-widget="todo-list">
-                    <li>
-                      <!-- drag handle -->
-                      <span class="handle">
-                        <i class="fas fa-ellipsis-v"></i>
-                        <i class="fas fa-ellipsis-v"></i>
-                      </span>
-                      <!-- checkbox -->
-                      <div class="icheck-primary d-inline ml-2">
-                        <input type="checkbox" value="" name="todo1" id="todoCheck1">
-                        <label for="todoCheck1"></label>
-                      </div>
-                      <!-- todo text -->
-                      <span class="text">Design a nice theme</span>
-                      <!-- Emphasis label -->
-                      <small class="badge badge-danger"><i class="far fa-clock"></i> 2 mins</small>
-                      <!-- General tools such as edit or delete-->
-                      <div class="tools">
-                        <i class="fas fa-edit"></i>
-                        <i class="fas fa-trash-o"></i>
-                      </div>
-                    </li>
-                    <li>
-                      <span class="handle">
-                        <i class="fas fa-ellipsis-v"></i>
-                        <i class="fas fa-ellipsis-v"></i>
-                      </span>
-                      <div class="icheck-primary d-inline ml-2">
-                        <input type="checkbox" value="" name="todo2" id="todoCheck2" checked>
-                        <label for="todoCheck2"></label>
-                      </div>
-                      <span class="text">Make the theme responsive</span>
-                      <small class="badge badge-info"><i class="far fa-clock"></i> 4 hours</small>
-                      <div class="tools">
-                        <i class="fas fa-edit"></i>
-                        <i class="fas fa-trash-o"></i>
-                      </div>
-                    </li>
-                    <li>
-                      <span class="handle">
-                        <i class="fas fa-ellipsis-v"></i>
-                        <i class="fas fa-ellipsis-v"></i>
-                      </span>
-                      <div class="icheck-primary d-inline ml-2">
-                        <input type="checkbox" value="" name="todo3" id="todoCheck3">
-                        <label for="todoCheck3"></label>
-                      </div>
-                      <span class="text">Let theme shine like a star</span>
-                      <small class="badge badge-warning"><i class="far fa-clock"></i> 1 day</small>
-                      <div class="tools">
-                        <i class="fas fa-edit"></i>
-                        <i class="fas fa-trash-o"></i>
-                      </div>
-                    </li>
-                    <li>
-                      <span class="handle">
-                        <i class="fas fa-ellipsis-v"></i>
-                        <i class="fas fa-ellipsis-v"></i>
-                      </span>
-                      <div class="icheck-primary d-inline ml-2">
-                        <input type="checkbox" value="" name="todo4" id="todoCheck4">
-                        <label for="todoCheck4"></label>
-                      </div>
-                      <span class="text">Let theme shine like a star</span>
-                      <small class="badge badge-success"><i class="far fa-clock"></i> 3 days</small>
-                      <div class="tools">
-                        <i class="fas fa-edit"></i>
-                        <i class="fas fa-trash-o"></i>
-                      </div>
-                    </li>
-                    <li>
-                      <span class="handle">
-                        <i class="fas fa-ellipsis-v"></i>
-                        <i class="fas fa-ellipsis-v"></i>
-                      </span>
-                      <div class="icheck-primary d-inline ml-2">
-                        <input type="checkbox" value="" name="todo5" id="todoCheck5">
-                        <label for="todoCheck5"></label>
-                      </div>
-                      <span class="text">Check your messages and notifications</span>
-                      <small class="badge badge-primary"><i class="far fa-clock"></i> 1 week</small>
-                      <div class="tools">
-                        <i class="fas fa-edit"></i>
-                        <i class="fas fa-trash-o"></i>
-                      </div>
-                    </li>
-                    <li>
-                      <span class="handle">
-                        <i class="fas fa-ellipsis-v"></i>
-                        <i class="fas fa-ellipsis-v"></i>
-                      </span>
-                      <div class="icheck-primary d-inline ml-2">
-                        <input type="checkbox" value="" name="todo6" id="todoCheck6">
-                        <label for="todoCheck6"></label>
-                      </div>
-                      <span class="text">Let theme shine like a star</span>
-                      <small class="badge badge-secondary"><i class="far fa-clock"></i> 1 month</small>
-                      <div class="tools">
-                        <i class="fas fa-edit"></i>
-                        <i class="fas fa-trash-o"></i>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-                <!-- /.card-body -->
-                <div class="card-footer clearfix">
-                  <button type="button" class="btn btn-primary float-right"><i class="fas fa-plus"></i> Add item</button>
-                </div>
-              </div>
+
               <!-- /.card -->
             </section>
             <!-- /.Left col -->
             <!-- right col (We are only adding the ID to make the widgets sortable)-->
             <section class="col-lg-5 connectedSortable">
 
-              <!-- Map card -->
+              <!-- News card -->
               <div class="card bg-gradient-primary">
                 <div class="card-header border-0">
                   <h3 class="card-title">
-                    <i class="fas fa-map-marker-alt mr-1"></i>
-                    Visitors
+                    <i class="fas fa-newspaper mr-1"></i>
+                    ข่าวประชาสัมพันธ์ล่าสุด
                   </h3>
                   <!-- card tools -->
                   <div class="card-tools">
-                    <button type="button" class="btn btn-primary btn-sm daterange" title="Date range">
-                      <i class="far fa-calendar-alt"></i>
-                    </button>
                     <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
                       <i class="fas fa-minus"></i>
                     </button>
@@ -567,27 +319,51 @@ if ($username === 'admin') {
                   <!-- /.card-tools -->
                 </div>
 
-                <!-- /.card-body-->
-                <div class="card-footer bg-transparent">
-                  <div class="row">
-                    <div class="col-4 text-center">
-                      <div id="sparkline-1"></div>
-                      <div class="text-white">Visitors</div>
-                    </div>
-                    <!-- ./col -->
-                    <div class="col-4 text-center">
-                      <div id="sparkline-2"></div>
-                      <div class="text-white">Online</div>
-                    </div>
-                    <!-- ./col -->
-                    <div class="col-4 text-center">
-                      <div id="sparkline-3"></div>
-                      <div class="text-white">Sales</div>
-                    </div>
-                    <!-- ./col -->
-                  </div>
-                  <!-- /.row -->
+                <!-- card-body -->
+                <div class="card-body p-0">
+                  <ul class="list-group list-group-flush">
+                    <?php
+                    // ตรวจสอบว่ามีการเชื่อมต่อฐานข้อมูลและมีการตั้งค่า session แล้ว
+                    $faculty_id = isset($_SESSION['faculty_id']) ? $_SESSION['faculty_id'] : '0';
+                    $position = isset($_SESSION['position']) ? $_SESSION['position'] : '';
+
+                    // ดึงข้อมูลข่าวล่าสุด 5 รายการ
+                    if ($position == "ผู้ดูแลระบบ" || $faculty_id == "1") {
+                      // กรณีเป็นแอดมินหรือมี faculty_id เป็น 1 ให้ดูข่าวทั้งหมดได้
+                      $sql = "SELECT id, title, date1, mou_year, date_time FROM news ORDER BY date_time DESC LIMIT 5";
+                    } else {
+                      // กรณีเป็นผู้ใช้ทั่วไป ให้ดูได้เฉพาะข่าวของคณะตัวเองและข่าวทั่วไป (faculty_id = 0)
+                      $sql = "SELECT id, title, date1, mou_year, date_time FROM news 
+            WHERE faculty_id = '$faculty_id' OR faculty_id = '0' 
+            ORDER BY date_time DESC LIMIT 5";
+                    }
+
+                    $result = mysqli_query($conn, $sql);
+
+                    if ($result && mysqli_num_rows($result) > 0) {
+                      // แสดงข้อมูลแต่ละแถว
+                      while ($row = mysqli_fetch_assoc($result)) {
+                        // จัดรูปแบบวันที่เพื่อแสดงผล
+                        $date_display = $row["date1"] . ' ' . $row["mou_year"];
+
+                        echo '<li class="list-group-item bg-gradient-primary border-light">';
+                        echo '  <div class="d-flex justify-content-between align-items-center">';
+                        echo '    <a href="news_detail.php?id=' . $row["id"] . '" class="text-white">' . htmlspecialchars($row["title"]) . '</a>';
+                        echo '    <span class="badge bg-primary"><i class="far fa-calendar-alt"></i> ' . htmlspecialchars($date_display) . '</span>';
+                        echo '  </div>';
+                        echo '</li>';
+                      }
+                    } else {
+                      echo '<li class="list-group-item bg-gradient-primary text-white text-center">ไม่มีข่าวประชาสัมพันธ์</li>';
+                    }
+
+                    // ไม่ควรปิดการเชื่อมต่อฐานข้อมูลที่นี่ถ้ายังต้องใช้ในส่วนอื่นของหน้าเว็บ
+                    // mysqli_close($conn);
+                    ?>
+                  </ul>
                 </div>
+
+                <!-- /.card-body -->
               </div>
               <!-- /.card -->
 
@@ -596,43 +372,7 @@ if ($username === 'admin') {
               <!-- /.card -->
 
               <!-- Calendar -->
-              <div class="card bg-gradient-success">
-                <div class="card-header border-0">
 
-                  <h3 class="card-title">
-                    <i class="far fa-calendar-alt"></i>
-                    Calendar
-                  </h3>
-                  <!-- tools card -->
-                  <div class="card-tools">
-                    <!-- button with a dropdown -->
-                    <div class="btn-group">
-                      <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" data-offset="-52">
-                        <i class="fas fa-bars"></i>
-                      </button>
-                      <div class="dropdown-menu" role="menu">
-                        <a href="#" class="dropdown-item">Add new event</a>
-                        <a href="#" class="dropdown-item">Clear events</a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item">View calendar</a>
-                      </div>
-                    </div>
-                    <button type="button" class="btn btn-success btn-sm" data-card-widget="collapse">
-                      <i class="fas fa-minus"></i>
-                    </button>
-                    <button type="button" class="btn btn-success btn-sm" data-card-widget="remove">
-                      <i class="fas fa-times"></i>
-                    </button>
-                  </div>
-                  <!-- /. tools -->
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body pt-0">
-                  <!--The calendar -->
-                  <div id="calendar" style="width: 100%"></div>
-                </div>
-                <!-- /.card-body -->
-              </div>
               <!-- /.card -->
             </section>
             <!-- right col -->
@@ -693,6 +433,93 @@ if ($username === 'admin') {
   <!-- <script src="dist/js/demo.js"></script> -->
   <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
   <script src="dist/js/pages/dashboard.js"></script>
+
+  <!-- เพิ่ม JavaScript สำหรับสร้างกราฟข้อมูลนักศึกษา -->
+  <script>
+    $(function() {
+      // ข้อมูลกราฟจาก PHP
+      var majors = <?php echo $majors_json; ?>;
+      var practiceData = <?php echo $practice_json; ?>;
+      var cwieData = <?php echo $cwie_json; ?>;
+      var graduateData = <?php echo $graduate_json; ?>;
+      var employedData = <?php echo $employed_json; ?>;
+      var employedInOrgData = <?php echo $employed_in_org_json; ?>;
+
+      // สร้างกราฟข้อมูลนักศึกษาและบัณฑิต CWIE
+      var ctx = document.getElementById('student-chart-canvas').getContext('2d');
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: majors,
+          datasets: [{
+              label: 'นักศึกษาฝึกประสบการณ์วิชาชีพ',
+              backgroundColor: '#4bc0c0',
+              data: practiceData
+            },
+            {
+              label: 'นักศึกษาสหกิจศึกษา',
+              backgroundColor: '#36a2eb',
+              data: cwieData
+            },
+            {
+              label: 'บัณฑิต CWIE',
+              backgroundColor: '#ff6384',
+              data: graduateData
+            },
+            {
+              label: 'บัณฑิต CWIE ที่ได้งานทำ',
+              backgroundColor: '#ffcd56',
+              data: employedData
+            },
+            {
+              label: 'บัณฑิต CWIE ที่ได้งานทำในสถานประกอบการ',
+              backgroundColor: '#9966ff',
+              data: employedInOrgData
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            xAxes: [{
+              stacked: false,
+              ticks: {
+                autoSkip: false,
+                maxRotation: 45,
+                minRotation: 45
+              }
+            }],
+            yAxes: [{
+              stacked: false,
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          },
+          tooltips: {
+            mode: 'index',
+            intersect: false,
+          },
+          hover: {
+            mode: 'nearest',
+            intersect: true
+          },
+          legend: {
+            display: true,
+            position: 'top'
+          }
+        }
+      });
+
+      // จัดการกับการเปลี่ยนปีการศึกษา
+      $('select[name="fid"]').on('change', function() {
+        var selectedYear = $(this).val();
+        $('.btn-success').attr('href', 'index.php?year=' + selectedYear);
+      });
+    });
+  </script>
 </body>
 
 </html>

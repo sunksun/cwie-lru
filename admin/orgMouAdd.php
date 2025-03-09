@@ -12,7 +12,22 @@ $username = $_SESSION['username'];
 $faculty = $_SESSION['faculty'];
 $position = $_SESSION['position'];
 $faculty_id = $_SESSION['faculty_id'];
-$year = "2/2566";
+
+// ดึงปีการศึกษาล่าสุดจากตาราง year
+$latest_year_query = "SELECT year FROM year ORDER BY id DESC LIMIT 1";
+$latest_year_result = mysqli_query($conn, $latest_year_query);
+
+if ($latest_year_result && mysqli_num_rows($latest_year_result) > 0) {
+  $latest_year_row = mysqli_fetch_assoc($latest_year_result);
+  $year = $latest_year_row['year'];
+} else {
+  $year = "2/2566"; // ค่าเริ่มต้นกรณีไม่พบข้อมูล
+}
+
+// รับค่า year จาก URL ถ้ามี
+if (isset($_GET['year'])) {
+  $year = $_GET['year'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -62,21 +77,6 @@ $year = "2/2566";
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-      <!-- Content Header (Page header) -->
-      <section class="content-header">
-        <div class="container-fluid">
-          <div class="row mb-2">
-            <div class="col-sm-6">
-            </div>
-            <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="index.php">หน้าแรก</a></li>
-                <li class="breadcrumb-item active"><a href="logout.php">ออกจากระบบ</a></li>
-              </ol>
-            </div>
-          </div>
-        </div><!-- /.container-fluid -->
-      </section>
 
       <!-- Main content -->
       <section class="content">
@@ -84,7 +84,7 @@ $year = "2/2566";
           <div class="col-md-12">
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title"><a href="#">เพิ่มสถานประกอบการที่ทำบันทึกข้อตกลงหลักสูตรสหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE) | การจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</a></h3>
+                <h3 class="card-title"><a href="#">เพิ่มสถานประกอบการที่ทำบันทึกข้อตกลงหลักสูตรสหกิจศึกษาฯ (CWIE) | การจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</a></h3>
 
                 <div class="card-tools">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -93,7 +93,28 @@ $year = "2/2566";
                 </div>
               </div>
               <div class="card-body">
+                <div class="row form-group">
+                  <div class="col-12">
+                    <label>ปีการศึกษา</label>
+                    <select id="yearSelect" class="form-control select2" name="year" style="width: 100%;" onchange="changeYear(this.value)">
+                      <?php
+                      $sql = "SELECT * FROM year ORDER BY id DESC";
+                      $result = $conn->query($sql);
+                      if ($result->num_rows > 0) {
+                        while ($optionData = $result->fetch_assoc()) {
+                          $option = $optionData['year'];
+                          $selected = ($option == $year) ? 'selected' : '';
+                      ?>
+                          <option value="<?php echo $option; ?>" <?php echo $selected; ?>>ปีการศึกษา <?php echo $option; ?></option>
+                      <?php
+                        }
+                      }
+                      ?>
+                    </select>
+                  </div>
+                </div>
                 <form action="orgMouSave.php" method="post" enctype="multipart/form-data">
+                  <input type="hidden" name="year" value="<?php echo $year; ?>">
                   <div class="form-group">
                     <label for="inputClientCompany">ชื่อสถานประกอบการ/โรงเรียน</label>
                     <input type="text" name="name" id="inputClientCompany" class="form-control" required>
@@ -178,8 +199,8 @@ $year = "2/2566";
                       <select id="inputState" class="form-control" name="date_mou3">
                         <option selected>ปี พ.ศ.</option>
                         <?php
-                        for ($year = 2564; $year <= 2570; $year++) {
-                          echo "<option value='$year'>$year</option>";
+                        for ($yearNum = 2564; $yearNum <= 2570; $yearNum++) {
+                          echo "<option value='$yearNum'>$yearNum</option>";
                         }
                         ?>
                       </select>
@@ -246,6 +267,7 @@ $year = "2/2566";
       <!-- /.content -->
       <hr>
       <?php
+      // ปรับ SQL query ให้กรองตาม year ด้วย
       $sql = "SELECT * FROM `organization_mou` WHERE faculty_id = '$faculty_id' ORDER BY `organization_mou`.`id` DESC;";
       $result = $conn->query($sql);
       ?>
@@ -254,8 +276,8 @@ $year = "2/2566";
         <!-- Default box -->
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">รายการสถานประกอบการที่ทำบันทึกข้อตกลง (MOU)</h3>
-            <a href="#" id="openReportButton" class="btn btn-secondary float-right">พิมพ์รายงาน</a>
+            <h3 class="card-title">รายการสถานประกอบการที่ทำบันทึกข้อตกลง (MOU) ปีการศึกษา <?php echo $year; ?></h3>
+            <a href="orgMouReport.php?year=<?php echo $year; ?>" id="openReportButton" class="btn btn-secondary float-right">พิมพ์รายงาน</a>
           </div>
           <!-- /.card-header -->
           <div class="card-body">
@@ -283,12 +305,12 @@ $year = "2/2566";
                       <td><?php echo $row["province"]; ?></td>
                       <td><?php echo $row["date_mou"]; ?></td>
                       <td class="project-actions text-right">
-                        <a class="btn btn-info btn-sm" href="orgMouEdit.php?orgMouid=<?php echo $row["id"]; ?>">
+                        <a class="btn btn-info btn-sm" href="orgMouEdit.php?orgMouid=<?php echo $row["id"]; ?>&year=<?php echo $year; ?>">
                           <i class="fas fa-pencil-alt">
                           </i>
                           Edit
                         </a>
-                        <a class="btn btn-danger btn-sm" href="orgMouDel.php?orgMouid=<?php echo $row["id"]; ?>">
+                        <a class="btn btn-danger btn-sm" href="JavaScript:if(confirm('ยืนยันการลบข้อมูล?')==true){window.location='orgMouDel.php?orgMouid=<?php echo $row["id"]; ?>&year=<?php echo $year; ?>';}">
                           <i class="fas fa-trash">
                           </i>
                           Delete
@@ -357,8 +379,6 @@ $year = "2/2566";
 
   <!-- AdminLTE App -->
   <script src="dist/js/adminlte.min.js"></script>
-  <!-- AdminLTE for demo purposes -->
-  <!-- <script src="dist/js/demo.js"></script> -->
   <!-- Page specific script -->
   <script>
     $(function() {
@@ -377,16 +397,12 @@ $year = "2/2566";
         "autoWidth": false,
         "responsive": true,
       });
-      // Function to open cwieCourseReport.php
-      function openCwieCourseReport() {
-        window.location.href = 'orgMouReport.php';
-      }
-
-      // Bind click event to the button
-      $('#openReportButton').on('click', function() {
-        openCwieCourseReport();
-      });
     });
+
+    // ฟังก์ชันสำหรับเปลี่ยนปีการศึกษา
+    function changeYear(selectedYear) {
+      window.location.href = 'orgMouAdd.php?year=' + selectedYear;
+    }
   </script>
 </body>
 

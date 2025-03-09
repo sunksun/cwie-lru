@@ -43,21 +43,7 @@ $faculty_id = $_SESSION['faculty_id'];
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-      <!-- Content Header (Page header) -->
-      <section class="content-header">
-        <div class="container-fluid">
-          <div class="row mb-2">
-            <div class="col-sm-6">
-            </div>
-            <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="index.php">หน้าแรก</a></li>
-                <li class="breadcrumb-item active"><a href="logout.php">ออกจากระบบ</a></li>
-              </ol>
-            </div>
-          </div>
-        </div><!-- /.container-fluid -->
-      </section>
+
 
       <!-- Main content -->
       <section class="content">
@@ -75,6 +61,7 @@ $faculty_id = $_SESSION['faculty_id'];
               </div>
               <div class="card-body">
                 <form action="newsSave.php" method="post" enctype="multipart/form-data">
+                  <input type="hidden" name="faculty_id" value="<?php echo $faculty_id; ?>">
                   <div class="row form-group">
                     <div class="col-6">
                       <div class="form-group">
@@ -151,7 +138,7 @@ $faculty_id = $_SESSION['faculty_id'];
       <!-- /.content -->
       <hr>
       <?php
-      $sql = "SELECT * FROM `news` ORDER BY `news`.`id` DESC";
+      $sql = "SELECT * FROM `news` WHERE faculty_id = '$faculty_id' OR faculty_id = '0' ORDER BY `news`.`id` DESC";
       $result = $conn->query($sql);
       ?>
       <section class="content">

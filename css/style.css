@@ -2099,7 +2099,7 @@ Main Header
   position: absolute;
   left: -3px;
   top: 0;
-  content: "|";
+  content: "";
 }
 .header-top .useful-links li a {
   color: #ffffff;

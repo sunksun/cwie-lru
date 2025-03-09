@@ -1,0 +1,17 @@
+{
+    "name": "sunksun.lap/cwie-lru",
+    "require": {
+        "phpmailer/phpmailer": "^6.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "SunksunLap\\CwieLru\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "sunksun",
+            "email": "sunksunlapunt@gmail.com"
+        }
+    ]
+}

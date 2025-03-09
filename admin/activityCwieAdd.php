@@ -6,13 +6,29 @@ if ($_SESSION['fullname'] == '') {
   echo '<script language="javascript">';
   echo 'alert("กรุณา Login เข้าสู่ระบบ"); location.href="login.php"';
   echo '</script>';
+  exit;
 }
 $fullname = $_SESSION['fullname'];
 $username = $_SESSION['username'];
 $faculty = $_SESSION['faculty'];
 $position = $_SESSION['position'];
 $faculty_id = $_SESSION['faculty_id'];
-$year = "2/2566";
+
+// รับค่าปีการศึกษาจาก URL หรือใช้ค่าเริ่มต้น
+if (isset($_GET['year']) && !empty($_GET['year'])) {
+  $year = $_GET['year'];
+} else {
+  // ดึงปีการศึกษาล่าสุดจากตาราง year
+  $latest_year_query = "SELECT year FROM year ORDER BY id DESC LIMIT 1";
+  $latest_year_result = mysqli_query($conn, $latest_year_query);
+
+  if ($latest_year_result && mysqli_num_rows($latest_year_result) > 0) {
+    $latest_year_row = mysqli_fetch_assoc($latest_year_result);
+    $year = $latest_year_row['year'];
+  } else {
+    $year = "2/2566"; // ค่าเริ่มต้นกรณีไม่พบข้อมูล
+  }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -62,21 +78,7 @@ $year = "2/2566";
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-      <!-- Content Header (Page header) -->
-      <section class="content-header">
-        <div class="container-fluid">
-          <div class="row mb-2">
-            <div class="col-sm-6">
-            </div>
-            <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="index.php">หน้าแรก</a></li>
-                <li class="breadcrumb-item active"><a href="logout.php">ออกจากระบบ</a></li>
-              </ol>
-            </div>
-          </div>
-        </div><!-- /.container-fluid -->
-      </section>
+
 
       <!-- Main content -->
       <section class="content">
@@ -84,7 +86,7 @@ $year = "2/2566";
           <div class="col-md-12">
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title"><a href="#">เพิ่มกิจกรรมการจัดการเรียนรู้เชิงบรูณาการกับการทำงาน (CWIE) ที่เกี่ยวข้อง </a></h3>
+                <h3 class="card-title"><a href="#">เพิ่มกิจกรรมการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE) ที่เกี่ยวข้อง ปีการศึกษา <?php echo $year; ?></a></h3>
 
                 <div class="card-tools">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -93,12 +95,33 @@ $year = "2/2566";
                 </div>
               </div>
               <div class="card-body">
+                <div class="row form-group">
+                  <div class="col-12">
+                    <label>ปีการศึกษา</label>
+                    <select id="yearSelect" class="form-control select2" style="width: 100%;" onchange="changeYear(this.value)">
+                      <?php
+                      $sql = "SELECT * FROM year ORDER BY id DESC";
+                      $result = $conn->query($sql);
+                      if ($result->num_rows > 0) {
+                        while ($optionData = $result->fetch_assoc()) {
+                          $option = $optionData['year'];
+                          $selected = ($option == $year) ? 'selected' : '';
+                      ?>
+                          <option value="<?php echo $option; ?>" <?php echo $selected; ?>>ปีการศึกษา <?php echo $option; ?></option>
+                      <?php
+                        }
+                      }
+                      ?>
+                    </select>
+                  </div>
+                </div>
                 <form action="activityCwieSave.php" method="post" enctype="multipart/form-data">
+                  <input type="hidden" name="year" value="<?php echo $year; ?>">
                   <div class="row form-group">
                     <div class="col-4">
                       <label for="inputClientCompany">ประเภทกิจกรรม</label>
-                      <select class="form-control select2" name="activity_type" style="width: 100%;">
-                        <option selected="selected">--- เลือกประเภทกิจกรรม ---</option>
+                      <select class="form-control select2" name="activity_type" style="width: 100%;" required>
+                        <option selected="selected" value="">--- เลือกประเภทกิจกรรม ---</option>
                         <?php
                         $sql = "SELECT * FROM activity_type";
                         $result = $conn->query($sql);
@@ -117,50 +140,56 @@ $year = "2/2566";
                     </div>
                     <div class="col-8">
                       <label for="inputClientCompany">ชื่อกิจกรรม</label>
-                      <input type="text" name="activity_name" class="form-control">
+                      <input type="text" name="activity_name" class="form-control" required>
                     </div>
                   </div>
                   <div class="row form-group">
                     <?php
-                    // ดึงข้อมูลจากตาราง major โดยมีเงื่อนไข faculty = '02'
+                    // ดึงข้อมูลจากตาราง major โดยมีเงื่อนไข faculty = faculty_id
                     $sql = "SELECT * FROM major WHERE faculty = '$faculty_id'";
                     $result = $conn->query($sql);
                     ?>
                     <div class="col-6">
                       <label for="inputClientCompany">สาขาวิชา</label>
-                      <?php
-                      if ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                          $option = $row['major'];
-                          $id = $row['id'];
-                      ?>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="major[]" value="<?php echo $id; ?>" id="course<?php echo $id; ?>">
-                            <label class="form-check-label" for="course<?php echo $id; ?>">
-                              <?php echo $option; ?>
-                            </label>
-                          </div>
-                      <?php
+                      <div style="max-height: 250px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+                        <?php
+                        if ($result->num_rows > 0) {
+                          while ($row = $result->fetch_assoc()) {
+                            $option = $row['major'];
+                            $id = $row['id'];
+                        ?>
+                            <div class="form-check">
+                              <input class="form-check-input course-checkbox" type="checkbox" name="major[]" value="<?php echo $id; ?>" id="course<?php echo $id; ?>">
+                              <label class="form-check-label" for="course<?php echo $id; ?>">
+                                <?php echo $option; ?>
+                              </label>
+                            </div>
+                        <?php
+                          }
                         }
-                      }
-                      ?>
-                      <!-- Checkbox สำหรับ "ทุกหลักสูตร" -->
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="major[]" value="all" id="courseAll">
-                        <label class="form-check-label" for="courseAll">
-                          ทุกหลักสูตร
-                        </label>
+                        ?>
+                        <!-- Checkbox สำหรับ "ทุกหลักสูตร" -->
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" name="major[]" value="all" id="courseAll">
+                          <label class="form-check-label" for="courseAll">
+                            <strong>ทุกหลักสูตร</strong>
+                          </label>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="row form-group">
                     <div class="col-6">
-                      <label for="inputClientCompany">วันที่ดำเนินการ</label>
-                      <input type="text" name="activity_date" class="form-control">
-                    </div>
-                    <div class="col-6">
-                      <label for="inputClientCompany">จำนวนผู้เข้าร่วม</label>
-                      <input type="number" name="amount" class="form-control">
+                      <div class="row">
+                        <div class="col-12">
+                          <label for="inputClientCompany">วันที่ดำเนินการ</label>
+                          <input type="text" name="activity_date" class="form-control" placeholder="เช่น 15 มิถุนายน 2567" required>
+                        </div>
+                      </div>
+                      <div class="row mt-3">
+                        <div class="col-12">
+                          <label for="inputClientCompany">จำนวนผู้เข้าร่วม</label>
+                          <input type="number" name="amount" class="form-control" min="0" required>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div class="form-group">
@@ -169,26 +198,36 @@ $year = "2/2566";
                   </div>
                   <div class="form-group">
                     <label for="inputName">ภาพกิจกรรม</label>
-                    <input class="form-control" type="file" name="filename" id="fileToUpload">
+                    <input class="form-control" type="file" name="filename" id="fileToUpload" accept="image/*">
+                    <small class="text-muted">รองรับไฟล์ภาพ JPG, PNG, GIF ขนาดไม่เกิน 2MB</small>
                   </div>
+                  <div class="row">
+                    <div class="col-12">
+                      <button type="submit" name="save" class="btn btn-success float-right">บันทึกข้อมูล</button>
+                    </div>
+                  </div>
+                </form>
               </div>
               <!-- /.card-body -->
             </div>
             <!-- /.card -->
           </div>
-
         </div>
-        <div class="row">
-          <div class="col-12">
-            <input type="submit" name="save" value="บันทึกข้อมูล" class="btn btn-success float-left">
-          </div>
-        </div>
-        </form>
       </section>
       <!-- /.content -->
       <hr>
       <?php
-      $sql = "SELECT * FROM `activity_cwie` WHERE faculty_id = '$faculty_id' ORDER BY `activity_cwie`.`id` DESC";
+      // ตรวจสอบว่ามีคอลัมน์ year ในตารางหรือไม่
+      $check_column = mysqli_query($conn, "SHOW COLUMNS FROM activity_cwie LIKE 'year'");
+      $column_exists = mysqli_num_rows($check_column) > 0;
+
+      if ($column_exists) {
+        // ถ้ามีคอลัมน์ year ให้กรองข้อมูลตามปีการศึกษาด้วย
+        $sql = "SELECT * FROM `activity_cwie` WHERE faculty_id = '$faculty_id' AND year = '$year' ORDER BY `activity_cwie`.`id` DESC";
+      } else {
+        // ถ้าไม่มีคอลัมน์ year ให้ดึงข้อมูลตาม faculty_id อย่างเดียว
+        $sql = "SELECT * FROM `activity_cwie` WHERE faculty_id = '$faculty_id' ORDER BY `activity_cwie`.`id` DESC";
+      }
       $result = $conn->query($sql);
       ?>
       <section class="content">
@@ -196,46 +235,54 @@ $year = "2/2566";
         <!-- Default box -->
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">จำนวนนักศึกษาและบัณฑิต CWIE</h3>
-            <a href="#" id="openReportButton" class="btn btn-secondary float-right">พิมพ์รายงาน</a>
+            <h3 class="card-title">รายการกิจกรรม CWIE ปีการศึกษา <?php echo $year; ?></h3>
+            <a href="activityCwieReport.php?year=<?php echo $year; ?>" id="openReportButton" class="btn btn-secondary float-right">พิมพ์รายงาน</a>
           </div>
           <!-- /.card-header -->
           <div class="card-body">
             <table id="example1" class="table table-bordered table-striped">
               <thead>
                 <tr>
-                  <th>ลำดับ</th>
-                  <th>ชื่อกิจกรรม</th>
-                  <th>สาขาวิชา</th>
-                  <th>วันที่ดำเนินการ</th>
-                  <th>จำนวนผู้เข้าร่วม</th>
-                  <th></th>
+                  <th width="5%">ลำดับ</th>
+                  <th width="30%">ชื่อกิจกรรม</th>
+                  <th width="25%">สาขาวิชา</th>
+                  <th width="15%">วันที่ดำเนินการ</th>
+                  <th width="10%">จำนวนผู้เข้าร่วม</th>
+                  <th width="15%">จัดการ</th>
                 </tr>
               </thead>
               <tbody>
                 <?php
-                if ($result->num_rows > 0) {
+                if ($result && $result->num_rows > 0) {
                   $i = 1;
                   while ($row = $result->fetch_assoc()) {
                 ?>
                     <tr>
                       <td><?php echo $i; ?></td>
-                      <td><?php echo $row["activity_name"]; ?></td>
-                      <td><?php echo $row["course"]; ?></td>
-                      <td><?php echo $row["activity_date"]; ?></td>
-                      <td><?php echo $row["amount"]; ?></td>
+                      <td><?php echo htmlspecialchars($row["activity_name"]); ?></td>
+                      <td><?php echo htmlspecialchars($row["course"]); ?></td>
+                      <td><?php echo htmlspecialchars($row["activity_date"]); ?></td>
+                      <td><?php echo htmlspecialchars($row["amount"]); ?></td>
                       <td class="project-actions text-right">
-                        <a class="btn btn-danger btn-sm" href="JavaScript:if(confirm('ยืนยันการลบข้อมูล?')==true){window.location='activityCwieDel.php?actid=<?php echo $row["id"]; ?>';}">
-                          <i class="fas fa-trash">
-                          </i>
+                        <a class="btn btn-info btn-sm" href="activityCwieView.php?actid=<?php echo $row["id"]; ?>&year=<?php echo $year; ?>">
+                          <i class="fas fa-eye"></i>
+                          View
+                        </a>
+                        <a class="btn btn-danger btn-sm" href="JavaScript:if(confirm('ยืนยันการลบข้อมูล?')==true){window.location='activityCwieDel.php?actid=<?php echo $row["id"]; ?>&year=<?php echo $year; ?>';}">
+                          <i class="fas fa-trash"></i>
                           Delete
                         </a>
                       </td>
                     </tr>
-                <?php
-                    include 'activityCwieView.php';
+                  <?php
                     $i++;
                   }
+                } else {
+                  ?>
+                  <tr>
+                    <td colspan="6" class="text-center">ไม่พบข้อมูลกิจกรรม</td>
+                  </tr>
+                <?php
                 }
                 ?>
               </tbody>
@@ -246,7 +293,7 @@ $year = "2/2566";
                   <th>สาขาวิชา</th>
                   <th>วันที่ดำเนินการ</th>
                   <th>จำนวนผู้เข้าร่วม</th>
-                  <th></th>
+                  <th>จัดการ</th>
                 </tr>
               </tfoot>
             </table>
@@ -294,8 +341,6 @@ $year = "2/2566";
 
   <!-- AdminLTE App -->
   <script src="dist/js/adminlte.min.js"></script>
-  <!-- AdminLTE for demo purposes -->
-  <!-- <script src="dist/js/demo.js"></script> -->
   <!-- Page specific script -->
   <script>
     $(function() {
@@ -314,14 +359,29 @@ $year = "2/2566";
         "autoWidth": false,
         "responsive": true,
       });
-      // Function to open cwieCourseReport.php
-      function openCwieCourseReport() {
-        window.location.href = 'activityCwieReport.php';
-      }
+    });
 
-      // Bind click event to the button
-      $('#openReportButton').on('click', function() {
-        openCwieCourseReport();
+    // ฟังก์ชันสำหรับเปลี่ยนปีการศึกษา
+    function changeYear(selectedYear) {
+      window.location.href = 'activityCwieAdd.php?year=' + selectedYear;
+    }
+
+    // ฟังก์ชันสำหรับจัดการ checkbox ทุกหลักสูตร
+    $(document).ready(function() {
+      // เมื่อคลิกที่ checkbox "ทุกหลักสูตร"
+      $('#courseAll').click(function() {
+        if ($(this).is(':checked')) {
+          // ถ้าเลือก "ทุกหลักสูตร" ให้ยกเลิกการเลือกสาขาวิชาอื่นๆ
+          $('.course-checkbox').prop('checked', false);
+        }
+      });
+
+      // เมื่อคลิกที่ checkbox สาขาวิชาอื่นๆ
+      $('.course-checkbox').click(function() {
+        if ($(this).is(':checked')) {
+          // ถ้าเลือกสาขาวิชาอื่น ให้ยกเลิกการเลือก "ทุกหลักสูตร"
+          $('#courseAll').prop('checked', false);
+        }
       });
     });
   </script>
