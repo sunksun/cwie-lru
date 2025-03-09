@@ -20,7 +20,7 @@ $year = "2/2566";
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Admin | แก้ไขรูปแบบการจัดการหลักสูตร</title>
+  <title>Admin | แก้ไขข้อมูลการจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -70,7 +70,7 @@ $year = "2/2566";
           <div class="col-md-12">
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title"><a href="#">แก้ไขรูปแบบการจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา</a></h3>
+                <h3 class="card-title"><a href="#">แก้ไขข้อมูลการจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</a></h3>
 
                 <div class="card-tools">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -90,14 +90,17 @@ $year = "2/2566";
                     <label for="inputClientCompany">เลือกภาคการศึกษา</label>
                     <select class="form-control select2" name="year" style="width: 100%;" required>
                       <?php
-                      $sql = "SELECT * FROM year ";
+                      // ดึงข้อมูลปีการศึกษาและเรียงจากล่าสุด
+                      $sql = "SELECT * FROM year ORDER BY id DESC";
                       $result = $conn->query($sql);
+
                       if ($result->num_rows > 0) {
                         while ($optionData = $result->fetch_assoc()) {
                           $option = $optionData['year'];
                       ?>
                           <option value="<?php echo $option; ?>" <?php if ($option == $row["year"]) echo 'selected="selected"'; ?>> ปีการศึกษา
-                            <?php echo $option; ?></option>
+                            <?php echo $option; ?>
+                          </option>
                       <?php
                         }
                       }
@@ -125,34 +128,16 @@ $year = "2/2566";
                     </select>
                   </div>
                   <div class="form-group">
-                    <label for="inputClientCompany">รูปแบบการจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา</label>
+                    <label for="inputClientCompany">หลักสูตรที่มีการจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</label>
                     <!-- radio -->
                     <div class="form-group">
                       <div class="form-check">
-                        <input class="form-check-input" type="radio" name="type" value="Separate" <?php
-                                                                                                  if ($row["separate"] == '/') {
-                                                                                                    echo "checked";
-                                                                                                  }
-                                                                                                  ?>>
-                        <label class="form-check-label">แบบแยก (Separate)
-                        </label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="type" value="Parallel" <?php
-                                                                                                  if ($row["parallel"] == '/') {
-                                                                                                    echo "checked";
-                                                                                                  }
-                                                                                                  ?>>
-                        <label class="form-check-label">แบบคู่ขนาน (Parallel)
-                        </label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="type" value="Mix" <?php
-                                                                                              if ($row["mix"] == '/') {
+                        <input class="form-check-input" type="radio" name="type" value="SIL" <?php
+                                                                                              if ($row["sil"] == '/') {
                                                                                                 echo "checked";
                                                                                               }
                                                                                               ?>>
-                        <label class="form-check-label">แบบผสม (Mix)
+                        <label class="form-check-label">แบบการจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)
                         </label>
                       </div>
                     </div>
@@ -176,11 +161,6 @@ $year = "2/2566";
         </form>
       </section>
       <!-- /.content -->
-      <hr>
-      <?php
-      $sql = "SELECT * FROM major";
-      $result = $conn->query($sql);
-      ?>
     </div>
     <!-- /.content-wrapper -->
 
@@ -219,8 +199,6 @@ $year = "2/2566";
 
   <!-- AdminLTE App -->
   <script src="dist/js/adminlte.min.js"></script>
-  <!-- AdminLTE for demo purposes -->
-  <!-- <script src="dist/js/demo.js"></script> -->
   <!-- Page specific script -->
   <script>
     $(function() {

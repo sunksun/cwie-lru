@@ -442,7 +442,7 @@
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-building"></i>
               <p>
-                สถานประกอบการ
+                สถานศึกษากับคณะ SIL
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
@@ -450,7 +450,7 @@
               <li class="nav-item">
                 <a href="orgMouAdd.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>สถานประกอบการที่ MOU</p>
+                  <p>สถานศึกษาที่ MOU</p>
                 </a>
               </li>
               <li class="nav-item">
@@ -465,7 +465,7 @@
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-landmark"></i>
               <p>
-                อาจารย์นิเทศสหกิจฯ
+                อาจารย์นิเทศ
                 <i class="fas fa-angle-left right"></i>
               </p>
             </a>

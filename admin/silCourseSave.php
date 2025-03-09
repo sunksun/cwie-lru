@@ -19,44 +19,52 @@ $year = $_POST["year"];
 $cwieCoid = $_GET["cwieCoid"];
 
 if (isset($_POST['save'])) {
-	// กำหนดค่าเริ่มต้นให้กับทุกฟิลด์เป็น 0 หรือค่าที่เหมาะสม
+	// กำหนดค่าเริ่มต้นให้กับทุกฟิลด์เป็นค่าว่าง
 	$separate = "";
 	$parallel = "";
 	$mix = "";
+	$sil = "";
 
-	// กำหนดฟิลด์ที่เลือกเป็น 1 หรือค่าที่เหมาะสม
+	// กำหนดฟิลด์ที่เลือกตามประเภท
 	if ($type == "Separate") {
 		$separate = "/";
 	} elseif ($type == "Parallel") {
 		$parallel = "/";
 	} elseif ($type == "Mix") {
 		$mix = "/";
+	} elseif ($type == "SIL") {
+		$sil = "/";
 	}
 
-	$sql = "INSERT INTO cwie_course (faculty_id, major, separate, parallel, mix, note, date_regis, year) VALUES 
-	('$faculty_id', '$course', '$separate', '$parallel', '$mix', '$note', current_timestamp(), '$year');";
+	$sql = "INSERT INTO cwie_course (faculty_id, major, separate, parallel, mix, sil, note, date_regis, year) VALUES 
+	('$faculty_id', '$course', '$separate', '$parallel', '$mix', '$sil', '$note', current_timestamp(), '$year');";
 	mysqli_query($conn, $sql);
 	echo '<script language="javascript">';
 	echo 'alert("บันทึกข้อมูลเรียบร้อยแล้ว"); location.href="silCourseAdd.php"';
 	echo '</script>';
 } elseif (isset($_POST['update'])) {
-	// กำหนดค่าเริ่มต้นให้กับทุกฟิลด์เป็น 0 หรือค่าที่เหมาะสม
+	// กำหนดค่าเริ่มต้นให้กับทุกฟิลด์เป็นค่าว่าง
 	$separate = "";
 	$parallel = "";
 	$mix = "";
+	$sil = "";
 
-	// กำหนดฟิลด์ที่เลือกเป็น 1 หรือค่าที่เหมาะสม
+	// กำหนดฟิลด์ที่เลือกตามประเภท
 	if ($type == "Separate") {
 		$separate = "/";
 	} elseif ($type == "Parallel") {
 		$parallel = "/";
 	} elseif ($type == "Mix") {
 		$mix = "/";
+	} elseif ($type == "SIL") {
+		$sil = "/";
 	}
+
 	$sql = "UPDATE cwie_course SET major = '$course', 
 	separate = '$separate', 
 	parallel = '$parallel', 
 	mix = '$mix', 
+	sil = '$sil', 
 	note = '$note', 
 	year = '$year' 
 	WHERE cwie_course.id = $cwieCoid";

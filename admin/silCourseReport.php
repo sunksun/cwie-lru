@@ -12,7 +12,17 @@ $username = $_SESSION['username'];
 $faculty = $_SESSION['faculty'];
 $position = $_SESSION['position'];
 $faculty_id = $_SESSION['faculty_id'];
-$year = "2/2566";
+
+// ดึงปีการศึกษาล่าสุดจากตาราง year
+$latest_year_query = "SELECT year FROM year ORDER BY id DESC LIMIT 1";
+$latest_year_result = mysqli_query($conn, $latest_year_query);
+
+if ($latest_year_result && mysqli_num_rows($latest_year_result) > 0) {
+    $latest_year_row = mysqli_fetch_assoc($latest_year_result);
+    $year = $latest_year_row['year'];
+} else {
+    $year = "2/2566"; // ค่าเริ่มต้นกรณีไม่พบข้อมูล
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,9 +52,7 @@ $year = "2/2566";
             padding: 2px;
             border: 1px solid #ddd;
             text-align: center;
-            /* Center text horizontally by default */
             vertical-align: middle;
-            /* Center text vertically */
         }
 
         th {
@@ -53,25 +61,32 @@ $year = "2/2566";
 
         .text-left {
             text-align: left;
-            /* Align text to the left */
         }
 
+        /* CSS สำหรับการพิมพ์ */
         @media print {
             @page {
+                size: auto;
                 margin: 0;
+                margin-header: 0;
+                margin-footer: 0;
             }
 
+            html,
             body {
                 margin: 1cm;
+                padding: 0;
             }
 
-            button {
-                display: none;
+            button,
+            .no-print {
+                display: none !important;
             }
 
-            @page {
-                size: auto;
-                margin: 0mm;
+            /* ซ่อนส่วนหัวและท้ายที่บราว์เซอร์สร้างอัตโนมัติ */
+            body::before,
+            body::after {
+                display: none !important;
             }
         }
     </style>
@@ -87,15 +102,10 @@ $year = "2/2566";
             <tr>
                 <td rowspan="2">ลำดับที่</td>
                 <td rowspan="2" class="text-left">สาขาวิชา</td>
-                <td colspan="4">
-                    รูปแบบการจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)
+                <td>
+                    การจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)
                 </td>
-            </tr>
-            <tr>
-                <td>แบบแยก (Separate)</td>
-                <td>แบบคู่ขนาน (Parallel)</td>
-                <td>แบบผสม (Mix)</td>
-                <td>หมายเหตุ</td>
+                <td rowspan="2">หมายเหตุ</td>
             </tr>
         </thead>
         <tbody>
@@ -103,31 +113,66 @@ $year = "2/2566";
     </table>
 
     <hr>
-    <button onclick="history.back()">ย้อนกลับ</button> | <button onclick="window.print()">พิมพ์รายงาน</button>
+    <button onclick="history.back()">ย้อนกลับ</button> <button onclick="window.print()">พิมพ์รายงาน</button>
 
     <script>
-        fetch('cwieCourseData.php')
+        // ส่งค่าปีการศึกษาไปยัง silCourseData.php
+        fetch('silCourseData.php?year=<?php echo $year; ?>')
             .then(response => response.json())
             .then(data => {
                 const tbody = document.querySelector('#reportTable tbody');
-                data.forEach(item => {
+
+                if (data.length === 0) {
+                    // กรณีไม่มีข้อมูล
                     const tr = document.createElement('tr');
-
-                    for (const key in item) {
-                        const td = document.createElement('td');
-                        td.textContent = item[key];
-
-                        // Align 'major' column to the right
-                        if (key === 'major') {
-                            td.classList.add('text-left');
-                        }
-
-                        tr.appendChild(td);
-                    }
+                    const td = document.createElement('td');
+                    td.textContent = 'ไม่พบข้อมูล';
+                    td.colSpan = 4; // ขยาย column ให้ครอบคลุมทั้งตาราง
+                    td.style.textAlign = 'center';
+                    tr.appendChild(td);
                     tbody.appendChild(tr);
-                });
+                } else {
+                    // กรณีมีข้อมูล
+                    data.forEach(item => {
+                        const tr = document.createElement('tr');
+
+                        // Create and append sequence cell
+                        const sequenceTd = document.createElement('td');
+                        sequenceTd.textContent = item.sequence;
+                        tr.appendChild(sequenceTd);
+
+                        // Create and append major cell with text-left class
+                        const majorTd = document.createElement('td');
+                        majorTd.textContent = item.major;
+                        majorTd.classList.add('text-left');
+                        tr.appendChild(majorTd);
+
+                        // Create and append SIL cell
+                        const silTd = document.createElement('td');
+                        silTd.textContent = item.sil || '-';
+                        tr.appendChild(silTd);
+
+                        // Create and append note cell
+                        const noteTd = document.createElement('td');
+                        noteTd.textContent = item.note || '-';
+                        tr.appendChild(noteTd);
+
+                        tbody.appendChild(tr);
+                    });
+                }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+                // แสดงข้อความเมื่อเกิดข้อผิดพลาด
+                const tbody = document.querySelector('#reportTable tbody');
+                const tr = document.createElement('tr');
+                const td = document.createElement('td');
+                td.textContent = 'เกิดข้อผิดพลาดในการโหลดข้อมูล';
+                td.colSpan = 4;
+                td.style.textAlign = 'center';
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+            });
     </script>
 </body>
 

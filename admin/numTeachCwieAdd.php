@@ -85,8 +85,7 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
           <div class="col-md-12">
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title"><a href="#">อาจารย์นิเทศหลักสูตรสหกิจศึกษาและการศึกษาเชิงบูรณาการกับการทำงาน (CWIE) ที่ผ่านการอบรมและรับรองโดยสำนักงานปลัดกระทรวงอุดมศึกษา วิทยาศาสตร์ วิจัยและนวัตกรรม
-                  </a></h3>
+                <h3 class="card-title"><a href="#">อาจารย์นิเทศหลักสูตรสหกิจศึกษาฯ (CWIE) | การจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</a></h3>
 
                 <div class="card-tools">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -155,7 +154,7 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
 
                   <div class="row form-group">
                     <div class="col-6">
-                      <label for="inputClientCompany">ชื่ออาจารย์นิเทศสหกิจศึกษา</label>
+                      <label for="inputClientCompany">ชื่ออาจารย์นิเทศ</label>
                       <input type="text" name="name_tea_cwie" class="form-control" required>
                     </div>
                     <div class="col-6">
@@ -207,7 +206,7 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
         <!-- Default box -->
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">จำนวนอาจารย์นิเทศหลักสูตรสหกิจศึกษาและการศึกษาเชิงบูรณาการกับการทำงาน (CWIE) ปีการศึกษา <?php echo $year; ?></h3>
+            <h3 class="card-title">จำนวนอาจารย์นิเทศหลักสูตรสหกิจศึกษาฯ (CWIE) | การจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL) ปีการศึกษา <?php echo $year; ?></h3>
             <a href="numTeachCwieReport.php?year=<?php echo $year; ?>" id="openReportButton" class="btn btn-secondary float-right">พิมพ์รายงาน</a>
           </div>
           <!-- /.card-header -->

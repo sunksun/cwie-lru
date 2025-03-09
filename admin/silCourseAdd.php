@@ -73,6 +73,7 @@ $year = "2/2566";
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
+
       <!-- Main content -->
       <section class="content">
         <div class="row">
@@ -94,14 +95,21 @@ $year = "2/2566";
                       <label for="inputClientCompany">เลือกภาคการศึกษา</label>
                       <select class="form-control select2" name="year" style="width: 100%;" required>
                         <?php
-                        $sql = "SELECT * FROM year ";
+                        // ดึงข้อมูลปีการศึกษาและเรียงจากล่าสุด
+                        $sql = "SELECT * FROM year ORDER BY id DESC";
                         $result = $conn->query($sql);
+                        $isFirst = true; // ตัวแปรสำหรับตรวจสอบรายการแรก
+
                         if ($result->num_rows > 0) {
                           while ($optionData = $result->fetch_assoc()) {
                             $option = $optionData['year'];
+                            // เลือกค่าล่าสุดเป็นค่า default โดยใช้ค่าแรกที่ดึงมาเนื่องจากเรียงจากล่าสุดแล้ว
+                            $selected = ($isFirst) ? 'selected="selected"' : '';
+                            $isFirst = false; // ตั้งค่าเป็น false หลังจากรายการแรก
                         ?>
-                            <option value="<?php echo $option; ?>" <?php if ($option == $year) echo 'selected="selected"'; ?>> ปีการศึกษา
-                              <?php echo $option; ?></option>
+                            <option value="<?php echo $option; ?>" <?php echo $selected; ?>> ปีการศึกษา
+                              <?php echo $option; ?>
+                            </option>
                         <?php
                           }
                         }
@@ -146,20 +154,12 @@ $year = "2/2566";
                     });
                   </script>
                   <div class="form-group">
-                    <label for="inputClientCompany">รูปแบบสหกิจศึกษาและการจัดการเรียนรู้</label>
+                    <label for="inputClientCompany">หลักสูตรที่มีการจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</label>
                     <!-- radio -->
                     <div class="form-group">
                       <div class="form-check">
-                        <input class="form-check-input" type="radio" name="type" value="Separate" id="separate">
-                        <label class="form-check-label" for="separate">แบบแยก (Separate)</label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="type" value="Parallel" id="parallel">
-                        <label class="form-check-label" for="parallel">แบบคู่ขนาน (Parallel)</label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="type" value="Mix" id="mix">
-                        <label class="form-check-label" for="mix">แบบผสม (Mix)</label>
+                        <input class="form-check-input" type="radio" name="type" value="SIL" id="sil">
+                        <label class="form-check-label" for="sil">แบบการจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</label>
                       </div>
                     </div>
                   </div>
@@ -187,15 +187,10 @@ $year = "2/2566";
       <?php
       // สร้างคำสั่ง SQL
       $sql = "SELECT id, faculty_id, major, 
-        CASE 
-            WHEN separate != '' THEN 'separate'
-            WHEN parallel != '' THEN 'parallel'
-            WHEN mix != '' THEN 'mix'
-            ELSE 'none'
-        END as type,
+        sil as type, /* แสดงค่าจากฟิลด์ sil โดยตรง */
         note, date_regis, year
         FROM `cwie_course`
-        WHERE faculty_id = '$faculty_id'
+        WHERE faculty_id = '$faculty_id' AND sil = '/'  /* เลือกเฉพาะข้อมูลที่มี sil เป็น '/' */
         ORDER BY `cwie_course`.`id` DESC";
       $result = $conn->query($sql);
       ?>
@@ -204,7 +199,7 @@ $year = "2/2566";
         <!-- Default box -->
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">รูปแบบสหกิจศึกษาและการจัดการเรียนรู้</h3>
+            <h3 class="card-title">หลักสูตรที่มีการจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</h3>
             <a href="#" id="openReportButton" class="btn btn-secondary float-right">พิมพ์รายงาน</a>
           </div>
           <!-- /.card-header -->
@@ -214,7 +209,7 @@ $year = "2/2566";
                 <tr>
                   <th>ลำดับ</th>
                   <th>สาขาวิชา</th>
-                  <th>รูปแบบ</th>
+                  <th>รูปแบบ (SIL)</th>
                   <th>ภาคการศึกษา</th>
                   <th></th>
                 </tr>
@@ -253,7 +248,7 @@ $year = "2/2566";
                 <tr>
                   <th>ลำดับ</th>
                   <th>สาขาวิชา</th>
-                  <th>รูปแบบ</th>
+                  <th>รูปแบบ (SIL)</th>
                   <th>ภาคการศึกษา</th>
                   <th></th>
                 </tr>

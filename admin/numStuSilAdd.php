@@ -12,7 +12,17 @@ $username = $_SESSION['username'];
 $faculty = $_SESSION['faculty'];
 $position = $_SESSION['position'];
 $faculty_id = $_SESSION['faculty_id'];
-$year = "2/2566";
+
+// ดึงปีการศึกษาล่าสุดจากตาราง year
+$latest_year_query = "SELECT year FROM year ORDER BY id DESC LIMIT 1";
+$latest_year_result = mysqli_query($conn, $latest_year_query);
+
+if ($latest_year_result && mysqli_num_rows($latest_year_result) > 0) {
+  $latest_year_row = mysqli_fetch_assoc($latest_year_result);
+  $year = $latest_year_row['year'];
+} else {
+  $year = "2/2566"; // ค่าเริ่มต้นกรณีไม่พบข้อมูล
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -74,20 +84,6 @@ $year = "2/2566";
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
       <!-- Content Header (Page header) -->
-      <section class="content-header">
-        <div class="container-fluid">
-          <div class="row mb-2">
-            <div class="col-sm-6">
-            </div>
-            <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="index.php">หน้าแรก</a></li>
-                <li class="breadcrumb-item active"><a href="logout.php">ออกจากระบบ</a></li>
-              </ol>
-            </div>
-          </div>
-        </div><!-- /.container-fluid -->
-      </section>
 
       <!-- Main content -->
       <section class="content">
@@ -110,13 +106,18 @@ $year = "2/2566";
                       <label for="inputClientCompany">เลือกภาคการศึกษา</label>
                       <select class="form-control select2" name="year" style="width: 100%;" required>
                         <?php
-                        $sql = "SELECT * FROM year ";
+                        // ดึงข้อมูลปีการศึกษาและเรียงจากล่าสุด
+                        $sql = "SELECT * FROM year ORDER BY id DESC";
                         $result = $conn->query($sql);
+                        $isFirst = true; // ตัวแปรสำหรับตรวจสอบรายการแรก
+
                         if ($result->num_rows > 0) {
                           while ($optionData = $result->fetch_assoc()) {
                             $option = $optionData['year'];
+                            // เลือกค่าล่าสุดเป็นค่า default โดยใช้ค่าแรกที่ดึงมาเนื่องจากเรียงจากล่าสุดแล้ว
+                            $selected = ($option == $year) ? 'selected="selected"' : '';
                         ?>
-                            <option value="<?php echo $option; ?>" <?php if ($option == $year) echo 'selected="selected"'; ?>> ปีการศึกษา
+                            <option value="<?php echo $option; ?>" <?php echo $selected; ?>> ปีการศึกษา
                               <?php echo $option; ?></option>
                         <?php
                           }
@@ -189,6 +190,7 @@ $year = "2/2566";
                     <label for="inputClientCompany">หมายเหตุ</label>
                     <input type="text" name="note" id="inputClientCompany" class="form-control">
                   </div>
+                  <input type="hidden" name="faculty_id" value="<?php echo $faculty_id; ?>">
               </div>
               <!-- /.card-body -->
             </div>
@@ -268,9 +270,9 @@ $year = "2/2566";
                   <th>ลำดับ</th>
                   <th>สาขาวิชา</th>
                   <th>ออกฝึกประสบการ</th>
-                  <th>CWIE</th>
-                  <th>บัณฑิต CWIE</th>
-                  <th>บัณฑิต CWIE ได้งาน</th>
+                  <th>SIL</th>
+                  <th>บัณฑิต SIL</th>
+                  <th>บัณฑิต SIL ได้งาน</th>
                   <th></th>
                 </tr>
               </tfoot>
@@ -319,8 +321,6 @@ $year = "2/2566";
 
   <!-- AdminLTE App -->
   <script src="dist/js/adminlte.min.js"></script>
-  <!-- AdminLTE for demo purposes -->
-  <!-- <script src="dist/js/demo.js"></script> -->
   <!-- Page specific script -->
   <script>
     $(function() {
@@ -339,7 +339,7 @@ $year = "2/2566";
         "autoWidth": false,
         "responsive": true,
       });
-      // Function to open cwieCourseReport.php
+      // Function to open numStuSilReport.php
       function openSilCourseReport() {
         window.location.href = 'numStuSilReport.php';
       }
