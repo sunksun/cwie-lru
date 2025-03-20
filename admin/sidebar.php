@@ -154,6 +154,88 @@
               <p>จัดการปีการศึกษา</p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-users"></i>
+              <p>
+                รายงานข้อมูล CWIE
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="course-manage-report.php" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>การจัดการหลักสูตร</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="num-stu-cwie-report.php" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>จำนวนนักศึกษา</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="organization-cwie-report.php" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>สถานประกอบการ</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="num-tea-cwie-report.php" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>อาจารย์นิเทศ</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="activity-cwie-report.php" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>การจัดกิจกรรม</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-users"></i>
+              <p>
+                รายงานข้อมูล SIL
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="studentAdd.php" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>การจัดการหลักสูตร</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="stu-highlightAdd.php" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>จำนวนนักศึกษา</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="stu-highlightAdd.php" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>สถานประกอบการ</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="stu-highlightAdd.php" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>อาจารย์นิเทศ</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="stu-highlightAdd.php" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>การจัดกิจกรรม</p>
+                </a>
+              </li>
+            </ul>
+          </li>
           <!-- 
           <li class="nav-item">
             <a href="#" class="nav-link">
@@ -590,6 +672,14 @@
           </ul>
         </li>
         -->
+        <!-- QR Code for Support -->
+        <li class="nav-header mt-4">ช่วยเหลือ</li>
+        <li class="nav-item text-center">
+          <div class="p-3">
+            <img src="dist/img/IMG_CE87BB1CDEA9-1.jpeg" class="img-fluid" style="max-width: 150px;" alt="QR Code">
+            <p class="text-center mt-2 text-light">แจ้งปัญหาการใช้งานระบบ</p>
+          </div>
+        </li>
       </ul>
     </nav>
     <!-- /.sidebar-menu -->

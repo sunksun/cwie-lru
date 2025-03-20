@@ -155,9 +155,9 @@ include_once('admin/connect.php');
 											echo '<tr>
 												<td class="text-center">' . $counter . '</td>
 												<td>' . $faculty_name . '</td>
-												<td class="text-center">' . $total_faculty . '</td>
-												<td class="text-center">' . $total_trained . '</td>
-												<td class="text-center">' . $percentage . '</td>
+												<td class="text-center">' . ($total_faculty > 0 ? $total_faculty : '-') . '</td>
+												<td class="text-center">' . ($total_trained > 0 ? $total_trained : '-') . '</td>
+												<td class="text-center">' . ($percentage > 0 ? $percentage : '-') . '</td>
 											</tr>';
 
 											$counter++;
@@ -169,9 +169,9 @@ include_once('admin/connect.php');
 										// แสดงแถวสรุปผลรวม
 										echo '<tr class="table-secondary">
 											<td colspan="2" class="text-center"><strong>รวมทั้งหมด</strong></td>
-											<td class="text-center"><strong>' . $grand_total_all . '</strong></td>
-											<td class="text-center"><strong>' . $grand_total_trained . '</strong></td>
-											<td class="text-center"><strong>' . $grand_percentage . '</strong></td>
+											<td class="text-center"><strong>' . ($grand_total_all > 0 ? $grand_total_all : '-') . '</strong></td>
+											<td class="text-center"><strong>' . ($grand_total_trained > 0 ? $grand_total_trained : '-') . '</strong></td>
+											<td class="text-center"><strong>' . ($grand_percentage > 0 ? $grand_percentage : '-') . '</strong></td>
 										</tr>';
 									} else {
 										echo '<tr><td colspan="5" class="text-center">ไม่พบข้อมูลคณะ</td></tr>';

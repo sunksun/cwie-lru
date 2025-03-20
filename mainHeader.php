@@ -7,6 +7,9 @@
 				</div>
 				<div class="top-right">
 					<ul class="useful-links">
+						<li><a href="user-manual-cwielru.pdf">คู่มือการใช้งาน</a></li>
+					</ul>
+					<ul class="useful-links">
 						<li><a href="admin/login.php">เข้าสู่ระบบ</a></li>
 					</ul>
 				</div>

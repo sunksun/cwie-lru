@@ -12,7 +12,22 @@ $username = $_SESSION['username'];
 $faculty = $_SESSION['faculty'];
 $position = $_SESSION['position'];
 $faculty_id = $_SESSION['faculty_id'];
-$year = "2/2566";
+
+// ดึงปีการศึกษาจาก URL หรือใช้ค่าปีล่าสุด
+if (isset($_GET['year']) && !empty($_GET['year'])) {
+    $year = $_GET['year'];
+} else {
+    // ดึงปีการศึกษาล่าสุดจากตาราง year
+    $latest_year_query = "SELECT year FROM year ORDER BY id DESC LIMIT 1";
+    $latest_year_result = mysqli_query($conn, $latest_year_query);
+
+    if ($latest_year_result && mysqli_num_rows($latest_year_result) > 0) {
+        $latest_year_row = mysqli_fetch_assoc($latest_year_result);
+        $year = $latest_year_row['year'];
+    } else {
+        $year = "2/2566"; // ค่าเริ่มต้นกรณีไม่พบข้อมูล
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -164,11 +164,11 @@ include_once('admin/connect.php');
 											echo '<tr>
 												<td class="text-center">' . $counter . '</td>
 												<td>' . $faculty_name . '</td>
-												<td class="text-center">' . $count_2564 . '</td>
-												<td class="text-center">' . $count_2565 . '</td>
-												<td class="text-center">' . $count_2566 . '</td>
+												<td class="text-center">' . ($count_2564 > 0 ? $count_2564 : '-') . '</td>
+												<td class="text-center">' . ($count_2565 > 0 ? $count_2565 : '-') . '</td>
+												<td class="text-center">' . ($count_2566 > 0 ? $count_2566 : '-') . '</td>
 												<td class="text-center">' . ($count_2567 > 0 ? $count_2567 : '-') . '</td>
-												<td class="text-center">' . $row_total . '</td>
+												<td class="text-center">' . ($row_total > 0 ? $row_total : '-') . '</td>
 												<td></td>
 											</tr>';
 
@@ -178,11 +178,11 @@ include_once('admin/connect.php');
 										// แสดงแถวสรุปผลรวม
 										echo '<tr class="table-secondary">
 											<td colspan="2" class="text-center"><strong>รวม</strong></td>
-											<td class="text-center"><strong>' . $total_2564 . '</strong></td>
-											<td class="text-center"><strong>' . $total_2565 . '</strong></td>
-											<td class="text-center"><strong>' . $total_2566 . '</strong></td>
-											<td class="text-center"><strong>' . $total_2567 . '</strong></td>
-											<td class="text-center"><strong>' . $total_all . '</strong></td>
+											<td class="text-center"><strong>' . ($total_2564 > 0 ? $total_2564 : '-') . '</strong></td>
+											<td class="text-center"><strong>' . ($total_2565 > 0 ? $total_2565 : '-') . '</strong></td>
+											<td class="text-center"><strong>' . ($total_2566 > 0 ? $total_2566 : '-') . '</strong></td>
+											<td class="text-center"><strong>' . ($total_2567 > 0 ? $total_2567 : '-') . '</strong></td>
+											<td class="text-center"><strong>' . ($total_all > 0 ? $total_all : '-') . '</strong></td>
 											<td></td>
 										</tr>';
 									} else { // ถ้าไม่มีข้อมูล
@@ -250,10 +250,10 @@ include_once('admin/connect.php');
 											echo '<tr class="faculty-row">
 												<td class="text-center">' . $faculty_counter . '</td>
 												<td><strong>' . $faculty_name . '</strong></td>
-												<td class="text-center">' . $faculty_num_pundit . '</td>
-												<td class="text-center">' . $faculty_num_pundit_job . '</td>
-												<td class="text-center">' . $faculty_num_pundit_job_work . '</td>
-												<td class="text-center">' . $faculty_percentage . '</td>
+												<td class="text-center">' . ($faculty_num_pundit > 0 ? $faculty_num_pundit : '-') . '</td>
+												<td class="text-center">' . ($faculty_num_pundit_job > 0 ? $faculty_num_pundit_job : '-') . '</td>
+												<td class="text-center">' . ($faculty_num_pundit_job_work > 0 ? $faculty_num_pundit_job_work : '-') . '</td>
+												<td class="text-center">' . ($faculty_percentage > 0 ? $faculty_percentage : '-') . '</td>
 											</tr>';
 
 											// ดึงข้อมูลสาขาวิชาตามคณะ
@@ -285,10 +285,10 @@ include_once('admin/connect.php');
 													echo '<tr class="major-row">
 														<td></td>
 														<td class="major-name">' . $major_counter . '. ' . htmlspecialchars($major_name) . '</td>
-														<td class="text-center">' . $num_pundit . '</td>
-														<td class="text-center">' . $num_pundit_job . '</td>
-														<td class="text-center">' . $num_pundit_job_work . '</td>
-														<td class="text-center">' . $major_percentage . '</td>
+														<td class="text-center">' . ($num_pundit > 0 ? $num_pundit : '-') . '</td>
+														<td class="text-center">' . ($num_pundit_job > 0 ? $num_pundit_job : '-') . '</td>
+														<td class="text-center">' . ($num_pundit_job_work > 0 ? $num_pundit_job_work : '-') . '</td>
+														<td class="text-center">' . ($major_percentage > 0 ? $major_percentage : '-') . '</td>
 													</tr>';
 
 													$major_counter++;
@@ -309,10 +309,10 @@ include_once('admin/connect.php');
 										// รวมยอดทั้งหมด
 										echo '<tr class="table-secondary">
 											<td colspan="2" class="text-center"><strong>รวมทั้งหมด</strong></td>
-											<td class="text-center"><strong>' . $total_num_pundit . '</strong></td>
-											<td class="text-center"><strong>' . $total_num_pundit_job . '</strong></td>
-											<td class="text-center"><strong>' . $total_num_pundit_job_work . '</strong></td>
-											<td class="text-center"><strong>' . $total_percentage . '</strong></td>
+											<td class="text-center"><strong>' . ($total_num_pundit > 0 ? $total_num_pundit : '-') . '</strong></td>
+											<td class="text-center"><strong>' . ($total_num_pundit_job > 0 ? $total_num_pundit_job : '-') . '</strong></td>
+											<td class="text-center"><strong>' . ($total_num_pundit_job_work > 0 ? $total_num_pundit_job_work : '-') . '</strong></td>
+											<td class="text-center"><strong>' . ($total_percentage > 0 ? $total_percentage : '-') . '</strong></td>
 										</tr>';
 									} else {
 										echo '<tr><td colspan="6" class="text-center">ไม่พบข้อมูลคณะ</td></tr>';

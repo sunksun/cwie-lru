@@ -73,6 +73,11 @@ include_once('admin/connect.php');
 		.faculty-total {
 			font-weight: bold;
 		}
+
+		.warning {
+			color: #ff0000;
+			font-style: italic;
+		}
 	</style>
 </head>
 
@@ -121,6 +126,11 @@ include_once('admin/connect.php');
 									$sql_faculty = "SELECT fid, faculty FROM faculty ORDER BY id ASC";
 									$result_faculty = $conn->query($sql_faculty);
 
+									// ตัวแปรสำหรับเก็บผลรวมทั้งหมด
+									$grand_practice = 0;
+									$grand_normal = 0;
+									$grand_cwie = 0;
+
 									if ($result_faculty && $result_faculty->num_rows > 0) {
 										$faculty_counter = 1;
 
@@ -130,11 +140,8 @@ include_once('admin/connect.php');
 
 											// คำนวณยอดรวมสำหรับแต่ละคณะ
 											$sql_sum = "SELECT 
-												SUM(num_practice) as total_practice, 
-												SUM(num_cwie) as total_cwie, 
-												SUM(num_pundit) as total_pundit, 
-												SUM(num_pundit_job) as total_pundit_job, 
-												SUM(num_pundit_job_work) as total_pundit_job_work
+												SUM(CASE WHEN num_practice = '' THEN 0 ELSE num_practice END) as total_practice, 
+												SUM(CASE WHEN num_cwie = '' THEN 0 ELSE num_cwie END) as total_cwie 
 												FROM num_stu_cwie 
 												WHERE faculty_id = '$faculty_id'";
 											$result_sum = $conn->query($sql_sum);
@@ -142,24 +149,34 @@ include_once('admin/connect.php');
 
 											$total_practice = $row_sum['total_practice'] ?: 0;
 											$total_cwie = $row_sum['total_cwie'] ?: 0;
-											$total_pundit = $row_sum['total_pundit'] ?: 0;
+
+											// ตรวจสอบว่า CWIE ไม่ควรมากกว่าจำนวนทั้งหมด
+											$total_normal = max(0, $total_practice - $total_cwie);
+
+											// ถ้า CWIE มากกว่าจำนวนทั้งหมด ให้ใช้ CWIE เป็นจำนวนทั้งหมด
+											$total_practice = max($total_practice, $total_cwie);
 
 											// คำนวณร้อยละ
-											$percentage = ($total_practice > 0) ? number_format(($total_cwie / $total_practice) * 100, 2) : 0;
+											$percentage = ($total_practice > 0) ? min(100, number_format(($total_cwie / $total_practice) * 100, 2)) : 0;
+
+											// สะสมผลรวมทั้งหมด
+											$grand_practice += $total_practice;
+											$grand_normal += $total_normal;
+											$grand_cwie += $total_cwie;
 
 											// แสดงแถวของคณะ
 											echo '<tr class="faculty-row">
 												<td class="text-center">' . $faculty_counter . '</td>
 												<td><strong>' . $faculty_name . '</strong></td>
-												<td class="text-center">' . $total_practice . '</td>
-												<td class="text-center">' . ($total_practice - $total_cwie) . '</td>
-												<td class="text-center">' . $total_cwie . '</td>
-												<td class="text-center">' . $percentage . '</td>
+												<td class="text-center">' . ($total_practice > 0 ? $total_practice : '-') . '</td>
+												<td class="text-center">' . ($total_normal > 0 ? $total_normal : '-') . '</td>
+												<td class="text-center">' . ($total_cwie > 0 ? $total_cwie : '-') . '</td>
+												<td class="text-center">' . ($percentage > 0 ? $percentage : '-') . '</td>
 												<td></td>
 											</tr>';
 
 											// ดึงข้อมูลสาขาวิชาตามคณะ
-											$sql_major = "SELECT major, num_practice, num_cwie, num_pundit, num_pundit_job, num_pundit_job_work, note 
+											$sql_major = "SELECT major, num_practice, num_cwie, num_pundit, note 
 												FROM num_stu_cwie 
 												WHERE faculty_id = '$faculty_id' 
 												ORDER BY id ASC";
@@ -172,12 +189,19 @@ include_once('admin/connect.php');
 													$major = $major_row['major'];
 													$num_practice = $major_row['num_practice'] ?: 0;
 													$num_cwie = $major_row['num_cwie'] ?: 0;
-													$num_pundit = $major_row['num_pundit'] ?: 0;
-													$num_pundit_job = $major_row['num_pundit_job'] ?: 0;
 													$note = $major_row['note'];
 
+													// ตรวจสอบค่าความถูกต้อง
+													$normal_practice = max(0, $num_practice - $num_cwie);
+
+													// ถ้า CWIE มากกว่าจำนวนทั้งหมด ให้ใช้ CWIE เป็นจำนวนทั้งหมด
+													if ($num_cwie > $num_practice) {
+														$num_practice = $num_cwie;
+														$normal_practice = 0;
+													}
+
 													// คำนวณร้อยละสำหรับสาขาวิชา
-													$major_percentage = ($num_practice > 0) ? number_format(($num_cwie / $num_practice) * 100, 2) : 0;
+													$major_percentage = ($num_practice > 0) ? min(100, number_format(($num_cwie / $num_practice) * 100, 2)) : 0;
 
 													// ดึงชื่อสาขาวิชาจากข้อความเต็ม (หลังคำว่า --)
 													$major_name = $major;
@@ -189,10 +213,10 @@ include_once('admin/connect.php');
 													echo '<tr class="major-row">
 														<td></td>
 														<td class="major-name">' . $major_counter . '. ' . htmlspecialchars($major_name) . '</td>
-														<td class="text-center">' . $num_practice . '</td>
-														<td class="text-center">' . ($num_practice - $num_cwie) . '</td>
-														<td class="text-center">' . $num_cwie . '</td>
-														<td class="text-center">' . $major_percentage . '</td>
+														<td class="text-center">' . ($num_practice > 0 ? $num_practice : '-') . '</td>
+														<td class="text-center">' . ($normal_practice > 0 ? $normal_practice : '-') . '</td>
+														<td class="text-center">' . ($num_cwie > 0 ? $num_cwie : '-') . '</td>
+														<td class="text-center">' . ($major_percentage > 0 ? $major_percentage : '-') . '</td>
 														<td>' . htmlspecialchars($note) . '</td>
 													</tr>';
 
@@ -208,24 +232,15 @@ include_once('admin/connect.php');
 											$faculty_counter++;
 										}
 
-										// รวมยอดทั้งหมด
-										$sql_total = "SELECT 
-											SUM(num_practice) as grand_practice, 
-											SUM(num_cwie) as grand_cwie
-											FROM num_stu_cwie";
-										$result_total = $conn->query($sql_total);
-										$row_total = $result_total->fetch_assoc();
-
-										$grand_practice = $row_total['grand_practice'] ?: 0;
-										$grand_cwie = $row_total['grand_cwie'] ?: 0;
-										$grand_percentage = ($grand_practice > 0) ? number_format(($grand_cwie / $grand_practice) * 100, 2) : 0;
+										// คำนวณร้อยละรวมทั้งหมด
+										$grand_percentage = ($grand_practice > 0) ? min(100, number_format(($grand_cwie / $grand_practice) * 100, 2)) : 0;
 
 										echo '<tr class="table-secondary">
 											<td colspan="2" class="text-center"><strong>รวมทั้งหมด</strong></td>
-											<td class="text-center"><strong>' . $grand_practice . '</strong></td>
-											<td class="text-center"><strong>' . ($grand_practice - $grand_cwie) . '</strong></td>
-											<td class="text-center"><strong>' . $grand_cwie . '</strong></td>
-											<td class="text-center"><strong>' . $grand_percentage . '</strong></td>
+											<td class="text-center"><strong>' . ($grand_practice > 0 ? $grand_practice : '-') . '</strong></td>
+											<td class="text-center"><strong>' . ($grand_normal > 0 ? $grand_normal : '-') . '</strong></td>
+											<td class="text-center"><strong>' . ($grand_cwie > 0 ? $grand_cwie : '-') . '</strong></td>
+											<td class="text-center"><strong>' . ($grand_percentage > 0 ? $grand_percentage : '-') . '</strong></td>
 											<td></td>
 										</tr>';
 									} else {

@@ -1,6 +1,7 @@
 <?php
 session_start();
 include_once('admin/connect.php');
+
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -26,6 +27,8 @@ include_once('admin/connect.php');
 
 	<!--[if lt IE 9]><script src="js/html5shiv.js"></script><![endif]-->
 	<!--[if lt IE 9]><script src="js/respond.js"></script><![endif]-->
+
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -144,6 +147,229 @@ include_once('admin/connect.php');
 						<strong>ภาพรวมสหกิจศึกษา (CWIE) มหาวิทยาลัยราชภัฏเลย </strong>
 					</div>
 				</div>
+				<!-- ส่วนที่จะแสดงกราฟ -->
+				<div class="container mt-4">
+					<div class="text-center mb-3">
+						<select id="year-selector" class="form-control d-inline-block" style="width: auto;">
+							<option value="1/2566">ภาคเรียนที่ 1/2566</option>
+							<option value="2/2566">ภาคเรียนที่ 2/2566</option>
+							<option value="1/2567">ภาคเรียนที่ 1/2567</option>
+							<option value="2/2567" selected>ภาคเรียนที่ 2/2567</option>
+						</select>
+					</div>
+
+					<canvas id="cwieChart" width="800" height="400"></canvas>
+
+					<!-- ตารางข้อมูล -->
+					<div class="table-responsive mt-4">
+						<table class="table table-bordered">
+							<!-- ส่วนหัวตาราง -->
+							<thead>
+								<tr class="bg-light">
+									<th>คณะ</th>
+									<th class="text-center">นักศึกษาฝึกประสบการณ์วิชาชีพ</th>
+									<th class="text-center">นักศึกษาสหกิจศึกษา</th>
+									<th class="text-center">บัณฑิต CWIE</th>
+									<th class="text-center">บัณฑิต CWIE ที่ได้งานทำ</th>
+									<th class="text-center">บัณฑิต CWIE ที่ได้งานทำในสถานประกอบการ</th>
+								</tr>
+							</thead>
+							<tbody>
+								<!-- PHP loop เพื่อแสดงข้อมูล -->
+								<?php
+								// ดึงข้อมูลจากฐานข้อมูล - ตัวอย่างโค้ด
+								$year = "2/2567"; // เริ่มต้นใช้ปีล่าสุด
+								if (isset($_GET['year'])) {
+									$year = $_GET['year'];
+								}
+
+								$faculties = [
+									['id' => '01', 'name' => 'คณะวิทยาการจัดการ'],
+									['id' => '02', 'name' => 'คณะวิทยาศาสตร์และเทคโนโลยี'],
+									['id' => '03', 'name' => 'คณะเทคโนโลยีอุตสาหกรรม'],
+									['id' => '04', 'name' => 'คณะมนุษยศาสตร์และสังคมศาสตร์'],
+									['id' => '05', 'name' => 'คณะครุศาสตร์']
+								];
+
+								$totals = ['practice' => 0, 'cwie' => 0, 'graduate' => 0, 'employed' => 0, 'employed_org' => 0];
+
+								foreach ($faculties as $faculty) {
+									// ในสถานการณ์จริง คุณควรใช้ prepared statement
+									$sql = "SELECT 
+                    SUM(num_practice) as practice, 
+                    SUM(num_cwie) as cwie, 
+                    SUM(num_pundit) as graduate, 
+                    SUM(num_pundit_job) as employed, 
+                    SUM(num_pundit_job_work) as employed_org 
+                  FROM num_stu_cwie 
+                  WHERE faculty_id = '{$faculty['id']}' AND year = '$year'";
+
+									$result = $conn->query($sql);
+									$data = $result->fetch_assoc();
+
+									// เพิ่มค่าในผลรวม
+									$totals['practice'] += $data['practice'] ?? 0;
+									$totals['cwie'] += $data['cwie'] ?? 0;
+									$totals['graduate'] += $data['graduate'] ?? 0;
+									$totals['employed'] += $data['employed'] ?? 0;
+									$totals['employed_org'] += $data['employed_org'] ?? 0;
+
+									echo "<tr>";
+									echo "<td>{$faculty['name']}</td>";
+									echo "<td class='text-center'>" . ($data['practice'] ?? 0) . "</td>";
+									echo "<td class='text-center'>" . ($data['cwie'] ?? 0) . "</td>";
+									echo "<td class='text-center'>" . ($data['graduate'] ?? 0) . "</td>";
+									echo "<td class='text-center'>" . ($data['employed'] ?? 0) . "</td>";
+									echo "<td class='text-center'>" . ($data['employed_org'] ?? 0) . "</td>";
+									echo "</tr>";
+								}
+								?>
+
+								<!-- แถวสรุปผลรวม -->
+								<tr class="bg-light font-weight-bold">
+									<td>รวม</td>
+									<td class="text-center"><?php echo $totals['practice']; ?></td>
+									<td class="text-center"><?php echo $totals['cwie']; ?></td>
+									<td class="text-center"><?php echo $totals['graduate']; ?></td>
+									<td class="text-center"><?php echo $totals['employed']; ?></td>
+									<td class="text-center"><?php echo $totals['employed_org']; ?></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<script>
+					document.addEventListener('DOMContentLoaded', function() {
+						// Set up year selector
+						const yearSelector = document.getElementById('year-selector');
+						const currentYear = yearSelector.value;
+
+						// Fetch faculty data from PHP variables
+						const facultyNames = <?php echo json_encode(array_map(function ($f) {
+													return $f['name'];
+												}, $faculties)); ?>;
+
+						// Set up data arrays for each metric
+						const practiceData = <?php echo json_encode(array_map(function ($f) use ($conn, $year) {
+													$sql = "SELECT SUM(num_practice) as practice FROM num_stu_cwie WHERE faculty_id = '{$f['id']}' AND year = '$year'";
+													$result = $conn->query($sql);
+													$data = $result->fetch_assoc();
+													return intval($data['practice'] ?? 0);
+												}, $faculties)); ?>;
+
+						const cwieData = <?php echo json_encode(array_map(function ($f) use ($conn, $year) {
+												$sql = "SELECT SUM(num_cwie) as cwie FROM num_stu_cwie WHERE faculty_id = '{$f['id']}' AND year = '$year'";
+												$result = $conn->query($sql);
+												$data = $result->fetch_assoc();
+												return intval($data['cwie'] ?? 0);
+											}, $faculties)); ?>;
+
+						const graduateData = <?php echo json_encode(array_map(function ($f) use ($conn, $year) {
+													$sql = "SELECT SUM(num_pundit) as graduate FROM num_stu_cwie WHERE faculty_id = '{$f['id']}' AND year = '$year'";
+													$result = $conn->query($sql);
+													$data = $result->fetch_assoc();
+													return intval($data['graduate'] ?? 0);
+												}, $faculties)); ?>;
+
+						const employedData = <?php echo json_encode(array_map(function ($f) use ($conn, $year) {
+													$sql = "SELECT SUM(num_pundit_job) as employed FROM num_stu_cwie WHERE faculty_id = '{$f['id']}' AND year = '$year'";
+													$result = $conn->query($sql);
+													$data = $result->fetch_assoc();
+													return intval($data['employed'] ?? 0);
+												}, $faculties)); ?>;
+
+						const employedOrgData = <?php echo json_encode(array_map(function ($f) use ($conn, $year) {
+													$sql = "SELECT SUM(num_pundit_job_work) as employed_org FROM num_stu_cwie WHERE faculty_id = '{$f['id']}' AND year = '$year'";
+													$result = $conn->query($sql);
+													$data = $result->fetch_assoc();
+													return intval($data['employed_org'] ?? 0);
+												}, $faculties)); ?>;
+
+						// Create chart
+						const ctx = document.getElementById('cwieChart').getContext('2d');
+						const chart = new Chart(ctx, {
+							type: 'bar',
+							data: {
+								labels: facultyNames,
+								datasets: [{
+										label: 'นักศึกษาฝึกประสบการณ์วิชาชีพ',
+										data: practiceData,
+										backgroundColor: '#4bc0c0',
+										borderColor: '#3aa7a7',
+										borderWidth: 1
+									},
+									{
+										label: 'นักศึกษาสหกิจศึกษา',
+										data: cwieData,
+										backgroundColor: '#ff9f40',
+										borderColor: '#e88c30',
+										borderWidth: 1
+									},
+									{
+										label: 'บัณฑิต CWIE',
+										data: graduateData,
+										backgroundColor: '#36a2eb',
+										borderColor: '#2993d8',
+										borderWidth: 1
+									},
+									{
+										label: 'บัณฑิต CWIE ที่ได้งานทำ',
+										data: employedData,
+										backgroundColor: '#9966ff',
+										borderColor: '#8a57e0',
+										borderWidth: 1
+									},
+									{
+										label: 'บัณฑิต CWIE ที่ได้งานทำในสถานประกอบการ',
+										data: employedOrgData,
+										backgroundColor: '#ff6384',
+										borderColor: '#e95375',
+										borderWidth: 1
+									}
+								]
+							},
+							options: {
+								responsive: true,
+								plugins: {
+									legend: {
+										position: 'top',
+									},
+									title: {
+										display: true,
+										text: 'ข้อมูลสหกิจศึกษา (CWIE) ประจำภาคเรียนที่ ' + currentYear
+									},
+									tooltip: {
+										mode: 'index',
+										intersect: false,
+									}
+								},
+								scales: {
+									x: {
+										title: {
+											display: true,
+											text: 'คณะ'
+										}
+									},
+									y: {
+										beginAtZero: true,
+										title: {
+											display: true,
+											text: 'จำนวน (คน)'
+										}
+									}
+								}
+							}
+						});
+
+						// Handle year selection change
+						yearSelector.addEventListener('change', function() {
+							window.location.href = 'index.php?year=' + this.value;
+						});
+					});
+					console.log('Chart.js version:', Chart.version);
+				</script>
+
 			</div>
 		</section>
 		<!-- End Courses Section-->
