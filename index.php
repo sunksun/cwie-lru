@@ -196,13 +196,13 @@ include_once('admin/connect.php');
 								foreach ($faculties as $faculty) {
 									// ในสถานการณ์จริง คุณควรใช้ prepared statement
 									$sql = "SELECT 
-                    SUM(num_practice) as practice, 
-                    SUM(num_cwie) as cwie, 
-                    SUM(num_pundit) as graduate, 
-                    SUM(num_pundit_job) as employed, 
-                    SUM(num_pundit_job_work) as employed_org 
-                  FROM num_stu_cwie 
-                  WHERE faculty_id = '{$faculty['id']}' AND year = '$year'";
+									SUM(num_practice) as practice, 
+									SUM(num_cwie) as cwie, 
+									SUM(num_pundit) as graduate, 
+									SUM(num_pundit_job) as employed, 
+									SUM(num_pundit_job_work) as employed_org 
+									FROM num_stu_cwie 
+									WHERE faculty_id = '{$faculty['id']}' AND year = '$year'";
 
 									$result = $conn->query($sql);
 									$data = $result->fetch_assoc();
@@ -216,11 +216,12 @@ include_once('admin/connect.php');
 
 									echo "<tr>";
 									echo "<td>{$faculty['name']}</td>";
-									echo "<td class='text-center'>" . ($data['practice'] ?? 0) . "</td>";
-									echo "<td class='text-center'>" . ($data['cwie'] ?? 0) . "</td>";
-									echo "<td class='text-center'>" . ($data['graduate'] ?? 0) . "</td>";
-									echo "<td class='text-center'>" . ($data['employed'] ?? 0) . "</td>";
-									echo "<td class='text-center'>" . ($data['employed_org'] ?? 0) . "</td>";
+									// แสดงเครื่องหมาย - แทนค่า 0
+									echo "<td class='text-center'>" . (($data['practice'] ?? 0) > 0 ? ($data['practice'] ?? 0) : "-") . "</td>";
+									echo "<td class='text-center'>" . (($data['cwie'] ?? 0) > 0 ? ($data['cwie'] ?? 0) : "-") . "</td>";
+									echo "<td class='text-center'>" . (($data['graduate'] ?? 0) > 0 ? ($data['graduate'] ?? 0) : "-") . "</td>";
+									echo "<td class='text-center'>" . (($data['employed'] ?? 0) > 0 ? ($data['employed'] ?? 0) : "-") . "</td>";
+									echo "<td class='text-center'>" . (($data['employed_org'] ?? 0) > 0 ? ($data['employed_org'] ?? 0) : "-") . "</td>";
 									echo "</tr>";
 								}
 								?>
@@ -228,11 +229,11 @@ include_once('admin/connect.php');
 								<!-- แถวสรุปผลรวม -->
 								<tr class="bg-light font-weight-bold">
 									<td>รวม</td>
-									<td class="text-center"><?php echo $totals['practice']; ?></td>
-									<td class="text-center"><?php echo $totals['cwie']; ?></td>
-									<td class="text-center"><?php echo $totals['graduate']; ?></td>
-									<td class="text-center"><?php echo $totals['employed']; ?></td>
-									<td class="text-center"><?php echo $totals['employed_org']; ?></td>
+									<td class="text-center"><?php echo ($totals['practice'] > 0) ? $totals['practice'] : "-"; ?></td>
+									<td class="text-center"><?php echo ($totals['cwie'] > 0) ? $totals['cwie'] : "-"; ?></td>
+									<td class="text-center"><?php echo ($totals['graduate'] > 0) ? $totals['graduate'] : "-"; ?></td>
+									<td class="text-center"><?php echo ($totals['employed'] > 0) ? $totals['employed'] : "-"; ?></td>
+									<td class="text-center"><?php echo ($totals['employed_org'] > 0) ? $totals['employed_org'] : "-"; ?></td>
 								</tr>
 							</tbody>
 						</table>

@@ -41,11 +41,14 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
     <style>
         body {
             font-family: 'TH Sarabun New', sans-serif;
+            margin: 1cm;
+            padding: 0;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 15px;
         }
 
         h4 {
@@ -56,9 +59,11 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
         th,
         td {
             padding: 2px;
-            border: 1px solid #ddd;
+            border: 1px solid #000;
             text-align: center;
             vertical-align: middle;
+            font-size: 18px;
+            /* เพิ่มขนาดตัวอักษรให้ชัดเจน */
         }
 
         th {
@@ -78,30 +83,119 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
             text-align: left;
         }
 
+        .faculty-section {
+            margin-bottom: 20px;
+        }
+
+        .action-buttons {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 8px 15px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .notes-section {
+            margin-top: 20px;
+        }
+
+        /* เพิ่มคลาสสำหรับเครื่องหมายถูก */
+        .check-mark {
+            font-family: Arial, sans-serif;
+            /* ใช้ฟอนต์ที่รองรับเครื่องหมายถูก */
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* ปรับแต่งส่วนหัวรายงาน */
+        .header-container {
+            text-align: center;
+            width: 100%;
+            margin: 0 auto 20px auto;
+        }
+
+        .header-text {
+            text-align: center;
+            width: 100%;
+        }
+
+        .header-text h4 {
+            text-align: center;
+            width: 100%;
+            margin: 10px auto;
+            line-height: 1.5;
+            font-size: 20px;
+        }
+
         /* CSS สำหรับการพิมพ์ */
         @media print {
             @page {
-                size: auto;
-                margin: 0;
+                size: A4 portrait;
+                margin: 0.5cm;
+                /* ปิดการแสดงส่วนหัวและส่วนท้ายของกระดาษเมื่อพิมพ์ */
                 margin-header: 0;
                 margin-footer: 0;
+                marks: none;
             }
 
             html,
             body {
-                margin: 1cm;
+                margin: 0;
                 padding: 0;
             }
 
-            button,
-            .no-print {
+            body {
+                margin: 1cm;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            /* จัดหัวข้อให้อยู่ตรงกลางเมื่อพิมพ์ */
+            .header-container {
+                text-align: center;
+                width: 100%;
+                margin: 0 auto 20px auto;
+            }
+
+            /* ทำให้ตารางขึ้นหน้าใหม่อย่างเหมาะสม */
+            .faculty-section {
+                page-break-inside: avoid;
+            }
+
+            /* ป้องกันการตัดแถวของตารางระหว่างหน้า */
+            tr {
+                page-break-inside: avoid;
+            }
+
+            /* ทำให้ส่วนหัวของตารางแสดงซ้ำเมื่อขึ้นหน้าใหม่ */
+            thead {
+                display: table-header-group;
+            }
+
+            /* ซ่อนปุ่ม */
+            .action-buttons,
+            button {
                 display: none !important;
             }
 
-            /* ซ่อนส่วนหัวและท้ายที่บราว์เซอร์สร้างอัตโนมัติ */
-            body::before,
-            body::after {
-                display: none !important;
+            /* ให้แน่ใจว่าเครื่องหมายถูกแสดงผล */
+            .check-mark {
+                visibility: visible !important;
+                display: inline !important;
+                font-family: Arial, sans-serif;
+                font-size: 20px;
+                font-weight: bold;
+            }
+
+            /* เพิ่มความหนาของเส้นขอบตาราง */
+            th,
+            td {
+                border: 1px solid #000 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
             }
         }
     </style>
@@ -109,11 +203,12 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
 
 <body>
     <div class="container">
-        <div class="header-text">
-            <h4>สหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE)</h4>
-            <h4><?php echo htmlspecialchars($faculty); ?></h4>
-            <h4>มหาวิทยาลัยราชภัฏเลย</h4>
-            <h4>ประจำภาคเรียนที่ <?php echo htmlspecialchars($year); ?></h4>
+        <div class="header-container">
+            <div class="header-text">
+                <h4>สหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE)</h4>
+                <h4>มหาวิทยาลัยราชภัฏเลย</h4>
+                <h4>ประจำภาคเรียนที่ <?php echo htmlspecialchars($year); ?></h4>
+            </div>
         </div>
 
         <h4>หลักสูตรที่มีการเรียนการสอนแบบสหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE)</h4>
@@ -132,6 +227,7 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
                     $faculty_name = $faculty_row['faculty'];
 
                     // สร้างตารางสำหรับแต่ละคณะ โดยจัดให้ชิดซ้าย
+                    echo '<div class="faculty-section">';
                     echo '<h4 class="faculty-header" style="text-align: left;">' . $faculty_counter . '. ' . $faculty_name . '</h4>';
 
 
@@ -164,9 +260,9 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
 
                             echo '<tr>
                                 <td style="text-align: left;">' . $course_counter . '. ' . htmlspecialchars($major) . '</td>
-                                <td>' . ($separate ? '<span class="check-mark">✓</span>' : '') . '</td>
-                                <td>' . ($parallel ? '<span class="check-mark">✓</span>' : '') . '</td>
-                                <td>' . ($mix ? '<span class="check-mark">✓</span>' : '') . '</td>
+                                <td>' . ($separate ? '<span class="check-mark">&radic;</span>' : '') . '</td>
+                                <td>' . ($parallel ? '<span class="check-mark">&radic;</span>' : '') . '</td>
+                                <td>' . ($mix ? '<span class="check-mark">&radic;</span>' : '') . '</td>
                                 <td class="note-cell">' . htmlspecialchars($note) . '</td>
                             </tr>';
 
@@ -177,6 +273,7 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
                     }
 
                     echo '</tbody></table>';
+                    echo '</div>'; // ปิด faculty-section
                     $faculty_counter++;
                 }
             } else {
@@ -184,6 +281,7 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
             }
         } else {
             // ถ้าไม่ใช่ admin ให้แสดงเฉพาะคณะของผู้ใช้
+            echo '<div class="faculty-section">';
             echo '<table>
                 <thead>
                     <tr>
@@ -212,9 +310,9 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
 
                     echo '<tr>
                         <td style="text-align: left;">' . $course_counter . '. ' . htmlspecialchars($major) . '</td>
-                        <td>' . ($separate ? '<span class="check-mark">✓</span>' : '') . '</td>
-                        <td>' . ($parallel ? '<span class="check-mark">✓</span>' : '') . '</td>
-                        <td>' . ($mix ? '<span class="check-mark">✓</span>' : '') . '</td>
+                        <td>' . ($separate ? '<span class="check-mark">&radic;</span>' : '') . '</td>
+                        <td>' . ($parallel ? '<span class="check-mark">&radic;</span>' : '') . '</td>
+                        <td>' . ($mix ? '<span class="check-mark">&radic;</span>' : '') . '</td>
                         <td class="note-cell">' . htmlspecialchars($note) . '</td>
                     </tr>';
 
@@ -225,6 +323,7 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
             }
 
             echo '</tbody></table>';
+            echo '</div>'; // ปิด faculty-section
         }
         ?>
 

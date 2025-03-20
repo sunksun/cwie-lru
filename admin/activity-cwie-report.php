@@ -102,7 +102,6 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
     <div class="container">
         <div class="header-text">
             <h4>สหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE)</h4>
-            <h4><?php echo htmlspecialchars($faculty); ?></h4>
             <h4>มหาวิทยาลัยราชภัฏเลย</h4>
             <h4>ประจำภาคเรียนที่ <?php echo htmlspecialchars($year); ?></h4>
         </div>
