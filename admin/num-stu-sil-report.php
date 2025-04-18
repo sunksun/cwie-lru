@@ -36,7 +36,7 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายงานจำนวนสาขาวิชาและจำนวนนักศึกษาที่ออกฝึกในรูปแบบสหกิจศึกษา</title>
+    <title>สาขาวิชา และ จำนวนนักศึกษาที่ออกฝึกในรูปแบบการจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New&display=swap">
     <style>
         body {
@@ -145,12 +145,12 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
 <body>
     <div class="container">
         <div class="header-text">
-            <h4>สหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE)</h4>
-            <h4>มหาวิทยาลัยราชภัฏเลย</h4>
+            <h4>การจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</h4>
+            <h4>คณะครุศาสตร์ มหาวิทยาลัยราชภัฏเลย</h4>
             <h4>ประจำภาคเรียนที่ <?php echo htmlspecialchars($year); ?></h4>
         </div>
 
-        <h3 class="text-center mb-4">จำนวนสาขาวิชาและจำนวนนักศึกษาที่ออกฝึกในรูปแบบสหกิจศึกษา</h3>
+        <h3 class="text-center mb-4">สาขาวิชา และ จำนวนนักศึกษาที่ออกฝึกในรูปแบบการจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</h3>
 
         <table>
             <thead>
@@ -159,7 +159,7 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
                     <th rowspan="2" class="align-middle" style="width: 40%; text-align: left;">คณะ</th>
                     <th rowspan="2" class="align-middle" style="width: 10%">จำนวนนักศึกษาที่ออกฝึกทั้งหมด</th>
                     <th rowspan="2" class="align-middle" style="width: 12%">จำนวนนักศึกษาที่ออกฝึกภาคปกติ</th>
-                    <th rowspan="2" class="align-middle" style="width: 13%">จำนวนนักศึกษาที่ออกฝึกในรูปแบบสหกิจฯ (CWIE)</th>
+                    <th rowspan="2" class="align-middle" style="width: 13%">จำนวนนักศึกษาที่ออกฝึกในรูปแบบ (SIL)</th>
                     <th rowspan="2" class="align-middle" style="width: 10%">คิดเป็นร้อยละ</th>
                     <th rowspan="2" class="align-middle" style="width: 10%">หมายเหตุ</th>
                 </tr>
@@ -168,18 +168,13 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
                 <?php
                 // ดึงข้อมูลตามสิทธิ์การเข้าถึง
                 if ($username == 'admin') {
-                    // ถ้าเป็น admin ดึงข้อมูลคณะทั้งหมดยกเว้นคณะครุศาสตร์ (fid = '05')
-                    $sql_faculty = "SELECT fid, faculty FROM faculty WHERE fid != '05' ORDER BY id ASC";
+                    // ถ้าเป็น admin ดึงข้อมูลคณะทั้งหมด
+                    $sql_faculty = "SELECT fid, faculty FROM faculty WHERE fid='05' ORDER BY id ASC;";
                     $result_faculty = $conn->query($sql_faculty);
                 } else {
-                    // ถ้าไม่ใช่ admin และไม่ใช่คณะครุศาสตร์ ดึงเฉพาะคณะของผู้ใช้
-                    if ($faculty_id != '05') {
-                        $sql_faculty = "SELECT fid, faculty FROM faculty WHERE fid = '$faculty_id'";
-                        $result_faculty = $conn->query($sql_faculty);
-                    } else {
-                        // ถ้าผู้ใช้เป็นคณะครุศาสตร์ ให้ไม่แสดงข้อมูล
-                        $result_faculty = false;
-                    }
+                    // ถ้าไม่ใช่ admin ดึงเฉพาะคณะของผู้ใช้
+                    $sql_faculty = "SELECT fid, faculty FROM faculty WHERE fid = '$faculty_id'";
+                    $result_faculty = $conn->query($sql_faculty);
                 }
 
                 // ตัวแปรสำหรับเก็บผลรวมทั้งหมด
@@ -300,7 +295,7 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
                         <td></td>
                     </tr>';
                 } else {
-                    echo '<tr><td colspan="7" class="text-center">ไม่พบข้อมูลคณะที่ต้องการแสดง</td></tr>';
+                    echo '<tr><td colspan="7" class="text-center">ไม่พบข้อมูลคณะ</td></tr>';
                 }
                 ?>
             </tbody>
@@ -311,9 +306,8 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
             <p>
                 1. จำนวนนักศึกษาที่ออกฝึกทั้งหมด หมายถึง จำนวนนักศึกษาทั้งหมดที่ออกฝึกประสบการณ์วิชาชีพ<br>
                 2. จำนวนนักศึกษาที่ออกฝึกภาคปกติ หมายถึง จำนวนนักศึกษาที่ออกฝึกงานทั่วไป<br>
-                3. จำนวนนักศึกษาที่ออกฝึกในรูปแบบสหกิจฯ (CWIE) หมายถึง จำนวนนักศึกษาที่ออกฝึกตามรูปแบบสหกิจศึกษา<br>
-                4. ร้อยละ คำนวณจาก (จำนวนนักศึกษาที่ออกฝึกในรูปแบบสหกิจฯ / จำนวนนักศึกษาที่ออกฝึกทั้งหมด) × 100<br>
-                5. รายงานนี้ไม่รวมข้อมูลของคณะครุศาสตร์
+                3. จำนวนนักศึกษาที่ออกฝึกในรูปแบบ (SIL) หมายถึง จำนวนนักศึกษาที่ออกฝึกประสบการณ์วิชาชีพ<br>
+                4. ร้อยละ คำนวณจาก (จำนวนนักศึกษาที่ออกฝึกประสบการณ์วิชาชีพ / จำนวนนักศึกษาที่ออกฝึกทั้งหมด) × 100
             </p>
         </div>
 

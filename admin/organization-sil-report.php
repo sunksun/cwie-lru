@@ -36,7 +36,7 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายงานข้อมูลสถานประกอบการและข้อมูลนักศึกษา CWIE</title>
+    <title>รายงานข้อมูลสถานศึกษาและข้อมูลนักศึกษา SIL</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New&display=swap">
     <style>
         body {
@@ -158,14 +158,14 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
 <body>
     <div class="container">
         <div class="header-text">
-            <h4>สหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE)</h4>
+            <h4>การจัดการเรียนรู้เชิงบูรณาการกับการทำงานในสถานศึกษา (School-Integrated Learning : SIL)</h4>
             <h4>มหาวิทยาลัยราชภัฏเลย</h4>
             <h4>ประจำภาคเรียนที่ <?php echo htmlspecialchars($year); ?></h4>
         </div>
 
-        <!-- ตาราง MOU -->
+        <!-- ตาราง MOU เฉพาะคณะครุศาสตร์ -->
         <div class="table-container">
-            <h3 class="text-center mb-4">จำนวนการทำบันทึกข้อตกลงระหว่างองค์กรกับคณะ (MOU)</h3>
+            <h3 class="text-center mb-4">จำนวนการทำบันทึกข้อตกลงระหว่างสถานศึกษากับคณะ (MOU)</h3>
 
             <table>
                 <thead>
@@ -182,21 +182,9 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
                 </thead>
                 <tbody>
                     <?php
-                    // ตรวจสอบสิทธิ์การเข้าถึงข้อมูล
-                    if ($username == 'admin') {
-                        // ถ้าเป็น admin ดึงข้อมูลคณะทั้งหมดยกเว้นคณะครุศาสตร์
-                        $sql_faculty = "SELECT fid, faculty FROM faculty WHERE fid != '05' ORDER BY id ASC";
-                        $result_faculty = $conn->query($sql_faculty);
-                    } else {
-                        // ถ้าไม่ใช่ admin และไม่ใช่คณะครุศาสตร์ ดึงเฉพาะคณะของผู้ใช้
-                        if ($faculty_id != '05') {
-                            $sql_faculty = "SELECT fid, faculty FROM faculty WHERE fid = '$faculty_id'";
-                            $result_faculty = $conn->query($sql_faculty);
-                        } else {
-                            // ถ้าเป็นคณะครุศาสตร์ ไม่แสดงข้อมูล
-                            $result_faculty = false;
-                        }
-                    }
+                    // เลือกเฉพาะคณะครุศาสตร์
+                    $sql_faculty = "SELECT fid, faculty FROM faculty WHERE faculty LIKE '%ครุศาสตร์%' ORDER BY id ASC";
+                    $result_faculty = $conn->query($sql_faculty);
 
                     if ($result_faculty && $result_faculty->num_rows > 0) { // ถ้ามีข้อมูล
                         $counter = 1;
@@ -210,7 +198,7 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
                             $faculty_id_current = $faculty_row['fid'];
                             $faculty_name = $faculty_row['faculty'];
 
-                            // คำนวณจำนวน MOU ในแต่ละปีสำหรับแต่ละคณะโดยดูจากคอลัมน์ year
+                            // คำนวณจำนวน MOU ในแต่ละปีสำหรับคณะครุศาสตร์โดยดูจากคอลัมน์ year
                             $sql = "SELECT 
                                 COUNT(CASE WHEN year LIKE '%/2564' THEN 1 END) as count_2564,
                                 COUNT(CASE WHEN year LIKE '%/2565' THEN 1 END) as count_2565,
@@ -268,38 +256,26 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
             </table>
         </div>
 
-        <!-- ตารางข้อมูลนักศึกษา CWIE และการได้งานทำ -->
+        <!-- ตารางข้อมูลนักศึกษา SIL และการได้งานทำ -->
         <div class="table-container page-break">
-            <h3 class="text-center mb-4">นักศึกษาสหกิจศึกษา (CWIE)<br>และการได้งานทำกับสถานประกอบการ</h3>
+            <h3 class="text-center mb-4">นักศึกษาที่ออกฝึกรูปแบบการจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)<br>และได้งานทำกับสถานศึกษา</h3>
 
             <table>
                 <thead>
                     <tr>
                         <th rowspan="2" class="align-middle" style="width: 5%">ลำดับที่</th>
-                        <th rowspan="2" class="align-middle" style="width: 35%; text-align: left;">คณะ</th>
-                        <th rowspan="2" class="align-middle" style="width: 12%">จำนวนบัณฑิต CWIE<br>(ปีการศึกษา 2/2567)</th>
-                        <th rowspan="2" class="align-middle" style="width: 12%">จำนวนบัณฑิต CWIE<br>ที่ได้งานทำ<br>(ปีการศึกษา2/2567)</th>
-                        <th rowspan="2" class="align-middle" style="width: 12%">จำนวนบัณฑิต CWIE<br>ที่ได้งานทำในสถานประกอบการ<br>(ปีการศึกษา2/2567)</th>
+                        <th rowspan="2" class="align-middle" style="width: 35%; text-align: left;">คณะ/สาขาวิชา</th>
+                        <th rowspan="2" class="align-middle" style="width: 12%">จำนวนบัณฑิต SIL<br>(ปีการศึกษา <?php echo htmlspecialchars($year); ?>)</th>
+                        <th rowspan="2" class="align-middle" style="width: 12%">จำนวนบัณฑิต SIL<br>ที่ได้งานทำ<br>(ปีการศึกษา <?php echo htmlspecialchars($year); ?>)</th>
+                        <th rowspan="2" class="align-middle" style="width: 12%">จำนวนบัณฑิต SIL<br>ที่ได้งานทำในสถานศึกษา<br>(ปีการศึกษา <?php echo htmlspecialchars($year); ?>)</th>
                         <th rowspan="2" class="align-middle" style="width: 10%">คิดเป็น<br>ร้อยละ</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    // ตรวจสอบสิทธิ์การเข้าถึงข้อมูล
-                    if ($username == 'admin') {
-                        // ถ้าเป็น admin ดึงข้อมูลคณะทั้งหมดยกเว้นคณะครุศาสตร์
-                        $sql_faculty = "SELECT fid, faculty FROM faculty WHERE fid != '05' ORDER BY id ASC";
-                        $result_faculty = $conn->query($sql_faculty);
-                    } else {
-                        // ถ้าไม่ใช่ admin และไม่ใช่คณะครุศาสตร์ ดึงเฉพาะคณะของผู้ใช้
-                        if ($faculty_id != '05') {
-                            $sql_faculty = "SELECT fid, faculty FROM faculty WHERE fid = '$faculty_id'";
-                            $result_faculty = $conn->query($sql_faculty);
-                        } else {
-                            // ถ้าเป็นคณะครุศาสตร์ ไม่แสดงข้อมูล
-                            $result_faculty = false;
-                        }
-                    }
+                    // เลือกเฉพาะคณะครุศาสตร์
+                    $sql_faculty = "SELECT fid, faculty FROM faculty WHERE faculty LIKE '%ครุศาสตร์%' ORDER BY id ASC";
+                    $result_faculty = $conn->query($sql_faculty);
 
                     if ($result_faculty && $result_faculty->num_rows > 0) {
                         $faculty_counter = 1;
@@ -311,13 +287,13 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
                             $faculty_id_current = $faculty_row['fid'];
                             $faculty_name = $faculty_row['faculty'];
 
-                            // คำนวณยอดรวมสำหรับแต่ละคณะ
+                            // คำนวณยอดรวมสำหรับคณะครุศาสตร์
                             $sql_sum = "SELECT 
-                                SUM(num_pundit) as total_pundit, 
+                                SUM(num_practice) as total_pundit, 
                                 SUM(num_pundit_job) as total_pundit_job, 
                                 SUM(num_pundit_job_work) as total_pundit_job_work
                                 FROM num_stu_cwie 
-                                WHERE faculty_id = '$faculty_id_current' AND year = '2/2567'";
+                                WHERE faculty_id = '$faculty_id_current' AND year = '$year'";
                             $result_sum = $conn->query($sql_sum);
                             $row_sum = $result_sum->fetch_assoc();
 
@@ -344,9 +320,9 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
                             </tr>';
 
                             // ดึงข้อมูลสาขาวิชาตามคณะ
-                            $sql_major = "SELECT major, num_pundit, num_pundit_job, num_pundit_job_work 
+                            $sql_major = "SELECT major, num_practice as num_pundit, num_pundit_job, num_pundit_job_work 
                                 FROM num_stu_cwie 
-                                WHERE faculty_id = '$faculty_id_current' AND year = '2/2567'
+                                WHERE faculty_id = '$faculty_id_current' AND year = '$year'
                                 ORDER BY id ASC";
                             $result_major = $conn->query($sql_major);
 
@@ -412,9 +388,9 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
         <div class="notes-section">
             <h5>หมายเหตุ:</h5>
             <p>
-                1. ข้อมูลแสดงจำนวนการทำบันทึกข้อตกลงระหว่างองค์กรกับคณะ (MOU) แยกตามปี พ.ศ.<br>
-                2. ข้อมูลแสดงจำนวนบัณฑิต CWIE และการได้งานทำหลังสำเร็จการศึกษา<br>
-                3. ร้อยละ คำนวณจาก (จำนวนบัณฑิต CWIE ที่ได้งานทำ / จำนวนบัณฑิต CWIE) × 100<br>
+                1. ข้อมูลแสดงจำนวนการทำบันทึกข้อตกลงระหว่างสถานศึกษากับคณะ (MOU) แยกตามปี พ.ศ.<br>
+                2. ข้อมูลแสดงจำนวนบัณฑิต SIL และการได้งานทำหลังสำเร็จการศึกษา<br>
+                3. ร้อยละ คำนวณจาก (จำนวนบัณฑิต SIL ที่ได้งานทำ / จำนวนบัณฑิต SIL) × 100<br>
                 4. ข้อมูล ณ วันที่ <?php echo date('d/m/Y'); ?>
             </p>
         </div>

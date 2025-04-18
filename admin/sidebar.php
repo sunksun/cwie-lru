@@ -155,6 +155,12 @@
             </a>
           </li>
           <li class="nav-item">
+            <a href="facultyTeacherManage.php" class="nav-link">
+              <i class="nav-icon fas fa-calendar-alt"></i>
+              <p>จำนวนอาจารย์</p>
+            </a>
+          </li>
+          <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-users"></i>
               <p>
@@ -205,31 +211,31 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="studentAdd.php" class="nav-link">
+                <a href="sil-course-manage-report.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>การจัดการหลักสูตร</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="stu-highlightAdd.php" class="nav-link">
+                <a href="num-stu-sil-report.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>จำนวนนักศึกษา</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="stu-highlightAdd.php" class="nav-link">
+                <a href="organization-sil-report.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>สถานประกอบการ</p>
+                  <p>สถานศึกษา</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="stu-highlightAdd.php" class="nav-link">
+                <a href="num-tea-sil-report.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>อาจารย์นิเทศ</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="stu-highlightAdd.php" class="nav-link">
+                <a href="activity-sil-report.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>การจัดกิจกรรม</p>
                 </a>

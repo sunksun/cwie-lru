@@ -36,7 +36,7 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายงาน : จำนวนอาจารย์นิเทศสหกิจศึกษา ประจำปีการศึกษา <?php echo $year; ?></title>
+    <title>รายงาน : จำนวน<?php echo ($username == 'admin_edu' || $faculty_id == '05') ? 'อาจารย์นิเทศ' : 'อาจารย์นิเทศสหกิจศึกษา'; ?> ประจำปีการศึกษา <?php echo $year; ?></title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New&display=swap">
     <style>
         body {
@@ -140,7 +140,15 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
         <thead>
             <tr>
                 <td>ลำดับที่</td>
-                <td>รายชื่ออาจารย์นิเทศหลักสูตรสหกิจศึกษา</td>
+                <td class="text-left">
+                    <?php
+                    if ($username == 'admin_edu' || $faculty_id == '05') {
+                        echo 'รายชื่ออาจารย์นิเทศ';
+                    } else {
+                        echo 'รายชื่ออาจารย์นิเทศหลักสูตรสหกิจศึกษา';
+                    }
+                    ?>
+                </td>
                 <td class="text-left">สาขาวิชา</td>
                 <td>หมายเลขประจำตัวผู้ขึ้นทะเบียน</td>
                 <td>หมายเหตุ</td>
@@ -182,7 +190,7 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
                         td.textContent = value;
 
                         // กำหนด class ให้กับคอลัมน์ที่ต้องการแสดงผลชิดซ้าย
-                        if (index === 2) { // สาขาวิชา
+                        if (index === 1 || index === 2) { // รายชื่ออาจารย์ และ สาขาวิชา
                             td.classList.add('text-left');
                         }
 

@@ -36,7 +36,7 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายงานกิจกรรมสหกิจศึกษาและการศึกษาเชิงบูรณาการกับการทำงาน (CWIE)</title>
+    <title>รายงานกิจกรรมการจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New&display=swap">
     <style>
         body {
@@ -101,7 +101,7 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
 <body>
     <div class="container">
         <div class="header-text">
-            <h4>สหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE)</h4>
+            <h4>การจัดการเรียนรู้เชิงบูรณาการกับการทำงานในสถานศึกษา (School-Integrated Learning : SIL)</h4>
             <h4>มหาวิทยาลัยราชภัฏเลย</h4>
             <h4>ประจำภาคเรียนที่ <?php echo htmlspecialchars($year); ?></h4>
         </div>
@@ -122,11 +122,8 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
                 </thead>
                 <tbody>
                     <?php
-                    // สร้างเงื่อนไขการกรองตามสิทธิ์ผู้ใช้และตัดคณะครุศาสตร์ออก
-                    $where_condition = "activity_type = 'กิจกรรมนักศึกษา' AND faculty_id != '05'";
-                    if ($username != 'admin') {
-                        $where_condition .= " AND faculty_id = '$faculty_id'";
-                    }
+                    // สร้างเงื่อนไขการกรองเฉพาะคณะครุศาสตร์
+                    $where_condition = "activity_type = 'กิจกรรมนักศึกษา' AND faculty_id = '05'";
                     if (isset($_GET['year']) && !empty($_GET['year'])) {
                         $where_condition .= " AND year = '" . $conn->real_escape_string($_GET['year']) . "'";
                     }
@@ -176,11 +173,8 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
                 </thead>
                 <tbody>
                     <?php
-                    // สร้างเงื่อนไขการกรองตามสิทธิ์ผู้ใช้และตัดคณะครุศาสตร์ออก
-                    $where_condition = "activity_type = 'กิจกรรมอาจารย์' AND faculty_id != '05'";
-                    if ($username != 'admin') {
-                        $where_condition .= " AND faculty_id = '$faculty_id'";
-                    }
+                    // สร้างเงื่อนไขการกรองเฉพาะคณะครุศาสตร์
+                    $where_condition = "activity_type = 'กิจกรรมอาจารย์' AND faculty_id = '05'";
                     if (isset($_GET['year']) && !empty($_GET['year'])) {
                         $where_condition .= " AND year = '" . $conn->real_escape_string($_GET['year']) . "'";
                     }
@@ -214,9 +208,9 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
             </table>
         </div>
 
-        <!-- กิจกรรมร่วมกับสถานประกอบการ -->
+        <!-- กิจกรรมร่วมกับสถานศึกษา -->
         <div class="activity-section">
-            <h3 class="text-center">กิจกรรมร่วมกับสถานประกอบการ</h3>
+            <h3 class="text-center">กิจกรรมร่วมกับสถานศึกษา</h3>
             <table>
                 <thead>
                     <tr>
@@ -230,16 +224,13 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
                 </thead>
                 <tbody>
                     <?php
-                    // สร้างเงื่อนไขการกรองตามสิทธิ์ผู้ใช้และตัดคณะครุศาสตร์ออก
-                    $where_condition = "activity_type = 'กิจกรรมร่วมกับสถานประกอบการ' AND faculty_id != '05'";
-                    if ($username != 'admin') {
-                        $where_condition .= " AND faculty_id = '$faculty_id'";
-                    }
+                    // สร้างเงื่อนไขการกรองเฉพาะคณะครุศาสตร์
+                    $where_condition = "activity_type = 'กิจกรรมร่วมกับสถานประกอบการ' AND faculty_id = '05'";
                     if (isset($_GET['year']) && !empty($_GET['year'])) {
                         $where_condition .= " AND year = '" . $conn->real_escape_string($_GET['year']) . "'";
                     }
 
-                    // ดึงข้อมูลกิจกรรมร่วมกับสถานประกอบการ
+                    // ดึงข้อมูลกิจกรรมร่วมกับสถานศึกษา
                     $sql_org = "SELECT ac.*, f.faculty AS faculty_name 
                                FROM activity_cwie ac 
                                LEFT JOIN faculty f ON ac.faculty_id = f.fid 
@@ -261,7 +252,7 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
                             $counter++;
                         }
                     } else {
-                        echo '<tr><td colspan="6" class="text-center">ไม่พบข้อมูลกิจกรรมร่วมกับสถานประกอบการ</td></tr>';
+                        echo '<tr><td colspan="6" class="text-center">ไม่พบข้อมูลกิจกรรมร่วมกับสถานศึกษา</td></tr>';
                     }
                     ?>
                 </tbody>
@@ -271,7 +262,7 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
         <div class="notes-section">
             <h5>หมายเหตุ:</h5>
             <p>
-                1. ข้อมูลแสดงกิจกรรมด้านสหกิจศึกษาและการศึกษาเชิงบูรณาการกับการทำงาน (CWIE) แยกตามประเภทกิจกรรม<br>
+                1. ข้อมูลแสดงกิจกรรมด้านการจัดการเรียนรู้เชิงบูรณาการกับการทำงานในสถานศึกษา (SIL) แยกตามประเภทกิจกรรม<br>
                 2. ข้อมูล ณ วันที่ <?php echo date('d/m/Y'); ?>
             </p>
         </div>

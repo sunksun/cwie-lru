@@ -29,6 +29,16 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
         $year = "2/2566"; // ค่าเริ่มต้นกรณีไม่พบข้อมูล
     }
 }
+
+// ดึงชื่อคณะครุศาสตร์จากฐานข้อมูล
+$faculty_query = "SELECT faculty FROM faculty WHERE fid = '05'";
+$faculty_result = mysqli_query($conn, $faculty_query);
+$faculty_name = "คณะครุศาสตร์"; // ค่าเริ่มต้น
+
+if ($faculty_result && mysqli_num_rows($faculty_result) > 0) {
+    $faculty_row = mysqli_fetch_assoc($faculty_result);
+    $faculty_name = $faculty_row['faculty'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -36,7 +46,7 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายงานหลักสูตรที่มีการเรียนการสอนแบบ CWIE</title>
+    <title>รายงานหลักสูตรที่มีการจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=TH+Sarabun+New&display=swap">
     <style>
         body {
@@ -63,7 +73,6 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
             text-align: center;
             vertical-align: middle;
             font-size: 18px;
-            /* เพิ่มขนาดตัวอักษรให้ชัดเจน */
         }
 
         th {
@@ -205,48 +214,27 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
     <div class="container">
         <div class="header-container">
             <div class="header-text">
-                <h4>สหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE)</h4>
-                <h4>มหาวิทยาลัยราชภัฏเลย</h4>
+                <h4>การจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (SIL)</h4>
+                <h4>คณะครุศาสตร์ มหาวิทยาลัยราชภัฏเลย</h4>
                 <h4>ประจำภาคเรียนที่ <?php echo htmlspecialchars($year); ?></h4>
             </div>
         </div>
 
-        <h4>หลักสูตรที่มีการเรียนการสอนแบบสหกิจศึกษาและการจัดการเรียนรู้เชิงบูรณาการกับการทำงาน (CWIE)</h4>
+        <h4>1. หลักสูตรที่มีการจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา (School-Integrated Learning : SIL)</h4>
 
-        <?php
-        // ถ้าเป็น admin ดึงข้อมูลคณะทั้งหมด (ยกเว้นคณะครุศาสตร์)
-        if ($username == 'admin') {
-            // เปลี่ยน query เพื่อไม่ดึงข้อมูลคณะครุศาสตร์ (faculty_id = '05')
-            $sql_faculty = "SELECT fid, faculty FROM faculty WHERE fid != '05' ORDER BY id ASC";
-            $result_faculty = $conn->query($sql_faculty);
-
-            if ($result_faculty && $result_faculty->num_rows > 0) {
-                $faculty_counter = 1;
-
-                while ($faculty_row = $result_faculty->fetch_assoc()) {
-                    $faculty_id = $faculty_row['fid'];
-                    $faculty_name = $faculty_row['faculty'];
-
-                    // สร้างตารางสำหรับแต่ละคณะ โดยจัดให้ชิดซ้าย
-                    echo '<div class="faculty-section">';
-                    echo '<h4 class="faculty-header" style="text-align: left;">' . $faculty_counter . '. ' . $faculty_name . '</h4>';
-
-
-                    // เพิ่มตาราง
-                    echo '<table>
-                        <thead>
-                            <tr>
-                                <th width="60%">สาขาวิชา</th>
-                                <th width="10%">แบบแยก<br>(Separate)</th>
-                                <th width="10%">แบบคู่ขนาน<br>(Parallel)</th>
-                                <th width="10%">แบบผสม<br>(Mix)</th>
-                                <th width="10%">หมายเหตุ</th>
-                            </tr>
-                        </thead>
-                        <tbody>';
-
-                    // ดึงข้อมูลหลักสูตรตามคณะ
-                    $sql_course = "SELECT * FROM cwie_course WHERE faculty_id = '$faculty_id' ORDER BY id ASC";
+        <div class="faculty-section">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="70%">สาขาวิชา</th>
+                        <th width="10%">มีการจัดการเรียนรู้แบบ SIL</th>
+                        <th width="20%">หมายเหตุ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    // ดึงข้อมูลหลักสูตรเฉพาะคณะครุศาสตร์ (faculty_id = '05')
+                    $sql_course = "SELECT * FROM cwie_course WHERE faculty_id = '05' ORDER BY id ASC";
                     $result_course = $conn->query($sql_course);
 
                     if ($result_course && $result_course->num_rows > 0) {
@@ -254,90 +242,29 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
 
                         while ($course_row = $result_course->fetch_assoc()) {
                             $major = $course_row['major'];
-                            $separate = $course_row['separate'];
-                            $parallel = $course_row['parallel'];
-                            $mix = $course_row['mix'];
+                            $sil = $course_row['sil'] ?? '/'; // หากไม่มีข้อมูล SIL ให้ใส่เครื่องหมาย / เป็นค่าเริ่มต้น
                             $note = $course_row['note'];
 
                             echo '<tr>
                                 <td style="text-align: left;">' . $course_counter . '. ' . htmlspecialchars($major) . '</td>
-                                <td>' . ($separate ? '<span class="check-mark">&radic;</span>' : '') . '</td>
-                                <td>' . ($parallel ? '<span class="check-mark">&radic;</span>' : '') . '</td>
-                                <td>' . ($mix ? '<span class="check-mark">&radic;</span>' : '') . '</td>
+                                <td>' . ($sil ? '<span class="check-mark">&radic;</span>' : '') . '</td>
                                 <td class="note-cell">' . htmlspecialchars($note) . '</td>
                             </tr>';
 
                             $course_counter++;
                         }
                     } else {
-                        echo '<tr><td colspan="5" style="text-align: center;">ไม่พบข้อมูลหลักสูตร</td></tr>';
+                        echo '<tr><td colspan="3" style="text-align: center;">ไม่พบข้อมูลหลักสูตร</td></tr>';
                     }
-
-                    echo '</tbody></table>';
-                    echo '</div>'; // ปิด faculty-section
-                    $faculty_counter++;
-                }
-            } else {
-                echo '<div style="text-align: center; margin: 20px;">ไม่พบข้อมูลคณะ</div>';
-            }
-        } else {
-            // ถ้าไม่ใช่ admin และไม่ใช่คณะครุศาสตร์ ให้แสดงเฉพาะคณะของผู้ใช้
-            if ($faculty_id != '05') {
-                echo '<div class="faculty-section">';
-                echo '<table>
-                    <thead>
-                        <tr>
-                            <th width="60%">สาขาวิชา</th>
-                            <th width="10%">แบบแยก<br>(Separate)</th>
-                            <th width="10%">แบบคู่ขนาน<br>(Parallel)</th>
-                            <th width="10%">แบบผสม<br>(Mix)</th>
-                            <th width="10%">หมายเหตุ</th>
-                        </tr>
-                    </thead>
-                    <tbody>';
-
-                // ดึงข้อมูลหลักสูตรตามคณะของผู้ใช้
-                $sql_course = "SELECT * FROM cwie_course WHERE faculty_id = '$faculty_id' ORDER BY id ASC";
-                $result_course = $conn->query($sql_course);
-
-                if ($result_course && $result_course->num_rows > 0) {
-                    $course_counter = 1;
-
-                    while ($course_row = $result_course->fetch_assoc()) {
-                        $major = $course_row['major'];
-                        $separate = $course_row['separate'];
-                        $parallel = $course_row['parallel'];
-                        $mix = $course_row['mix'];
-                        $note = $course_row['note'];
-
-                        echo '<tr>
-                            <td style="text-align: left;">' . $course_counter . '. ' . htmlspecialchars($major) . '</td>
-                            <td>' . ($separate ? '<span class="check-mark">&radic;</span>' : '') . '</td>
-                            <td>' . ($parallel ? '<span class="check-mark">&radic;</span>' : '') . '</td>
-                            <td>' . ($mix ? '<span class="check-mark">&radic;</span>' : '') . '</td>
-                            <td class="note-cell">' . htmlspecialchars($note) . '</td>
-                        </tr>';
-
-                        $course_counter++;
-                    }
-                } else {
-                    echo '<tr><td colspan="5" style="text-align: center;">ไม่พบข้อมูลหลักสูตร</td></tr>';
-                }
-
-                echo '</tbody></table>';
-                echo '</div>'; // ปิด faculty-section
-            } else {
-                echo '<div style="text-align: center; margin: 20px;">คุณไม่มีสิทธิ์เข้าถึงข้อมูลในส่วนนี้</div>';
-            }
-        }
-        ?>
+                    ?>
+                </tbody>
+            </table>
+        </div>
 
         <div class="notes-section">
             <h5>หมายเหตุ:</h5>
             <p>
-                <strong>แบบแยก (Separate)</strong> - จัดการเรียนการสอนในห้องเรียนสลับกับการฝึกปฏิบัติในสถานประกอบการ<br>
-                <strong>แบบคู่ขนาน (Parallel)</strong> - จัดการเรียนการสอนในห้องเรียนควบคู่กับการฝึกปฏิบัติในสถานประกอบการ<br>
-                <strong>แบบผสม (Mix)</strong> - จัดการเรียนการสอนแบบผสมผสานระหว่างรูปแบบแยกและรูปแบบคู่ขนาน
+                <strong>School-Integrated Learning (SIL)</strong> - การจัดการเรียนรู้การปฏิบัติงานในสถานศึกษา คือรูปแบบการจัดการเรียนการสอนที่เน้นการเรียนรู้ผ่านการปฏิบัติงานจริงในสถานศึกษา เป็นส่วนหนึ่งของหลักสูตรครุศาสตร์
             </p>
         </div>
 

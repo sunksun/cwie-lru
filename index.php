@@ -187,8 +187,7 @@ include_once('admin/connect.php');
 									['id' => '01', 'name' => 'คณะวิทยาการจัดการ'],
 									['id' => '02', 'name' => 'คณะวิทยาศาสตร์และเทคโนโลยี'],
 									['id' => '03', 'name' => 'คณะเทคโนโลยีอุตสาหกรรม'],
-									['id' => '04', 'name' => 'คณะมนุษยศาสตร์และสังคมศาสตร์'],
-									['id' => '05', 'name' => 'คณะครุศาสตร์']
+									['id' => '04', 'name' => 'คณะมนุษยศาสตร์และสังคมศาสตร์']
 								];
 
 								$totals = ['practice' => 0, 'cwie' => 0, 'graduate' => 0, 'employed' => 0, 'employed_org' => 0];
@@ -490,7 +489,7 @@ include_once('admin/connect.php');
 				</div>
 				<div class="row">
 					<?php
-					$sql = "SELECT name_tea_cwie, course, filename FROM `num_tea_cwie` ORDER BY `id` DESC LIMIT 8";
+					$sql = "SELECT name_tea_cwie, course, filename FROM `num_tea_cwie` WHERE faculty_id != '05' ORDER BY `id` DESC LIMIT 8";
 					$result = $conn->query($sql);
 
 					if ($result && $result->num_rows > 0) {
@@ -513,7 +512,7 @@ include_once('admin/connect.php');
 												</a>
 											<?php else: ?>
 												<a href="#">
-													<img src="admin/img_teach/default-teacher.jpg" alt="<?php echo htmlspecialchars($row["name_tea_cwie"]); ?>">
+													<img src="admin/img_teach/13092023102745.png" alt="<?php echo htmlspecialchars($row["name_tea_cwie"]); ?>">
 												</a>
 											<?php endif; ?>
 										</figure>
